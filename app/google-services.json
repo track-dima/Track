@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "540847796518",
+    "project_id": "track-d720c",
+    "storage_bucket": "track-d720c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540847796518:android:15a0f583c6c108453511e7",
+        "android_client_info": {
+          "package_name": "it.polimi.dima.track"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540847796518-d3repo1tnpmn4nqt3qqve0bunk0un1nn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsBC5TtFGzB7ZffIewLP1gtAdE2oBldro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540847796518-d3repo1tnpmn4nqt3qqve0bunk0un1nn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
