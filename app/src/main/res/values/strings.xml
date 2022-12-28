@@ -21,8 +21,18 @@
     <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
     <string name="password_match_error">Passwords do not match.</string>
 
-    <!-- HomeScreen -->
-    <string name="home">Home</string>
+    <!-- TrainingsScreens -->
+    <string name="trainings">Trainings</string>
+
+    <!-- EditTrainingScreen -->
+    <string name="edit_training">Edit your training</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="url">URL</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="flag">Flag</string>
+    <string name="priority">Priority</string>
 
     <!-- SettingsScreen -->
     <string name="settings">Settings</string>

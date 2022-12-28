@@ -9,7 +9,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import it.polimi.dima.track.model.service.LogService
+import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.model.service.impl.LogServiceImpl
+import it.polimi.dima.track.model.service.impl.StorageServiceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -17,6 +19,9 @@ abstract class ServiceModule {
   @Binds abstract fun provideAccountService(impl: AccountServiceImpl): AccountService
 
   @Binds abstract fun provideLogService(impl: LogServiceImpl): LogService
+
+  @Binds abstract fun provideStorageService(impl: StorageServiceImpl): StorageService
+
   @Binds
   abstract fun provideConfigurationService(impl: ConfigurationServiceImpl): ConfigurationService
 }

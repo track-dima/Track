@@ -27,7 +27,7 @@ fun DropdownContextMenu(
     onExpandedChange = { isExpanded = !isExpanded }
   ) {
     Icon(
-      modifier = Modifier.padding(8.dp, 0.dp),
+      modifier = Modifier.padding(8.dp, 0.dp).menuAnchor(),
       imageVector = Icons.Default.MoreVert,
       contentDescription = "More"
     )
@@ -67,7 +67,7 @@ fun DropdownSelector(
     onExpandedChange = { isExpanded = !isExpanded }
   ) {
     TextField(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier.fillMaxWidth().menuAnchor(),
       readOnly = true,
       value = selection,
       onValueChange = {},

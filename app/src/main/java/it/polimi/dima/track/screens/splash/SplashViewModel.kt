@@ -3,7 +3,7 @@ package it.polimi.dima.track.screens.splash
 import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import it.polimi.dima.track.HOME_SCREEN
+import it.polimi.dima.track.TRAININGS_SCREEN
 import it.polimi.dima.track.SPLASH_SCREEN
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.ConfigurationService
@@ -26,7 +26,7 @@ class SplashViewModel @Inject constructor(
   fun onAppStart(openAndPopUp: (String, String) -> Unit) {
 
     showError.value = false
-    if (accountService.hasUser) openAndPopUp(HOME_SCREEN, SPLASH_SCREEN)
+    if (accountService.hasUser) openAndPopUp(TRAININGS_SCREEN, SPLASH_SCREEN)
     else createAnonymousAccount(openAndPopUp)
   }
 
@@ -38,7 +38,7 @@ class SplashViewModel @Inject constructor(
         showError.value = true
         throw ex
       }
-      openAndPopUp(HOME_SCREEN, SPLASH_SCREEN)
+      openAndPopUp(TRAININGS_SCREEN, SPLASH_SCREEN)
     }
   }
 }

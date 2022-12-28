@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -19,7 +18,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import it.polimi.dima.track.common.snackbar.SnackBarManager
-import it.polimi.dima.track.screens.home.HomeScreen
+import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
+import it.polimi.dima.track.screens.trainings.TrainingsScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
@@ -96,7 +96,17 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState) {
         SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
 
-    composable(HOME_SCREEN) {
-        HomeScreen(openScreen = { route -> appState.navigate(route) })
+    composable(TRAININGS_SCREEN) {
+        TrainingsScreen(openScreen = { route -> appState.navigate(route) })
+    }
+
+    composable(
+        route = "$EDIT_TRAINING_SCREEN$TRAINING_ID_ARG",
+        arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    ) {
+        EditTrainingScreen(
+            popUpScreen = { appState.popUp() },
+            trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+        )
     }
 }

@@ -14,17 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package it.polimi.dima.track.screens.home
+package it.polimi.dima.track.common.ext
 
-import dagger.hilt.android.lifecycle.HiltViewModel
-import it.polimi.dima.track.SETTINGS_SCREEN
-import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.screens.TrackViewModel
-import javax.inject.Inject
+import it.polimi.dima.track.model.Training
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
-  logService: LogService,
-) : TrackViewModel(logService) {
-  fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
+
+fun Training?.hasDueDate(): Boolean {
+  return this?.dueDate.orEmpty().isNotBlank()
+}
+
+fun Training?.hasDueTime(): Boolean {
+  return this?.dueTime.orEmpty().isNotBlank()
 }
