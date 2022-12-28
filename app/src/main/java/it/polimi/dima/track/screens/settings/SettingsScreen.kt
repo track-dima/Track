@@ -41,7 +41,7 @@ fun SettingsScreen(
         viewModel.onSignUpClick(openScreen)
       }
     } else {
-      SignOutCard { viewModel.onSignOutClick(restartApp) }
+      SignOutCard { viewModel.onSignOutClick() }
       DeleteMyAccountCard { viewModel.onDeleteMyAccountClick(restartApp) }
     }
   }

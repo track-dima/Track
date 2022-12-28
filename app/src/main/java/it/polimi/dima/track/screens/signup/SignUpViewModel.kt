@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.SIGN_UP_SCREEN
+import it.polimi.dima.track.TRAININGS_SCREEN
 import it.polimi.dima.track.common.ext.isValidEmail
 import it.polimi.dima.track.common.ext.isValidPassword
 import it.polimi.dima.track.common.ext.passwordMatches
@@ -57,7 +58,7 @@ class SignUpViewModel @Inject constructor(
 
     launchCatching {
       accountService.linkAccount(email, password)
-      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+      openAndPopUp(TRAININGS_SCREEN, SIGN_UP_SCREEN)
     }
   }
 }
