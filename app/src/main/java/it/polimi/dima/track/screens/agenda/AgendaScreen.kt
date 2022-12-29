@@ -1,4 +1,4 @@
-package it.polimi.dima.track.screens.trainings
+package it.polimi.dima.track.screens.agenda
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -18,16 +18,17 @@ import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
+import it.polimi.dima.track.screens.trainings.TrainingItem
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
-fun TrainingsScreen(
+fun AgendaScreen(
     openScreen: (String) -> Unit,
-    navigationType: NavigationType,
     modifier: Modifier = Modifier,
-    viewModel: TrainingsViewModel = hiltViewModel()
+    navigationType: NavigationType,
+    viewModel: AgendaViewModel = hiltViewModel()
 ) {
     Scaffold(
         floatingActionButton = {

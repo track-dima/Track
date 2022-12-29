@@ -13,12 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.BasicButton
 import it.polimi.dima.track.common.ext.basicButton
-
-private const val SPLASH_TIMEOUT = 1000L
 
 @Composable
 fun SplashScreen(
@@ -46,7 +43,6 @@ fun SplashScreen(
   }
 
   LaunchedEffect(true) {
-    delay(SPLASH_TIMEOUT)
     viewModel.onAppStart(openAndPopUp)
   }
 }
