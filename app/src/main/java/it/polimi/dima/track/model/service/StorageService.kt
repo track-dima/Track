@@ -7,7 +7,6 @@ interface StorageService {
   val trainings: Flow<List<Training>>
 
   suspend fun getTraining(trainingId: String): Training?
-
   suspend fun save(training: Training): String
   suspend fun update(training: Training)
   suspend fun delete(trainingId: String)

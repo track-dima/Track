@@ -31,7 +31,6 @@ import it.polimi.dima.track.screens.signup.SignUpScreen
 import it.polimi.dima.track.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackApp(
     windowSize: WindowSizeClass,
@@ -117,7 +116,7 @@ fun TrackAppContent(
         ) {
             NavHost(
                 navController = appState.navController,
-                startDestination = AGENDA_SCREEN,
+                startDestination = SPLASH_SCREEN,
                 modifier = Modifier.weight(1f)
             ) {
                 trackGraph(appState, navigationType)
