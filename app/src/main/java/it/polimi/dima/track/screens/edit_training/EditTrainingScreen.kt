@@ -51,7 +51,6 @@ fun EditTrainingScreen(
     val fieldModifier = Modifier.fieldModifier()
     BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier)
     BasicField(R.string.description, training.description, viewModel::onDescriptionChange, fieldModifier)
-    BasicField(R.string.url, training.url, viewModel::onUrlChange, fieldModifier)
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
