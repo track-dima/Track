@@ -7,6 +7,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +44,15 @@ fun EditTrainingScreen(
 ) {
   val training by viewModel.training
 
-  LaunchedEffect(Unit) { viewModel.initialize(trainingId) }
+  LaunchedEffect(Unit) {
+    viewModel.initialize(trainingId)
+  }
 
   Column(
-    modifier = modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
+    modifier = modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+      .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     ActionToolbar(
@@ -77,12 +88,22 @@ private fun CardEditors(
 ) {
   val activity = LocalContext.current as AppCompatActivity
 
+  val openDialog = remember { mutableStateOf(false) }
   RegularCardEditor(R.string.date, R.drawable.ic_calendar, training.dueDateString, Modifier.card()) {
-    showDatePicker(activity, training, onDateChange)
+    openDialog.value = true
   }
 
   RegularCardEditor(R.string.time, R.drawable.ic_clock, training.dueTimeString, Modifier.card()) {
     showTimePicker(activity, training, onTimeChange)
+  }
+
+  if (openDialog.value) {
+    EmbeddedDatePicker(
+      training = training,
+      open = openDialog.value,
+      onClose = { openDialog.value = false },
+      onDateChange = onDateChange
+    )
   }
 }
 
@@ -105,18 +126,52 @@ private fun CardSelectors(
   }
 }
 
-private fun showDatePicker(activity: AppCompatActivity?, training: Training, onDateChange: (Long) -> Unit) {
-  var selectedDate = MaterialDatePicker.todayInUtcMilliseconds()
-  if (training.hasDueDate()) {
-    selectedDate = training.dueDate!!.time
-  }
-  val picker = MaterialDatePicker.Builder.datePicker()
-    .setSelection(selectedDate)
-    .build()
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EmbeddedDatePicker(
+    training: Training,
+    open: Boolean,
+    onClose: () -> Unit,
+    onDateChange: (Long) -> Unit
+    ) {
 
-  activity?.let {
-    picker.show(it.supportFragmentManager, picker.toString())
-    picker.addOnPositiveButtonClickListener { timeInMillis -> onDateChange(timeInMillis) }
+  val initialDate = remember(training.hasDueDate()) {
+    if (training.hasDueDate()) {
+      training.dueDate!!.time
+    } else {
+      MaterialDatePicker.todayInUtcMilliseconds()
+    }
+  }
+
+  val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDate)
+  if (open) {
+    DatePickerDialog(
+      onDismissRequest = {
+        onClose()
+      },
+      confirmButton = {
+        TextButton(
+          onClick = {
+            onClose()
+            datePickerState.selectedDateMillis?.let { onDateChange(it) }
+          },
+          enabled = true
+        ) {
+          Text("OK")
+        }
+      },
+      dismissButton = {
+        TextButton(
+          onClick = {
+            onClose()
+          }
+        ) {
+          Text("Cancel")
+        }
+      }
+    ) {
+      DatePicker(state = datePickerState)
+    }
   }
 }
 
