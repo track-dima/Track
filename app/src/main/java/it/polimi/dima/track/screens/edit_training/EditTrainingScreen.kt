@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +47,9 @@ fun EditTrainingScreen(
     ActionToolbar(
       title = R.string.edit_training,
       modifier = Modifier.toolbarActions(),
-      endActionIcon = R.drawable.ic_check,
+      startActionIcon = Icons.Default.Close,
+      startAction = { viewModel.onCancelClick(popUpScreen) },
+      endActionIcon = Icons.Default.Check,
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )
 

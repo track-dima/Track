@@ -73,6 +73,10 @@ class EditTrainingViewModel @Inject constructor(
     }
   }
 
+  fun onCancelClick(popUpScreen: () -> Unit) {
+    popUpScreen()
+  }
+
   private fun Int.toClockPattern(): String {
     return if (this < 10) "0$this" else "$this"
   }
