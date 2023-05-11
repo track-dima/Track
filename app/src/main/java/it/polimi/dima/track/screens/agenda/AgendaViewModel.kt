@@ -39,6 +39,7 @@ class AgendaViewModel @Inject constructor(
   fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
+      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFlag -> onFlagTrainingClick(training)
       TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
     }
@@ -50,5 +51,12 @@ class AgendaViewModel @Inject constructor(
 
   private fun onDeleteTaskClick(training: Training) {
     launchCatching { storageService.delete(training.id) }
+  }
+
+  private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
+    launchCatching {
+      val newId = storageService.duplicate(training)
+      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
+    }
   }
 }

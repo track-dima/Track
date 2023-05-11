@@ -34,16 +34,24 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     currentCollection(auth.currentUserId).document(trainingId).get().await().toObject()
 
   override suspend fun save(training: Training): String =
-    trace(SAVE_TRAINING_TRACE) { currentCollection(auth.currentUserId).add(training).await().id }
+    trace(SAVE_TRAINING_TRACE) {
+      currentCollection(auth.currentUserId).add(training).await().id
+    }
 
   override suspend fun update(training: Training): Unit =
     trace(UPDATE_TRAINING_TRACE) {
       currentCollection(auth.currentUserId).document(training.id).set(training).await()
     }
 
-  override suspend fun delete(trainingId: String) {
-    currentCollection(auth.currentUserId).document(trainingId).delete().await()
-  }
+  override suspend fun duplicate(training: Training): String =
+    trace(DUPLICATE_TRAINING_TRACE) {
+      currentCollection(auth.currentUserId).add(training.copy(id = "")).await().id
+    }
+
+  override suspend fun delete(trainingId: String): Unit =
+    trace(DELETE_TRAINING_TRACE) {
+      currentCollection(auth.currentUserId).document(trainingId).delete().await()
+    }
 
   // TODO: It's not recommended to delete on the client:
   // https://firebase.google.com/docs/firestore/manage-data/delete-data#kotlin+ktx_2
@@ -59,6 +67,8 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     private const val USER_COLLECTION = "users"
     private const val TRAINING_COLLECTION = "trainings"
     private const val SAVE_TRAINING_TRACE = "saveTraining"
+    private const val DELETE_TRAINING_TRACE = "deleteTraining"
+    private const val DUPLICATE_TRAINING_TRACE = "duplicateTraining"
     private const val UPDATE_TRAINING_TRACE = "updateTraining"
   }
 }

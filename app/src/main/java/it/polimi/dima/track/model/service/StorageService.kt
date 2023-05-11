@@ -9,6 +9,7 @@ interface StorageService {
   suspend fun getTraining(trainingId: String): Training?
   suspend fun save(training: Training): String
   suspend fun update(training: Training)
+  suspend fun duplicate(training: Training): String
   suspend fun delete(trainingId: String)
   suspend fun deleteAllForUser(userId: String)
 }

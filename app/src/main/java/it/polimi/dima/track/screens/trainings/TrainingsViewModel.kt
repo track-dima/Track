@@ -38,8 +38,9 @@ class TrainingsViewModel @Inject constructor(
   fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
+      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFlag -> onFlagTrainingClick(training)
-      TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
+      TrainingActionOption.DeleteTask -> onDeleteTrainingClick(training)
     }
   }
 
@@ -47,7 +48,14 @@ class TrainingsViewModel @Inject constructor(
     launchCatching { storageService.update(training.copy(flag = !training.flag)) }
   }
 
-  private fun onDeleteTaskClick(training: Training) {
+  private fun onDeleteTrainingClick(training: Training) {
     launchCatching { storageService.delete(training.id) }
+  }
+
+  private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
+    launchCatching {
+      val newId = storageService.duplicate(training)
+      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
+    }
   }
 }
