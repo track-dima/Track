@@ -113,13 +113,13 @@ private fun getDueDateAndTime(training: Training): String {
   val stringBuilder = StringBuilder("")
 
   if (training.hasDueDate()) {
-    stringBuilder.append(training.dueDate)
+    stringBuilder.append(training.dueDateString)
     stringBuilder.append(" ")
   }
 
   if (training.hasDueTime()) {
     stringBuilder.append("at ")
-    stringBuilder.append(training.dueTime)
+    stringBuilder.append(training.dueTimeString)
   }
 
   return stringBuilder.toString()
@@ -130,8 +130,6 @@ private fun isScheduled(training: Training): Boolean {
     return false
   }
 
-  val formatter = SimpleDateFormat(EditTrainingViewModel.DATE_FORMAT, Locale.ENGLISH)
-  val dueDate = formatter.parse(training.dueDate)
   val currentDate = Calendar.getInstance(TimeZone.getTimeZone(EditTrainingViewModel.UTC)).time
-  return currentDate.before(dueDate)
+  return currentDate.before(training.dueDate)
 }

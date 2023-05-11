@@ -19,6 +19,8 @@ import it.polimi.dima.track.common.composable.CardSelector
 import it.polimi.dima.track.common.composable.RegularCardEditor
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
+import it.polimi.dima.track.common.ext.hasDueDate
+import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.Priority
@@ -68,12 +70,12 @@ private fun CardEditors(
 ) {
   val activity = LocalContext.current as AppCompatActivity
 
-  RegularCardEditor(R.string.date, R.drawable.ic_calendar, training.dueDate, Modifier.card()) {
-    showDatePicker(activity, onDateChange)
+  RegularCardEditor(R.string.date, R.drawable.ic_calendar, training.dueDateString, Modifier.card()) {
+    showDatePicker(activity, training, onDateChange)
   }
 
-  RegularCardEditor(R.string.time, R.drawable.ic_clock, training.dueTime, Modifier.card()) {
-    showTimePicker(activity, onTimeChange)
+  RegularCardEditor(R.string.time, R.drawable.ic_clock, training.dueTimeString, Modifier.card()) {
+    showTimePicker(activity, training, onTimeChange)
   }
 }
 
@@ -96,8 +98,14 @@ private fun CardSelectors(
   }
 }
 
-private fun showDatePicker(activity: AppCompatActivity?, onDateChange: (Long) -> Unit) {
-  val picker = MaterialDatePicker.Builder.datePicker().build()
+private fun showDatePicker(activity: AppCompatActivity?, training: Training, onDateChange: (Long) -> Unit) {
+  var selectedDate = MaterialDatePicker.todayInUtcMilliseconds()
+  if (training.hasDueDate()) {
+    selectedDate = training.dueDate!!.time
+  }
+  val picker = MaterialDatePicker.Builder.datePicker()
+    .setSelection(selectedDate)
+    .build()
 
   activity?.let {
     picker.show(it.supportFragmentManager, picker.toString())
@@ -105,8 +113,19 @@ private fun showDatePicker(activity: AppCompatActivity?, onDateChange: (Long) ->
   }
 }
 
-private fun showTimePicker(activity: AppCompatActivity?, onTimeChange: (Int, Int) -> Unit) {
-  val picker = MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build()
+private fun showTimePicker(activity: AppCompatActivity?, training: Training, onTimeChange: (Int, Int) -> Unit) {
+  var selectedHour = 0
+  var selectedMinute = 0
+  if (training.hasDueTime()) {
+    selectedHour = training.dueTime!!["hour"]!!
+    selectedMinute = training.dueTime["minute"]!!
+  }
+  val picker = MaterialTimePicker.Builder()
+    .setTimeFormat(TimeFormat.CLOCK_24H)
+    .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+    .setHour(selectedHour)
+    .setMinute(selectedMinute)
+    .build()
 
   activity?.let {
     picker.show(it.supportFragmentManager, picker.toString())

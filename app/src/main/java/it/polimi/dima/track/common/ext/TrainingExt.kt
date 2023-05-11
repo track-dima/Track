@@ -20,9 +20,9 @@ import it.polimi.dima.track.model.Training
 
 
 fun Training?.hasDueDate(): Boolean {
-  return this?.dueDate.orEmpty().isNotBlank()
+  return (this?.dueDate != null && this.dueDateString.isNotBlank())
 }
 
 fun Training?.hasDueTime(): Boolean {
-  return this?.dueTime.orEmpty().isNotBlank()
+  return (this?.dueTime != null && this.dueTimeString.isNotBlank())
 }

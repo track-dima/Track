@@ -35,20 +35,21 @@ class EditTrainingViewModel @Inject constructor(
     training.value = training.value.copy(description = newValue)
   }
 
-  fun onUrlChange(newValue: String) {
-    training.value = training.value.copy(url = newValue)
-  }
-
   fun onDateChange(newValue: Long) {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone(UTC))
     calendar.timeInMillis = newValue
-    val newDueDate = SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH).format(calendar.time)
-    training.value = training.value.copy(dueDate = newDueDate)
+    training.value = training.value.copy(
+      dueDate = calendar.time,
+      dueDateString = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(calendar.time)
+    )
   }
 
   fun onTimeChange(hour: Int, minute: Int) {
     val newDueTime = "${hour.toClockPattern()}:${minute.toClockPattern()}"
-    training.value = training.value.copy(dueTime = newDueTime)
+    training.value = training.value.copy(
+      dueTime = mapOf("hour" to hour, "minute" to minute),
+      dueTimeString = newDueTime
+    )
   }
 
   fun onFlagToggle(newValue: String) {
