@@ -48,8 +48,10 @@ fun EditTrainingScreen(
       title = R.string.edit_training,
       modifier = Modifier.toolbarActions(),
       startActionIcon = Icons.Default.Close,
+      startActionDescription = R.string.close,
       startAction = { viewModel.onCancelClick(popUpScreen) },
       endActionIcon = Icons.Default.Check,
+      endActionDescription = R.string.confirm,
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )
 

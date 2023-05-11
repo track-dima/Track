@@ -49,4 +49,6 @@
     <string name="edit">Edit</string>
     <string name="add_training">Add training</string>
     <string name="profile">Profile</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
 </resources>

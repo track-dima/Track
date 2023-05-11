@@ -48,6 +48,7 @@ fun TrainingsScreen(
                 title = R.string.agenda,
                 modifier = Modifier.toolbarActions(),
                 endActionIcon = Icons.Default.Settings,
+                endActionDescription = R.string.settings,
                 endAction = { viewModel.onSettingsClick(openScreen) }
             )
 

@@ -22,13 +22,15 @@ fun BasicToolbar(@StringRes title: Int) {
 @Composable
 fun ActionToolbar(
   @StringRes title: Int,
-  startActionIcon: ImageVector? = null,
-  endActionIcon: ImageVector,
   modifier: Modifier,
+  startActionIcon: ImageVector? = null,
+  @StringRes startActionDescription: Int? = null,
   startAction: (() -> Unit)? = null,
+  endActionIcon: ImageVector,
+  @StringRes endActionDescription: Int,
   endAction: () -> Unit
 ) {
-  val hasStartAction = startActionIcon != null && startAction != null
+  val hasStartAction = startActionIcon != null && startAction != null && startActionDescription != null
 
   TopAppBar(
     title = {
@@ -51,14 +53,20 @@ fun ActionToolbar(
     navigationIcon = {
       if (hasStartAction) {
         IconButton(onClick = startAction!!) {
-          Icon(imageVector = startActionIcon!!, contentDescription = "Action")
+          Icon(
+            imageVector = startActionIcon!!,
+            contentDescription = stringResource(startActionDescription!!)
+          )
         }
       }
     },
     actions = {
       Box(modifier) {
         IconButton(onClick = endAction) {
-          Icon(imageVector = endActionIcon, contentDescription = "Action")
+          Icon(
+            imageVector = endActionIcon,
+            contentDescription = stringResource(endActionDescription)
+          )
         }
       }
     }
