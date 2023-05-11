@@ -24,7 +24,6 @@ import it.polimi.dima.track.common.utils.*
 import it.polimi.dima.track.navigation.*
 import it.polimi.dima.track.screens.agenda.AgendaScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
-import it.polimi.dima.track.screens.trainings.TrainingsScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
@@ -183,10 +182,10 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
     }
 
     composable(TRAININGS_SCREEN) {
-        TrainingsScreen(
+        /* TrainingsScreen(
             openScreen = { route -> appState.navigate(route) },
             navigationType = navigationType
-        )
+        )*/
     }
 
     composable(AGENDA_SCREEN) {

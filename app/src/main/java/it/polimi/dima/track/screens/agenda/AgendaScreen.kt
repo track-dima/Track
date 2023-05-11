@@ -42,6 +42,9 @@ fun AgendaScreen(
         }
     ) {
         val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
+
+        // TODO is this sorting efficient?
+        val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
         val options by viewModel.options
 
         Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
@@ -56,7 +59,7 @@ fun AgendaScreen(
             Spacer(modifier = Modifier.smallSpacer())
 
             LazyColumn {
-                items(trainings.value, key = { it.id }) { trainingItem ->
+                items(sortedTrainings, key = { it.id }) { trainingItem ->
                     TrainingItem(
                         training = trainingItem,
                         options = options,
