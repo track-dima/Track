@@ -35,6 +35,7 @@ import it.polimi.dima.track.model.Priority
 import it.polimi.dima.track.model.Training
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -92,8 +93,12 @@ private fun CardEditors(
 ) {
   val activity = LocalContext.current as AppCompatActivity
 
-  val openDateDialog = remember { mutableStateOf(false) }
-  val openTimeDialog = remember { mutableStateOf(false) }
+  /*
+   * rememberSaveable is used to save the state of the dialog during configuration changes.
+   * TODO sembra che lo stato venga salvato solo per quando l'orientamento torna a essere quello precedente
+   */
+  val openDateDialog = rememberSaveable { mutableStateOf(false) }
+  val openTimeDialog = rememberSaveable { mutableStateOf(false) }
   RegularCardEditor(R.string.date, R.drawable.ic_calendar, training.dueDateString, Modifier.card()) {
     openDateDialog.value = true
   }
@@ -139,6 +144,7 @@ private fun CardSelectors(
   }
 }
 
+// TODO non rimane sullo schermo quando cambio orientamento e non si adatta al layout orizzontale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EmbeddedDatePicker(

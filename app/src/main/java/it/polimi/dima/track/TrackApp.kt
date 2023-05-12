@@ -56,25 +56,16 @@ fun TrackApp(
                 )
             }
         ) { innerPaddingModifier ->
-            if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
-                PermanentNavigationDrawer(drawerContent = {
+            PermanentNavigationDrawer(drawerContent = {
+                if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
                     PermanentNavigationDrawerContent(
                         selectedDestination = selectedDestination,
                         navigationContentPosition = uiState.navigationContentPosition,
                         navigateToTopLevelDestination = appState::drawerNavigate,
                         openScreen = { route -> appState.navigate(route) }
                     )
-                }) {
-                    TrackAppContent(
-                        appState = appState,
-                        navigationType = uiState.navigationType,
-                        navigationContentPosition = uiState.navigationContentPosition,
-                        innerPadding = innerPaddingModifier,
-                        selectedDestination = selectedDestination,
-                        navigateToTopLevelDestination = appState::drawerNavigate
-                    )
                 }
-            } else {
+            }) {
                 TrackAppContent(
                     appState = appState,
                     navigationType = uiState.navigationType,
