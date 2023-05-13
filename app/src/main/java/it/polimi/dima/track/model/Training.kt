@@ -6,7 +6,7 @@ import java.util.Date
 data class Training(
   @DocumentId val id: String = "",
   val title: String = "",
-  val priority: String = "",
+  val type: String = "",
   val dueDate: Date? = null,
   val dueDateString: String = "",
   val dueTime: Map<String, Int>? = null,

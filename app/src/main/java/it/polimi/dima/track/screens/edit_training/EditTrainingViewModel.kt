@@ -57,8 +57,8 @@ class EditTrainingViewModel @Inject constructor(
     training.value = training.value.copy(flag = newFlagOption)
   }
 
-  fun onPriorityChange(newValue: String) {
-    training.value = training.value.copy(priority = newValue)
+  fun onTypeChange(newValue: String) {
+    training.value = training.value.copy(type = newValue)
   }
 
   fun onDoneClick(popUpScreen: () -> Unit) {

@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownContextMenu(
   options: List<String>,
@@ -24,7 +23,6 @@ fun DropdownContextMenu(
   Box(modifier = modifier) {
     IconButton(onClick = { isExpanded = true }) {
       Icon(
-        modifier = Modifier.padding(8.dp, 0.dp),
         imageVector = Icons.Default.MoreVert,
         contentDescription = "More"
       )
@@ -43,6 +41,7 @@ fun DropdownContextMenu(
         DropdownMenuItem(
           /*
            * TODO aggiungere leading icon
+           * https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)
            */
           text = { Text(text = selectionOption) },
           onClick = {

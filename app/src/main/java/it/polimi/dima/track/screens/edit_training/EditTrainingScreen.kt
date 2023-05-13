@@ -12,9 +12,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +29,7 @@ import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
-import it.polimi.dima.track.model.Priority
+import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.model.Training
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,7 +77,7 @@ fun EditTrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
-    CardSelectors(training, viewModel::onPriorityChange, viewModel::onFlagToggle)
+    CardSelectors(training, viewModel::onTypeChange, viewModel::onFlagToggle)
 
     Spacer(modifier = Modifier.spacer())
   }
@@ -127,13 +125,13 @@ private fun CardEditors(
 @Composable
 private fun CardSelectors(
   training: Training,
-  onPriorityChange: (String) -> Unit,
+  onTypeChange: (String) -> Unit,
   onFlagToggle: (String) -> Unit
 ) {
-  val prioritySelection = Priority.getByName(training.priority).name
-  CardSelector(R.string.priority, Priority.getOptions(), prioritySelection, Modifier.card()) {
+  val typeSelection = Type.getByName(training.type).name
+  CardSelector(R.string.type, Type.getOptions(), typeSelection, Modifier.card()) {
     newValue ->
-    onPriorityChange(newValue)
+    onTypeChange(newValue)
   }
 
   val flagSelection = EditFlagOption.getByCheckedState(training.flag).name
