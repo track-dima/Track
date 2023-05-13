@@ -87,14 +87,9 @@ fun EditTrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
 
-    OutlinedCard(modifier = Modifier
-      .fieldModifier()
-      .fillMaxWidth()
-      .height(200.dp)) {
+    OutlinedCard(modifier = Modifier.fieldModifier().fillMaxWidth().height(200.dp)) {
       FilledTonalIconButton(
-        modifier = Modifier
-          .align(Alignment.End)
-          .padding(8.dp),
+        modifier = Modifier.align(Alignment.End).padding(8.dp),
         onClick = { /* doSomething() */ }
       ) {
         Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
