@@ -52,9 +52,9 @@ class EditTrainingViewModel @Inject constructor(
     )
   }
 
-  fun onFlagToggle(newValue: String) {
-    val newFlagOption = EditFlagOption.getBooleanValue(newValue)
-    training.value = training.value.copy(flag = newFlagOption)
+  fun onFavouriteToggle(newValue: String) {
+    val newFavouriteOption = EditFavouriteOption.getBooleanValue(newValue)
+    training.value = training.value.copy(favourite = newFavouriteOption)
   }
 
   fun onTypeChange(newValue: String) {

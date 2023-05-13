@@ -2,7 +2,7 @@ package it.polimi.dima.track.screens.trainings
 
 enum class TrainingActionOption(val title: String) {
   EditTraining("Edit training"),
-  ToggleFlag("Toggle flag"),
+  ToggleFavourite("Toggle favourite"),
   DuplicateTraining("Duplicate training"),
   DeleteTask("Delete training");
 

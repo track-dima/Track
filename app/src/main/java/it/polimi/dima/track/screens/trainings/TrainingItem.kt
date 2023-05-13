@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -80,11 +83,11 @@ fun TrainingItem(
         }
       }
 
-      if (training.flag) {
+      if (training.favourite) {
         Icon(
-          painter = painterResource(R.drawable.ic_flag),
+          imageVector = Icons.Default.Star,
           tint = DarkOrange,
-          contentDescription = "Flag"
+          contentDescription = "Favourite"
         )
       }
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {

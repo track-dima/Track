@@ -13,6 +13,7 @@ data class Training(
   val dueTimeString: String = "",
   val description: String = "",
   val url: String = "",
-  val flag: Boolean = false,
+  val favourite: Boolean = false,
+  val personalBest: Boolean = false,
   val completed: Boolean = false
 )

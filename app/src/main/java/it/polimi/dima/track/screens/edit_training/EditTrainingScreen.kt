@@ -77,7 +77,7 @@ fun EditTrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
-    CardSelectors(training, viewModel::onTypeChange, viewModel::onFlagToggle)
+    CardSelectors(training, viewModel::onTypeChange, viewModel::onFavouriteToggle)
 
     Spacer(modifier = Modifier.spacer())
   }
@@ -126,7 +126,7 @@ private fun CardEditors(
 private fun CardSelectors(
   training: Training,
   onTypeChange: (String) -> Unit,
-  onFlagToggle: (String) -> Unit
+  onFavouriteToggle: (String) -> Unit
 ) {
   val typeSelection = Type.getByName(training.type).name
   CardSelector(R.string.type, Type.getOptions(), typeSelection, Modifier.card()) {
@@ -134,10 +134,10 @@ private fun CardSelectors(
     onTypeChange(newValue)
   }
 
-  val flagSelection = EditFlagOption.getByCheckedState(training.flag).name
-  CardSelector(R.string.flag, EditFlagOption.getOptions(), flagSelection, Modifier.card()) { newValue
+  val favouriteSelection = EditFavouriteOption.getByCheckedState(training.favourite).name
+  CardSelector(R.string.favourite, EditFavouriteOption.getOptions(), favouriteSelection, Modifier.card()) { newValue
     ->
-    onFlagToggle(newValue)
+    onFavouriteToggle(newValue)
   }
 }
 
