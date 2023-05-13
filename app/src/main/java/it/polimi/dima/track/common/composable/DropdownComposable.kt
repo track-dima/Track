@@ -21,24 +21,29 @@ fun DropdownContextMenu(
 ) {
   var isExpanded by remember { mutableStateOf(false) }
 
-  ExposedDropdownMenuBox(
-    expanded = isExpanded,
-    modifier = modifier,
-    onExpandedChange = { isExpanded = !isExpanded }
-  ) {
-    Icon(
-      modifier = Modifier.padding(8.dp, 0.dp).menuAnchor(), // TODO: menuAnchor() is causing recomposition
-      imageVector = Icons.Default.MoreVert,
-      contentDescription = "More"
-    )
+  Box(modifier = modifier) {
+    IconButton(onClick = { isExpanded = true }) {
+      Icon(
+        modifier = Modifier.padding(8.dp, 0.dp),
+        imageVector = Icons.Default.MoreVert,
+        contentDescription = "More"
+      )
+    }
 
-    ExposedDropdownMenu(
+    /*
+     * Utilizzo DropdownMenu invece che ExposedDropdownMenu perché quest'ultimo non permette di
+     * ancorare il menu ad un elemento diverso da un TextField.
+     */
+    DropdownMenu(
       modifier = Modifier.width(180.dp),
       expanded = isExpanded,
       onDismissRequest = { isExpanded = false }
     ) {
       options.forEach { selectionOption ->
         DropdownMenuItem(
+          /*
+           * TODO aggiungere leading icon
+           */
           text = { Text(text = selectionOption) },
           onClick = {
             isExpanded = false
@@ -67,7 +72,9 @@ fun DropdownSelector(
     onExpandedChange = { isExpanded = !isExpanded }
   ) {
     TextField(
-      modifier = Modifier.fillMaxWidth().menuAnchor(),
+      modifier = Modifier
+        .fillMaxWidth()
+        .menuAnchor(),
       readOnly = true,
       value = selection,
       onValueChange = {},

@@ -95,7 +95,6 @@ private fun CardEditors(
 
   /*
    * rememberSaveable is used to save the state of the dialog during configuration changes.
-   * TODO sembra che lo stato venga salvato solo per quando l'orientamento torna a essere quello precedente
    */
   val openDateDialog = rememberSaveable { mutableStateOf(false) }
   val openTimeDialog = rememberSaveable { mutableStateOf(false) }
@@ -144,7 +143,7 @@ private fun CardSelectors(
   }
 }
 
-// TODO non rimane sullo schermo quando cambio orientamento e non si adatta al layout orizzontale
+// TODO non si adatta al layout orizzontale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EmbeddedDatePicker(
