@@ -3,11 +3,13 @@ package it.polimi.dima.track
 import android.content.res.Resources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import it.polimi.dima.track.common.snackbar.SnackBarManager
 import it.polimi.dima.track.common.utils.*
 import it.polimi.dima.track.navigation.*
@@ -59,6 +62,12 @@ fun TrackApp(
         ) { innerPaddingModifier ->
             PermanentNavigationDrawer(drawerContent = {
                 if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+                    val systemUiController = rememberSystemUiController()
+                    val useDarkIcons = !isSystemInDarkTheme()
+                    val colorScheme = MaterialTheme.colorScheme
+                    SideEffect {
+                        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = useDarkIcons)
+                    }
                     PermanentNavigationDrawerContent(
                         selectedDestination = selectedDestination,
                         navigationContentPosition = uiState.navigationContentPosition,
@@ -98,12 +107,13 @@ fun TrackAppContent(
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
                 openScreen = { route -> appState.navigate(route) },
             )
+            // TODO check if setSystemBarsColor is needed
         }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(innerPadding)
+                /* .padding(innerPadding)  TODO no quando il contenuto è edge-to-edge */
         ) {
             NavHost(
                 navController = appState.navController,
