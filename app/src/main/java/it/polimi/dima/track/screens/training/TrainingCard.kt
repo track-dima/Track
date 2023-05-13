@@ -1,4 +1,4 @@
-package it.polimi.dima.track.screens.trainings
+package it.polimi.dima.track.screens.training
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,20 +13,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
@@ -37,20 +35,21 @@ import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import it.polimi.dima.track.ui.theme.BrightYellow
 import it.polimi.dima.track.ui.theme.DarkOrange
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingItem(
+fun TrainingCard(
   training: Training,
   options: List<String>,
   onCheckChange: () -> Unit,
-  onActionClick: (String) -> Unit
+  onActionClick: (String) -> Unit,
+  onClick: () -> Unit
 ) {
   Card(
     modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+    onClick = onClick,
   ) {
     Row(
       modifier = Modifier

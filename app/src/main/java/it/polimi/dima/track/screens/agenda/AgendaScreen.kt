@@ -18,7 +18,8 @@ import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
-import it.polimi.dima.track.screens.trainings.TrainingItem
+import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.screens.training.TrainingCard
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -27,7 +28,8 @@ fun AgendaScreen(
     openScreen: (String) -> Unit,
     modifier: Modifier = Modifier,
     navigationType: NavigationType,
-    viewModel: AgendaViewModel = hiltViewModel()
+    viewModel: AgendaViewModel = hiltViewModel(),
+    onTrainingPressed: (Training) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -60,10 +62,11 @@ fun AgendaScreen(
 
             LazyColumn {
                 items(sortedTrainings, key = { it.id }) { trainingItem ->
-                    TrainingItem(
+                    TrainingCard(
                         training = trainingItem,
                         options = options,
                         onCheckChange = { viewModel.onTrainingCheckChange(trainingItem) },
+                        onClick = { onTrainingPressed(trainingItem) },
                         onActionClick = { action -> viewModel.onTrainingActionClick(openScreen, trainingItem, action) }
                     )
                 }

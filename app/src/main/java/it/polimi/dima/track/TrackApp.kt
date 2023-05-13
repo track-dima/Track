@@ -28,6 +28,7 @@ import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
 import it.polimi.dima.track.screens.splash.SplashScreen
+import it.polimi.dima.track.screens.training.TrainingScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -182,6 +183,7 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
     composable(AGENDA_SCREEN) {
         AgendaScreen(
             openScreen = { route -> appState.navigate(route) },
+            onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID={${training.id}}") },
             navigationType = navigationType
         )
     }
@@ -189,13 +191,21 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
         // ProfileScreen(openScreen = { route -> appState.navigate(route) })
     }
 
-
-
     composable(
         route = "$EDIT_TRAINING_SCREEN$TRAINING_ID_ARG",
         arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
     ) {
         EditTrainingScreen(
+            popUpScreen = { appState.popUp() },
+            trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+        )
+    }
+
+    composable(
+        route = "$TRAINING_SCREEN$TRAINING_ID_ARG",
+        arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    ) {
+        TrainingScreen(
             popUpScreen = { appState.popUp() },
             trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
         )

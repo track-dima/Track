@@ -10,7 +10,7 @@ import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.screens.TrackViewModel
-import it.polimi.dima.track.screens.trainings.TrainingActionOption
+import it.polimi.dima.track.screens.training.TrainingActionOption
 import javax.inject.Inject
 
 @HiltViewModel

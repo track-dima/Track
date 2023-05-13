@@ -1,4 +1,4 @@
-package it.polimi.dima.track.screens.trainings
+package it.polimi.dima.track.screens.training
 
 enum class TrainingActionOption(val title: String) {
   EditTraining("Edit training"),
