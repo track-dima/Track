@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,7 +33,9 @@ import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
+import it.polimi.dima.track.ui.theme.BrightYellow
 import it.polimi.dima.track.ui.theme.DarkOrange
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -75,21 +78,26 @@ fun TrainingItem(
           contentAlignment = Alignment.BottomStart
         ) {
           Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.height(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
           ) {
+            if (training.favourite) {
+              Icon(
+                imageVector = Icons.Default.Star,
+                tint = BrightYellow,
+                contentDescription = "Favourite"
+              )
+            }
             Text(text = "4 repetitions", style = MaterialTheme.typography.titleSmall)
             Text(text = "~1:30h", style = MaterialTheme.typography.titleSmall)
+            if (training.type.isNotEmpty() && training.type != Type.None.name) {
+              Text(text = training.type, style = MaterialTheme.typography.titleSmall)
+            }
           }
         }
       }
 
-      if (training.favourite) {
-        Icon(
-          imageVector = Icons.Default.Star,
-          tint = DarkOrange,
-          contentDescription = "Favourite"
-        )
-      }
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {
         DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
         if (isScheduled(training)) {
@@ -100,7 +108,7 @@ fun TrainingItem(
             contentAlignment = Alignment.BottomCenter
           ) {
             Icon(
-              painter = painterResource(id = R.drawable.ic_calendar),
+              imageVector = Icons.Default.Schedule,
               tint = DarkOrange,
               contentDescription = "Scheduled training",
               modifier = Modifier.size(24.dp)
