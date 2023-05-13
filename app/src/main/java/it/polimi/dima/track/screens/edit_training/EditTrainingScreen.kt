@@ -7,9 +7,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -35,6 +39,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 
@@ -80,6 +86,20 @@ fun EditTrainingScreen(
     CardSelectors(training, viewModel::onTypeChange, viewModel::onFavouriteToggle)
 
     Spacer(modifier = Modifier.spacer())
+
+    OutlinedCard(modifier = Modifier
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(200.dp)) {
+      FilledTonalIconButton(
+        modifier = Modifier
+          .align(Alignment.End)
+          .padding(8.dp),
+        onClick = { /* doSomething() */ }
+      ) {
+        Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
+      }
+    }
   }
 }
 

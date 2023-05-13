@@ -53,7 +53,6 @@ fun TrainingItem(
     modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
   ) {
     Row(
-      /*verticalAlignment = Alignment.CenterVertically,*/
       modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp, 16.dp, 16.dp, 16.dp)

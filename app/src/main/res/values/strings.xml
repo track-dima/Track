@@ -51,4 +51,5 @@
     <string name="profile">Profile</string>
     <string name="confirm">Confirm</string>
     <string name="close">Close</string>
+    <string name="edit_repetitions">Edit repetitions</string>
 </resources>
