@@ -9,10 +9,12 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
@@ -28,6 +30,7 @@ fun SettingsScreen(
   viewModel: SettingsViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
+  val context = LocalContext.current
 
   Column(
     modifier = modifier
@@ -55,6 +58,10 @@ fun SettingsScreen(
     } else {
       SignOutCard { viewModel.onSignOutClick() }
       DeleteMyAccountCard { viewModel.onDeleteMyAccountClick(restartApp) }
+    }
+
+    Button(onClick = { viewModel.onFitbitButtonClick(context) } ) {
+      Text("Connect to your FitBit account")
     }
   }
 }

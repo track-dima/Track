@@ -1,14 +1,17 @@
 package it.polimi.dima.track.screens.settings
 
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.LOGIN_SCREEN
 import it.polimi.dima.track.SIGN_UP_SCREEN
 import it.polimi.dima.track.SPLASH_SCREEN
-import it.polimi.dima.track.TRAININGS_SCREEN
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.screens.TrackViewModel
-import it.polimi.dima.track.screens.settings.SettingsUiState
+import it.polimi.dima.track.services.fitbit.FitbitAuthManager
+import it.polimi.dima.track.services.fitbit.FitbitConfig
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -34,5 +37,12 @@ class SettingsViewModel @Inject constructor(
       accountService.deleteAccount()
       restartApp(SPLASH_SCREEN)
     }
+  }
+
+  fun onFitbitButtonClick(context: Context) {
+    val fitbitAuthManager = FitbitAuthManager(FitbitConfig())
+    CustomTabsIntent.Builder()
+      .build()
+      .launchUrl(context, Uri.parse(fitbitAuthManager.createAuthorizationUrl()))
   }
 }
