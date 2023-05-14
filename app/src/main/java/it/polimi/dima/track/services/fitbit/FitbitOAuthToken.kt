@@ -1,5 +1,7 @@
 package it.polimi.dima.track.services.fitbit
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class FitbitOAuthToken(
     @JsonProperty("access_token") val accessToken: String,
     @JsonProperty("expires_in") val expiresIn: Long,
