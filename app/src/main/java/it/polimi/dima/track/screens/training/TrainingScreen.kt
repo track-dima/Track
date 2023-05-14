@@ -62,7 +62,7 @@ fun TrainingScreen(
       DropdownContextMenu(
         options = options,
         modifier = Modifier.contextMenu().padding(4.dp, 0.dp, 8.dp, 0.dp),
-        onActionClick = { action -> viewModel.onTrainingActionClick(training, action, popUpScreen) },
+        onActionClick = { action -> viewModel.onTrainingActionClick(onEditPressed, popUpScreen, training, action) },
         style = IconButtonStyle.FilledTonal,
       )
     }

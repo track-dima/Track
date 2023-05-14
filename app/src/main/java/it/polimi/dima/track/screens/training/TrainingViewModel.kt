@@ -2,7 +2,9 @@ package it.polimi.dima.track.screens.training
 
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
@@ -21,13 +23,13 @@ class TrainingViewModel @Inject constructor(
   val options = mutableStateOf<List<String>>(listOf())
 
   fun loadTaskOptions() {
-    val hasEditOption = configurationService.isShowTrainingEditButtonConfig
-    options.value = TrainingActionOption.getOptions(hasEditOption)
+    options.value = TrainingActionOption.getOptions(true)
   }
 
-  fun onTrainingActionClick(training: Training, action: String, popUpScreen: () -> Unit) {
+  fun onTrainingActionClick(editTraining: (Training) -> Unit, popUpScreen: () -> Unit, training: Training, action: String) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.DeleteTask -> onDeleteTaskClick(training, popUpScreen)
+      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, popUpScreen, editTraining)
       else -> {}
     }
   }
@@ -36,6 +38,15 @@ class TrainingViewModel @Inject constructor(
     launchCatching {
       storageService.delete(training.id)
       popUpScreen()
+    }
+  }
+
+  private fun onDuplicateTrainingClick(training: Training, popUpScreen: () -> Unit, editTraining: (Training) -> Unit) {
+    launchCatching {
+      // TODO duplicate non dovrebbe salvare finché non si conferma la modifica
+      val newId = storageService.duplicate(training)
+      popUpScreen()
+      editTraining(Training(id = newId))
     }
   }
 
