@@ -9,7 +9,7 @@ import okhttp3.Request
 import java.security.MessageDigest
 import java.security.SecureRandom
 
-class FitbitOAuthManager(private val config: FitbitOAuthConfig) {
+class FitbitAuthManager(private val config: FitbitConfig) {
     private val codeVerifier = generateCodeVerifier()
     private val codeChallenge = generateCodeChallenge(codeVerifier)
     private val httpClient = OkHttpClient()

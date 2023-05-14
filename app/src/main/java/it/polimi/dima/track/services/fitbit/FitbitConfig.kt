@@ -1,6 +1,6 @@
 package it.polimi.dima.track.services.fitbit
 
-data class FitbitOAuthConfig(
+data class FitbitConfig(
     val clientId: String = "23QZSP",
     val clientSecret: String = "1a64d4dfb1c5e4e3f865642908f8a3c2",
     val redirectUri: String,
