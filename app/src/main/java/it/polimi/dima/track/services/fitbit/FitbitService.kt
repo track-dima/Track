@@ -1,4 +1,4 @@
-package it.polimi.dima.track.services
+package it.polimi.dima.track.services.fitbit
 
 import android.content.Context
 import com.android.volley.RequestQueue
