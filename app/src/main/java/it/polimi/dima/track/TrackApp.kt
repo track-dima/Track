@@ -215,11 +215,10 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
         route = "$TRAINING_SCREEN$TRAINING_ID_ARG",
         arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
     ) {
-        val trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
         TrainingScreen(
             popUpScreen = { appState.popUp() },
-            trainingId = trainingId,
-            onEditPressed = {  appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${trainingId}}") }
+            trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID,
+            onEditPressed = {  training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}") }
         )
     }
 }
