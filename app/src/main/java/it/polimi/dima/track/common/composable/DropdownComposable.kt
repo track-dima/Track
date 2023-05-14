@@ -11,21 +11,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import it.polimi.dima.track.R
 
+enum class IconButtonStyle {
+  Normal, Filled, FilledTonal
+}
 @Composable
 fun DropdownContextMenu(
   options: List<String>,
   modifier: Modifier,
-  onActionClick: (String) -> Unit
+  onActionClick: (String) -> Unit,
+  style: IconButtonStyle = IconButtonStyle.Normal
 ) {
   var isExpanded by remember { mutableStateOf(false) }
 
   Box(modifier = modifier) {
-    IconButton(onClick = { isExpanded = true }) {
+    val icon: @Composable () -> Unit = {
       Icon(
         imageVector = Icons.Default.MoreVert,
-        contentDescription = "More"
+        contentDescription = stringResource(R.string.more_options)
       )
+    }
+    val onButtonClick = { isExpanded = true }
+    when (style) {
+      IconButtonStyle.Normal -> IconButton(onClick = onButtonClick) { icon() }
+      IconButtonStyle.Filled -> FilledIconButton(onClick = onButtonClick) { icon() }
+      IconButtonStyle.FilledTonal -> FilledTonalIconButton(onClick = onButtonClick) { icon() }
     }
 
     /*
@@ -43,7 +54,7 @@ fun DropdownContextMenu(
            * TODO aggiungere leading icon
            * https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)
            */
-          text = { Text(text = selectionOption) },
+          text = { Text(text = selectionOption, style = MaterialTheme.typography.bodyLarge) },
           onClick = {
             isExpanded = false
             onActionClick(selectionOption)
