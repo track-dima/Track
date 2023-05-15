@@ -17,7 +17,6 @@ import javax.inject.Inject
 class TrainingViewModel @Inject constructor(
   logService: LogService,
   private val storageService: StorageService,
-  private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
   val training = mutableStateOf(Training())
   val options = mutableStateOf<List<String>>(listOf())

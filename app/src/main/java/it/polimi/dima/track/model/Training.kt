@@ -12,8 +12,11 @@ data class Training(
   val dueTime: Map<String, Int>? = null,
   val dueTimeString: String = "",
   val description: String = "",
-  val url: String = "",
   val favourite: Boolean = false,
+
+  // UNUSED
   val personalBest: Boolean = false,
-  val completed: Boolean = false
+  val url: String = "",
+  val completed: Boolean = false,
+  val trainingSteps: List<TrainingStep> = listOf()
 )
