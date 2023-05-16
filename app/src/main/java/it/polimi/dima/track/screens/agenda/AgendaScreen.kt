@@ -6,9 +6,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,7 +19,8 @@ import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
-import it.polimi.dima.track.screens.trainings.TrainingItem
+import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.screens.training.TrainingCard
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -26,39 +29,49 @@ fun AgendaScreen(
     openScreen: (String) -> Unit,
     modifier: Modifier = Modifier,
     navigationType: NavigationType,
-    viewModel: AgendaViewModel = hiltViewModel()
+    viewModel: AgendaViewModel = hiltViewModel(),
+    onTrainingPressed: (Training) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
-                FloatingActionButton(
+                LargeFloatingActionButton(
                     onClick = { viewModel.onAddClick(openScreen) },
                     modifier = modifier.padding(16.dp)
                 ) {
-                    Icon(Icons.Filled.Add, "Add")
+                    Icon(
+                        Icons.Filled.Add,
+                        modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
+                        contentDescription = stringResource(id = R.string.add_training),
+                    )
                 }
             }
         }
     ) {
         val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
+
+        // TODO is this sorting efficient?
+        val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
         val options by viewModel.options
 
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        Column(modifier = Modifier.fillMaxWidth() .fillMaxHeight()) {
             ActionToolbar(
                 title = R.string.agenda,
                 modifier = Modifier.toolbarActions(),
-                endActionIcon = R.drawable.ic_settings,
+                endActionIcon = Icons.Default.Settings,
+                endActionDescription = R.string.settings,
                 endAction = { viewModel.onSettingsClick(openScreen) }
             )
 
             Spacer(modifier = Modifier.smallSpacer())
 
             LazyColumn {
-                items(trainings.value, key = { it.id }) { trainingItem ->
-                    TrainingItem(
+                items(sortedTrainings, key = { it.id }) { trainingItem ->
+                    TrainingCard(
                         training = trainingItem,
                         options = options,
                         onCheckChange = { viewModel.onTrainingCheckChange(trainingItem) },
+                        onClick = { onTrainingPressed(trainingItem) },
                         onActionClick = { action -> viewModel.onTrainingActionClick(openScreen, trainingItem, action) }
                     )
                 }

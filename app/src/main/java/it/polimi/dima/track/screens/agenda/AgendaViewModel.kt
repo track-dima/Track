@@ -10,7 +10,7 @@ import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.screens.TrackViewModel
-import it.polimi.dima.track.screens.trainings.TrainingActionOption
+import it.polimi.dima.track.screens.training.TrainingActionOption
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +24,8 @@ class AgendaViewModel @Inject constructor(
   val trainings = storageService.trainings
 
   fun loadTaskOptions() {
-    val hasEditOption = configurationService.isShowTrainingEditButtonConfig
-    options.value = TrainingActionOption.getOptions(hasEditOption)
+    // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
+    options.value = TrainingActionOption.getOptions(false)
   }
 
   fun onTrainingCheckChange(training: Training) {
@@ -39,16 +39,24 @@ class AgendaViewModel @Inject constructor(
   fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
-      TrainingActionOption.ToggleFlag -> onFlagTrainingClick(training)
+      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
+      TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
       TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
     }
   }
 
-  private fun onFlagTrainingClick(training: Training) {
-    launchCatching { storageService.update(training.copy(flag = !training.flag)) }
+  private fun onFavouriteTrainingClick(training: Training) {
+    launchCatching { storageService.update(training.copy(favourite = !training.favourite)) }
   }
 
   private fun onDeleteTaskClick(training: Training) {
     launchCatching { storageService.delete(training.id) }
+  }
+
+  private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
+    launchCatching {
+      val newId = storageService.duplicate(training)
+      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
+    }
   }
 }

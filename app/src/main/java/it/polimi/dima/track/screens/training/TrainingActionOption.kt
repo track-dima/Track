@@ -1,8 +1,9 @@
-package it.polimi.dima.track.screens.trainings
+package it.polimi.dima.track.screens.training
 
 enum class TrainingActionOption(val title: String) {
   EditTraining("Edit training"),
-  ToggleFlag("Toggle flag"),
+  ToggleFavourite("Toggle favourite"),
+  DuplicateTraining("Duplicate training"),
   DeleteTask("Delete training");
 
   companion object {
@@ -12,10 +13,10 @@ enum class TrainingActionOption(val title: String) {
       return EditTraining
     }
 
-    fun getOptions(hasEditOption: Boolean): List<String> {
+    fun getOptions(reduced: Boolean): List<String> {
       val options = mutableListOf<String>()
       values().forEach { trainingAction ->
-        if (hasEditOption || trainingAction != EditTraining) {
+        if (!reduced || trainingAction !in listOf(ToggleFavourite, EditTraining)) {
           options.add(trainingAction.title)
         }
       }

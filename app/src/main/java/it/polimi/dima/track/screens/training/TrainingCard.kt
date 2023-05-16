@@ -1,4 +1,4 @@
-package it.polimi.dima.track.screens.trainings
+package it.polimi.dima.track.screens.training
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,42 +12,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
+import it.polimi.dima.track.ui.theme.BrightYellow
 import it.polimi.dima.track.ui.theme.DarkOrange
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingItem(
+fun TrainingCard(
   training: Training,
   options: List<String>,
   onCheckChange: () -> Unit,
-  onActionClick: (String) -> Unit
+  onActionClick: (String) -> Unit,
+  onClick: () -> Unit
 ) {
   Card(
     modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+    onClick = onClick,
   ) {
     Row(
-      /*verticalAlignment = Alignment.CenterVertically,*/
       modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp, 16.dp, 16.dp, 16.dp)
@@ -72,21 +76,26 @@ fun TrainingItem(
           contentAlignment = Alignment.BottomStart
         ) {
           Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.height(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
           ) {
+            if (training.favourite) {
+              Icon(
+                imageVector = Icons.Default.Star,
+                tint = BrightYellow,
+                contentDescription = "Favourite"
+              )
+            }
             Text(text = "4 repetitions", style = MaterialTheme.typography.titleSmall)
             Text(text = "~1:30h", style = MaterialTheme.typography.titleSmall)
+            if (training.type.isNotEmpty() && training.type != Type.None.name) {
+              Text(text = training.type, style = MaterialTheme.typography.titleSmall)
+            }
           }
         }
       }
 
-      if (training.flag) {
-        Icon(
-          painter = painterResource(R.drawable.ic_flag),
-          tint = DarkOrange,
-          contentDescription = "Flag"
-        )
-      }
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {
         DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
         if (isScheduled(training)) {
@@ -97,7 +106,7 @@ fun TrainingItem(
             contentAlignment = Alignment.BottomCenter
           ) {
             Icon(
-              painter = painterResource(id = R.drawable.ic_calendar),
+              imageVector = Icons.Default.Schedule,
               tint = DarkOrange,
               contentDescription = "Scheduled training",
               modifier = Modifier.size(24.dp)
@@ -113,13 +122,13 @@ private fun getDueDateAndTime(training: Training): String {
   val stringBuilder = StringBuilder("")
 
   if (training.hasDueDate()) {
-    stringBuilder.append(training.dueDate)
+    stringBuilder.append(training.dueDateString)
     stringBuilder.append(" ")
   }
 
   if (training.hasDueTime()) {
     stringBuilder.append("at ")
-    stringBuilder.append(training.dueTime)
+    stringBuilder.append(training.dueTimeString)
   }
 
   return stringBuilder.toString()
@@ -130,8 +139,6 @@ private fun isScheduled(training: Training): Boolean {
     return false
   }
 
-  val formatter = SimpleDateFormat(EditTrainingViewModel.DATE_FORMAT, Locale.ENGLISH)
-  val dueDate = formatter.parse(training.dueDate)
   val currentDate = Calendar.getInstance(TimeZone.getTimeZone(EditTrainingViewModel.UTC)).time
-  return currentDate.before(dueDate)
+  return currentDate.before(training.dueDate)
 }

@@ -3,11 +3,13 @@ package it.polimi.dima.track
 import android.content.res.Resources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -19,16 +21,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import it.polimi.dima.track.common.snackbar.SnackBarManager
 import it.polimi.dima.track.common.utils.*
 import it.polimi.dima.track.navigation.*
 import it.polimi.dima.track.screens.agenda.AgendaScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
-import it.polimi.dima.track.screens.trainings.TrainingsScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
 import it.polimi.dima.track.screens.splash.SplashScreen
+import it.polimi.dima.track.screens.training.TrainingScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -57,25 +60,22 @@ fun TrackApp(
                 )
             }
         ) { innerPaddingModifier ->
-            if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
-                PermanentNavigationDrawer(drawerContent = {
+            PermanentNavigationDrawer(drawerContent = {
+                if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+                    val systemUiController = rememberSystemUiController()
+                    val useDarkIcons = !isSystemInDarkTheme()
+                    val colorScheme = MaterialTheme.colorScheme
+                    SideEffect {
+                        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = useDarkIcons)
+                    }
                     PermanentNavigationDrawerContent(
                         selectedDestination = selectedDestination,
                         navigationContentPosition = uiState.navigationContentPosition,
                         navigateToTopLevelDestination = appState::drawerNavigate,
                         openScreen = { route -> appState.navigate(route) }
                     )
-                }) {
-                    TrackAppContent(
-                        appState = appState,
-                        navigationType = uiState.navigationType,
-                        navigationContentPosition = uiState.navigationContentPosition,
-                        innerPadding = innerPaddingModifier,
-                        selectedDestination = selectedDestination,
-                        navigateToTopLevelDestination = appState::drawerNavigate
-                    )
                 }
-            } else {
+            }) {
                 TrackAppContent(
                     appState = appState,
                     navigationType = uiState.navigationType,
@@ -107,12 +107,13 @@ fun TrackAppContent(
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
                 openScreen = { route -> appState.navigate(route) },
             )
+            // TODO check if setSystemBarsColor is needed
         }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(innerPadding)
+                /* .padding(innerPadding)  TODO no quando il contenuto è edge-to-edge */
         ) {
             NavHost(
                 navController = appState.navController,
@@ -183,23 +184,22 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
     }
 
     composable(TRAININGS_SCREEN) {
-        TrainingsScreen(
+        /* TrainingsScreen(
             openScreen = { route -> appState.navigate(route) },
             navigationType = navigationType
-        )
+        )*/
     }
 
     composable(AGENDA_SCREEN) {
         AgendaScreen(
             openScreen = { route -> appState.navigate(route) },
+            onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID={${training.id}}") },
             navigationType = navigationType
         )
     }
     composable(PROFILE_SCREEN) {
         // ProfileScreen(openScreen = { route -> appState.navigate(route) })
     }
-
-
 
     composable(
         route = "$EDIT_TRAINING_SCREEN$TRAINING_ID_ARG",
@@ -208,6 +208,17 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
         EditTrainingScreen(
             popUpScreen = { appState.popUp() },
             trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+        )
+    }
+
+    composable(
+        route = "$TRAINING_SCREEN$TRAINING_ID_ARG",
+        arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    ) {
+        TrainingScreen(
+            popUpScreen = { appState.popUp() },
+            trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID,
+            onEditPressed = {  training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}") }
         )
     }
 }

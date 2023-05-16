@@ -35,29 +35,30 @@ class EditTrainingViewModel @Inject constructor(
     training.value = training.value.copy(description = newValue)
   }
 
-  fun onUrlChange(newValue: String) {
-    training.value = training.value.copy(url = newValue)
-  }
-
   fun onDateChange(newValue: Long) {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone(UTC))
     calendar.timeInMillis = newValue
-    val newDueDate = SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH).format(calendar.time)
-    training.value = training.value.copy(dueDate = newDueDate)
+    training.value = training.value.copy(
+      dueDate = calendar.time,
+      dueDateString = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(calendar.time)
+    )
   }
 
   fun onTimeChange(hour: Int, minute: Int) {
     val newDueTime = "${hour.toClockPattern()}:${minute.toClockPattern()}"
-    training.value = training.value.copy(dueTime = newDueTime)
+    training.value = training.value.copy(
+      dueTime = mapOf("hour" to hour, "minute" to minute),
+      dueTimeString = newDueTime
+    )
   }
 
-  fun onFlagToggle(newValue: String) {
-    val newFlagOption = EditFlagOption.getBooleanValue(newValue)
-    training.value = training.value.copy(flag = newFlagOption)
+  fun onFavouriteToggle(newValue: String) {
+    val newFavouriteOption = EditFavouriteOption.getBooleanValue(newValue)
+    training.value = training.value.copy(favourite = newFavouriteOption)
   }
 
-  fun onPriorityChange(newValue: String) {
-    training.value = training.value.copy(priority = newValue)
+  fun onTypeChange(newValue: String) {
+    training.value = training.value.copy(type = newValue)
   }
 
   fun onDoneClick(popUpScreen: () -> Unit) {
@@ -70,6 +71,10 @@ class EditTrainingViewModel @Inject constructor(
       }
       popUpScreen()
     }
+  }
+
+  fun onCancelClick(popUpScreen: () -> Unit) {
+    popUpScreen()
   }
 
   private fun Int.toClockPattern(): String {
