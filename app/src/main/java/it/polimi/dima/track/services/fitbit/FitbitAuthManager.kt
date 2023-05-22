@@ -9,7 +9,9 @@ import okhttp3.Request
 import java.security.MessageDigest
 import java.security.SecureRandom
 
-class FitbitAuthManager(private val config: FitbitConfig) {
+class FitbitAuthManager(
+    private val config: FitbitConfig = FitbitConfig()
+) {
     private val codeVerifier = generateCodeVerifier()
     private val codeChallenge = generateCodeChallenge(codeVerifier)
     private val httpClient = OkHttpClient()
@@ -19,7 +21,6 @@ class FitbitAuthManager(private val config: FitbitConfig) {
             .buildUpon()
             .appendQueryParameter("client_id", config.clientId)
             .appendQueryParameter("response_type", "code")
-            .appendQueryParameter("redirect_uri", config.redirectUri)
             .appendQueryParameter("code_challenge", codeChallenge)
             .appendQueryParameter("code_challenge_method", "S256")
             .appendQueryParameter("scope", config.scope)
@@ -32,7 +33,6 @@ class FitbitAuthManager(private val config: FitbitConfig) {
             .add("client_id", config.clientId)
             .add("grant_type", config.grantType)
             .add("code", code)
-            .add("redirect_uri", config.redirectUri)
             .add("code_verifier", codeVerifier)
             .build()
         val request = Request.Builder()
@@ -64,9 +64,5 @@ class FitbitAuthManager(private val config: FitbitConfig) {
     private fun createAuthorizationHeader(): String {
         val clientIdAndSecret = "${config.clientId}:${config.clientSecret}"
         return Base64.encodeToString(clientIdAndSecret.toByteArray(), Base64.NO_WRAP)
-    }
-
-    companion object {
-        private const val FITBIT_OAUTH_REQUEST_CODE = 1001
     }
 }
