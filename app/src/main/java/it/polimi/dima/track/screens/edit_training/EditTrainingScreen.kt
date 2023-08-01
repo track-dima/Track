@@ -43,9 +43,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
+import it.polimi.dima.track.EDIT_TRAINING_SCREEN
+import it.polimi.dima.track.TRAINING_ID
 
 @Composable
 fun EditTrainingScreen(
+  openScreen: (String) -> Unit,
   popUpScreen: () -> Unit,
   trainingId: String,
   modifier: Modifier = Modifier,
@@ -90,7 +94,7 @@ fun EditTrainingScreen(
     OutlinedCard(modifier = Modifier.fieldModifier().fillMaxWidth().height(200.dp)) {
       FilledTonalIconButton(
         modifier = Modifier.align(Alignment.End).padding(8.dp),
-        onClick = { /* doSomething() */ }
+        onClick = { openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}") }
       ) {
         Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
       }

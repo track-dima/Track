@@ -26,6 +26,7 @@ import it.polimi.dima.track.common.snackbar.SnackBarManager
 import it.polimi.dima.track.common.utils.*
 import it.polimi.dima.track.navigation.*
 import it.polimi.dima.track.screens.agenda.AgendaScreen
+import it.polimi.dima.track.screens.edit_repetitions.EditRepetitionsScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
@@ -206,6 +207,17 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
         arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
     ) {
         EditTrainingScreen(
+            openScreen = { route -> appState.navigate(route) },
+            popUpScreen = { appState.popUp() },
+            trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+        )
+    }
+
+    composable(
+        route = "$EDIT_REPETITIONS_SCREEN$TRAINING_ID_ARG",
+        arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    ) {
+        EditRepetitionsScreen(
             popUpScreen = { appState.popUp() },
             trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
         )
