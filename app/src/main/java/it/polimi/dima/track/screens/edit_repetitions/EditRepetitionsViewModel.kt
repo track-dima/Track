@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.screens.TrackViewModel
@@ -25,13 +26,28 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
+  fun onAddClick() {
+    val trainingStep = TrainingStep(distance = 1000, duration = 60)
+    training.value = training.value.copy(trainingSteps = training.value.trainingSteps + trainingStep)
+  }
+
+  fun onDeleteClick(trainingStep: TrainingStep) {
+    val trainingSteps = training.value.trainingSteps.toMutableList();
+    trainingSteps.remove(trainingStep)
+    training.value = training.value.copy(trainingSteps = trainingSteps)
+  }
+
+  fun onEditClick(trainingStep: TrainingStep) {
+
+  }
+
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTask = training.value
-      if (editedTask.id.isBlank()) {
-        storageService.save(editedTask)
+      val editedTraining = training.value
+      if (editedTraining.id.isBlank()) {
+        storageService.save(editedTraining)
       } else {
-        storageService.update(editedTask)
+        storageService.update(editedTraining)
       }
       popUpScreen()
     }

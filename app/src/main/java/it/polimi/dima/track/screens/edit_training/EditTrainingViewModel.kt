@@ -63,11 +63,11 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTask = training.value
-      if (editedTask.id.isBlank()) {
-        storageService.save(editedTask)
+      val editedTraining = training.value
+      if (editedTraining.id.isBlank()) {
+        storageService.save(editedTraining)
       } else {
-        storageService.update(editedTask)
+        storageService.update(editedTraining)
       }
       popUpScreen()
     }
