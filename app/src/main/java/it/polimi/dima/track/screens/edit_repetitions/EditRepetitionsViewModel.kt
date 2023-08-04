@@ -58,7 +58,11 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onAddRepetitionClick(repetitions: Int) {
+  fun onAddBlockClick(hierarchy: List<String>, repetitions: Int) {
+    trainingSteps.value = onAddBlockClickHelper(hierarchy, trainingSteps.value, repetitions)
+  }
+
+  private fun onAddBlockClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, repetitions: Int) : List<TrainingStep> {
     val repetitionBlock = TrainingStep(
       id = UUID.randomUUID().toString(),
       type = TrainingStep.Type.REPETITION_BLOCK,
@@ -66,28 +70,19 @@ class EditRepetitionsViewModel @Inject constructor(
       recover = true,
       recoverType = TrainingStep.DurationType.TIME,
       recoverDuration = 300,
-      stepsInRepetition = List(2){
-        TrainingStep(
-          id = UUID.randomUUID().toString(),
-          type = TrainingStep.Type.REPETITIONS,
-          durationType = TrainingStep.DurationType.DISTANCE,
-          distance = 200,
-          recover = true,
-          recoverType = TrainingStep.DurationType.TIME,
-          recoverDuration = 180,
-        )
-        TrainingStep(
-          id = UUID.randomUUID().toString(),
-          type = TrainingStep.Type.REPETITIONS,
-          durationType = TrainingStep.DurationType.DISTANCE,
-          distance = 200,
-          recover = true,
-          recoverType = TrainingStep.DurationType.TIME,
-          recoverDuration = 180,
-        )
-      }
     )
-    trainingSteps.value = trainingSteps.value + repetitionBlock
+
+    return if (hierarchy.isEmpty()) {
+      trainingSteps + repetitionBlock
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = onAddBlockClickHelper(hierarchy.drop(1), it.stepsInRepetition, repetitions))
+        } else {
+          it
+        }
+      }
+    }
   }
 
   fun onDeleteClick(hierarchy: List<String>, trainingStep: TrainingStep) {

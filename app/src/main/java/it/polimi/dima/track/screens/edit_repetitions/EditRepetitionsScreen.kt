@@ -82,7 +82,7 @@ fun EditRepetitionsScreen(
         SmallFloatingActionButton(
           modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp),
           containerColor = MaterialTheme.colorScheme.primary,
-          onClick = { viewModel.onAddRepetitionClick(3) }
+          onClick = { viewModel.onAddBlockClick(listOf(), 3) }
         ) {
           Text(text = "3x")
         }
@@ -148,6 +148,7 @@ fun EditRepetitionsScreen(
                 onDeleteClick = { hierarchy, trainingStep -> viewModel.onDeleteClick(hierarchy, trainingStep) },
                 onEditClick = { hierarchy, trainingStep -> viewModel.onEditClick(hierarchy, trainingStep) },
                 onAddClick = { hierarchy -> viewModel.onAddClick(hierarchy) },
+                onAddBlockClick = { hierarchy, repetitions -> viewModel.onAddBlockClick(hierarchy, repetitions) },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) }
               )
             }
@@ -317,6 +318,7 @@ fun RepetitionBlockContent(
     onDeleteClick: (List<String>, TrainingStep) -> Unit,
     onEditClick: (List<String>, TrainingStep) -> Unit,
     onAddClick: (List<String>) -> Unit,
+    onAddBlockClick: (List<String>, Int) -> Unit,
     onMove: (List<String>, ItemPosition, ItemPosition) -> Unit
 ) {
   OutlinedCard(
@@ -335,7 +337,7 @@ fun RepetitionBlockContent(
       Text(text = repetitionBlock.repetitions.toString() + "x", fontWeight = FontWeight.Bold)
       FilledTonalIconButton(
         modifier = Modifier.padding(8.dp),
-        onClick = { onDeleteClick(listOf(repetitionBlock.id), repetitionBlock) }
+        onClick = { onDeleteClick(listOf(), repetitionBlock) }
       ) {
         Icon(
           Icons.Outlined.Delete,
@@ -373,30 +375,50 @@ fun RepetitionBlockContent(
             )
             TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockContent(
               trainingStep,
-              onDeleteClick = { descendants, trainingStep -> onDeleteClick(descendants + repetitionBlock.id, trainingStep) },
-              onEditClick = { descendants, trainingStep -> onEditClick(descendants + repetitionBlock.id, trainingStep) },
-              onAddClick = { descendants -> onAddClick(descendants + repetitionBlock.id) },
-              onMove = { descendants, from, to -> onMove(descendants + repetitionBlock.id, from, to) }
+              onDeleteClick = { descendants, trainingStep -> onDeleteClick(listOf(repetitionBlock.id) + descendants, trainingStep) },
+              onEditClick = { descendants, trainingStep -> onEditClick(listOf(repetitionBlock.id) + descendants, trainingStep) },
+              onAddClick = { descendants -> onAddClick(listOf(repetitionBlock.id) + descendants) },
+              onAddBlockClick = { descendants, repetitions -> onAddBlockClick(listOf(repetitionBlock.id) + descendants, repetitions) },
+              onMove = { descendants, from, to -> onMove(listOf(repetitionBlock.id) + descendants, from, to) }
             )
           }
         }
       }
     }
-    OutlinedCard(
-      modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(70.dp),
-      onClick = { onAddClick(listOf(repetitionBlock.id))}
-    ) {
-      Column(
+    Row {
+      OutlinedCard(
         modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+          .fieldModifier()
+          .weight(1f)
+          .height(70.dp),
+        onClick = { onAddClick(listOf(repetitionBlock.id))}
       ) {
-        Text(text = "+", style = MaterialTheme.typography.titleLarge)
+        Column(
+          modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center
+        ) {
+          Text(text = "+", style = MaterialTheme.typography.titleLarge)
+        }
+      }
+      OutlinedCard(
+        modifier = Modifier
+          .fieldModifier()
+          .weight(1f)
+          .height(70.dp),
+        onClick = { onAddBlockClick(listOf(repetitionBlock.id), 3)}
+      ) {
+        Column(
+          modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center
+        ) {
+          Text(text = "+", style = MaterialTheme.typography.titleLarge)
+        }
       }
     }
   }
