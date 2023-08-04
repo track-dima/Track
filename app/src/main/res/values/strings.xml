@@ -54,4 +54,5 @@
     <string name="edit_repetitions">Edit repetitions</string>
     <string name="more_options">More options</string>
     <string name="delete_repetition">Elimina ripetizione</string>
+    <string name="add_repetition">Add repetition</string>
 </resources>

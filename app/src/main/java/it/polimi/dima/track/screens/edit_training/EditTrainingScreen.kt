@@ -94,7 +94,10 @@ fun EditTrainingScreen(
     OutlinedCard(modifier = Modifier.fieldModifier().fillMaxWidth().height(200.dp)) {
       FilledTonalIconButton(
         modifier = Modifier.align(Alignment.End).padding(8.dp),
-        onClick = { openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}") }
+        onClick = {
+          // TODO save training
+          openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+        }
       ) {
         Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
       }

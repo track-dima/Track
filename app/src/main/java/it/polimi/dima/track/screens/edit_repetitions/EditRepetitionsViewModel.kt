@@ -31,8 +31,34 @@ class EditRepetitionsViewModel @Inject constructor(
   }
 
   fun onAddClick() {
-    val trainingStep = TrainingStep(id = UUID.randomUUID().toString(), distance = 1000)
+    val trainingStep = TrainingStep(
+      id = UUID.randomUUID().toString(),
+      type = TrainingStep.Type.REPETITIONS,
+      durationType = TrainingStep.DurationType.DISTANCE,
+      distance = 200,
+      recover = true,
+      recoverType = TrainingStep.DurationType.TIME,
+      recoverDuration = 180,
+    )
     trainingSteps.value = trainingSteps.value + trainingStep
+  }
+
+  fun onAddRepetitionClick(repetitions: Int) {
+    val startId = UUID.randomUUID().toString()
+    val repetitionBlockStart = TrainingStep(
+      id = startId,
+      type = TrainingStep.Type.START_REP_BLOCK,
+      repetitions = repetitions,
+      recover = true,
+      recoverType = TrainingStep.DurationType.TIME,
+      recoverDuration = 300,
+    )
+    val repetitionBlockEnd = TrainingStep(
+      id = UUID.randomUUID().toString(),
+      type = TrainingStep.Type.END_REP_BLOCK,
+      repetitionBlock = startId
+    )
+    trainingSteps.value = trainingSteps.value + repetitionBlockStart + repetitionBlockEnd
   }
 
   fun onDeleteClick(trainingStep: TrainingStep) {
@@ -47,9 +73,11 @@ class EditRepetitionsViewModel @Inject constructor(
 
   fun moveStep(from: ItemPosition, to: ItemPosition) {
     val trainingSteps = trainingSteps.value.toMutableList();
-    trainingSteps.apply {
-      add(to.index, removeAt(from.index))
-    }
+    var trainingStep = trainingSteps.removeAt(from.index)
+    trainingStep = if (to.index < trainingSteps.size)
+      trainingStep.copy(repetitionBlock = trainingSteps[to.index].repetitionBlock)
+    else trainingStep.copy(repetitionBlock = "")
+    trainingSteps.add(to.index, trainingStep)
     this.trainingSteps.value = trainingSteps
   }
 
