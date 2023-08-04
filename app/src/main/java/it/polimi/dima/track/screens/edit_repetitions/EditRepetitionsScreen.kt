@@ -40,6 +40,7 @@ import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
+import org.burnoutcrew.reorderable.ItemPosition
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -54,7 +55,6 @@ fun EditRepetitionsScreen(
   viewModel: EditRepetitionsViewModel = hiltViewModel()
 ) {
   val trainingSteps by viewModel.trainingSteps
-  val draggingIds: MutableMap<String, Boolean> = mutableMapOf()
 
   LaunchedEffect(Unit) {
     viewModel.initialize(trainingId)
@@ -87,7 +87,7 @@ fun EditRepetitionsScreen(
           Text(text = "3x")
         }
         ExtendedFloatingActionButton(
-          onClick = { viewModel.onAddClick() },
+          onClick = { viewModel.onAddClick(listOf()) },
           icon = { Icon(Icons.Filled.Add, stringResource(R.string.add_repetition)) },
           text = { Text(text = stringResource(R.string.add_repetition)) },
         )
@@ -115,8 +115,7 @@ fun EditRepetitionsScreen(
       Spacer(modifier = Modifier.spacer())
 
       val state = rememberReorderableLazyListState(
-        onMove = { from, to -> viewModel.moveStep(from, to) },
-        canDragOver = { from, to -> !(from.index == 0 && to.index == 1) }
+        onMove = { from, to -> viewModel.moveStep(listOf(), from, to) }
       )
       LazyColumn(
         state = state.listState,
@@ -126,18 +125,31 @@ fun EditRepetitionsScreen(
           .weight(1f)
       ) {
         items(trainingSteps, { it.id }) { trainingStep ->
-          ReorderableItem(state, key = trainingStep.id) { isDragging ->
-            if (trainingStep.type == TrainingStep.Type.START_REP_BLOCK) {
-              draggingIds[trainingStep.id] = isDragging
-            }
-            if (draggingIds[trainingStep.repetitionBlock] != true) {
-              when (trainingStep.type) {
-                TrainingStep.Type.WARM_UP -> WarmUpCardContent(trainingStep, viewModel)
-                TrainingStep.Type.COOL_DOWN -> CoolDownCardContent(trainingStep, viewModel)
-                TrainingStep.Type.REPETITIONS -> RepetitionsCardContent(trainingStep, viewModel)
-                TrainingStep.Type.START_REP_BLOCK -> RepetitionBlockStartContent(trainingStep, viewModel)
-                TrainingStep.Type.END_REP_BLOCK -> RepetitionBlockEndContent(trainingStep, viewModel)
-              }
+          ReorderableItem(state, key = trainingStep.id) {
+
+            when (trainingStep.type) {
+              TrainingStep.Type.WARM_UP -> WarmUpCardContent(
+                trainingStep,
+                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
+                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+              )
+              TrainingStep.Type.COOL_DOWN -> CoolDownCardContent(
+                trainingStep,
+                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
+                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+              )
+              TrainingStep.Type.REPETITIONS -> RepetitionsCardContent(
+                trainingStep,
+                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
+                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+              )
+              TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockContent(
+                trainingStep,
+                onDeleteClick = { hierarchy, trainingStep -> viewModel.onDeleteClick(hierarchy, trainingStep) },
+                onEditClick = { hierarchy, trainingStep -> viewModel.onEditClick(hierarchy, trainingStep) },
+                onAddClick = { hierarchy -> viewModel.onAddClick(hierarchy) },
+                onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) }
+              )
             }
           }
         }
@@ -150,14 +162,15 @@ fun EditRepetitionsScreen(
 @Composable
 fun WarmUpCardContent(
   trainingStep: TrainingStep,
-  viewModel: EditRepetitionsViewModel
+  onDeleteClick: (List<String>, TrainingStep) -> Unit,
+  onEditClick: (List<String>, TrainingStep) -> Unit
 ) {
   OutlinedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
       .height(70.dp),
-    onClick = { viewModel.onEditClick(trainingStep) }
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) }
   ) {
     Row(
       modifier = Modifier
@@ -181,7 +194,7 @@ fun WarmUpCardContent(
       }
       FilledTonalIconButton(
         modifier = Modifier.padding(8.dp),
-        onClick = { viewModel.onDeleteClick(trainingStep) }
+        onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
         Icon(
           Icons.Outlined.Delete,
@@ -196,14 +209,15 @@ fun WarmUpCardContent(
 @Composable
 fun CoolDownCardContent(
     trainingStep: TrainingStep,
-    viewModel: EditRepetitionsViewModel
-    ) {
+    onDeleteClick: (List<String>, TrainingStep) -> Unit,
+    onEditClick: (List<String>, TrainingStep) -> Unit
+) {
   OutlinedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
       .height(70.dp),
-    onClick = { viewModel.onEditClick(trainingStep) }
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) }
   ) {
     Row(
       modifier = Modifier
@@ -227,7 +241,7 @@ fun CoolDownCardContent(
       }
       FilledTonalIconButton(
         modifier = Modifier.padding(8.dp),
-        onClick = { viewModel.onDeleteClick(trainingStep) }
+        onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
         Icon(
           Icons.Outlined.Delete,
@@ -242,14 +256,15 @@ fun CoolDownCardContent(
 @Composable
 fun RepetitionsCardContent(
   trainingStep: TrainingStep,
-  viewModel: EditRepetitionsViewModel
+  onDeleteClick: (List<String>, TrainingStep) -> Unit,
+  onEditClick: (List<String>, TrainingStep) -> Unit
 ) {
   OutlinedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
       .height(70.dp),
-    onClick = { viewModel.onEditClick(trainingStep) }
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) }
   ) {
     Row(
       modifier = Modifier
@@ -284,7 +299,7 @@ fun RepetitionsCardContent(
       }
       FilledTonalIconButton(
         modifier = Modifier.padding(8.dp),
-        onClick = { viewModel.onDeleteClick(trainingStep) }
+        onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
         Icon(
           Icons.Outlined.Delete,
@@ -295,32 +310,32 @@ fun RepetitionsCardContent(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepetitionBlockStartContent(
-    trainingStep: TrainingStep,
-    viewModel: EditRepetitionsViewModel
+fun RepetitionBlockContent(
+    repetitionBlock: TrainingStep,
+    onDeleteClick: (List<String>, TrainingStep) -> Unit,
+    onEditClick: (List<String>, TrainingStep) -> Unit,
+    onAddClick: (List<String>) -> Unit,
+    onMove: (List<String>, ItemPosition, ItemPosition) -> Unit
 ) {
   OutlinedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
-      .height(60.dp),
+      .height(70.dp + 80.dp * (repetitionBlock.stepsInRepetition.size + 1)),
   ) {
     Row(
       modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight(),
+        .padding(16.dp, 0.dp, 0.dp, 0.dp),
+      verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically
     ) {
-      Column (
-        modifier = Modifier.padding(8.dp, 0.dp)
-      ) {
-        Text(text = trainingStep.repetitions.toString() + "x", fontWeight = FontWeight.Bold)
-      }
+      Text(text = repetitionBlock.repetitions.toString() + "x", fontWeight = FontWeight.Bold)
       FilledTonalIconButton(
         modifier = Modifier.padding(8.dp),
-        onClick = { viewModel.onDeleteClick(trainingStep) }
+        onClick = { onDeleteClick(listOf(repetitionBlock.id), repetitionBlock) }
       ) {
         Icon(
           Icons.Outlined.Delete,
@@ -328,18 +343,61 @@ fun RepetitionBlockStartContent(
         )
       }
     }
-  }
-}
 
-@Composable
-fun RepetitionBlockEndContent(
-  trainingStep: TrainingStep,
-  viewModel: EditRepetitionsViewModel
-) {
-  OutlinedCard(
-    modifier = Modifier
-      .fieldModifier()
-      .fillMaxWidth()
-      .height(10.dp),
-  ) {}
+    val state = rememberReorderableLazyListState(
+      onMove = { from, to -> onMove(listOf(repetitionBlock.id), from, to) }
+    )
+    LazyColumn(
+      state = state.listState,
+      modifier = Modifier
+        .reorderable(state)
+        .detectReorderAfterLongPress(state)
+    ) {
+      items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
+        ReorderableItem(state, key = trainingStep.id) {
+          when (trainingStep.type) {
+            TrainingStep.Type.WARM_UP -> WarmUpCardContent(
+              trainingStep,
+              onDeleteClick = { _, trainingStep -> onDeleteClick(listOf(repetitionBlock.id), trainingStep) },
+              onEditClick = { _, trainingStep -> onEditClick(listOf(repetitionBlock.id), trainingStep) }
+            )
+            TrainingStep.Type.COOL_DOWN -> CoolDownCardContent(
+              trainingStep,
+              onDeleteClick = { _, trainingStep -> onDeleteClick(listOf(repetitionBlock.id), trainingStep) },
+              onEditClick = { _, trainingStep -> onEditClick(listOf(repetitionBlock.id), trainingStep) }
+            )
+            TrainingStep.Type.REPETITIONS -> RepetitionsCardContent(
+              trainingStep,
+              onDeleteClick = { _, trainingStep -> onDeleteClick(listOf(repetitionBlock.id), trainingStep) },
+              onEditClick = { _, trainingStep -> onEditClick(listOf(repetitionBlock.id), trainingStep) }
+            )
+            TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockContent(
+              trainingStep,
+              onDeleteClick = { descendants, trainingStep -> onDeleteClick(descendants + repetitionBlock.id, trainingStep) },
+              onEditClick = { descendants, trainingStep -> onEditClick(descendants + repetitionBlock.id, trainingStep) },
+              onAddClick = { descendants -> onAddClick(descendants + repetitionBlock.id) },
+              onMove = { descendants, from, to -> onMove(descendants + repetitionBlock.id, from, to) }
+            )
+          }
+        }
+      }
+    }
+    OutlinedCard(
+      modifier = Modifier
+        .fieldModifier()
+        .fillMaxWidth()
+        .height(70.dp),
+      onClick = { onAddClick(listOf(repetitionBlock.id))}
+    ) {
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+      ) {
+        Text(text = "+", style = MaterialTheme.typography.titleLarge)
+      }
+    }
+  }
 }

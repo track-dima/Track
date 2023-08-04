@@ -11,7 +11,7 @@ data class TrainingStep(
   val recoverDistance: Int = 0,
   val recoverDuration: Int = 0,
   val repetitions: Int = 0,
-  val repetitionBlock: String = "",
+  val stepsInRepetition: List<TrainingStep> = listOf()
 ) {
 
   class DurationType {
@@ -26,8 +26,7 @@ data class TrainingStep(
       const val WARM_UP = "warm_up"
       const val COOL_DOWN = "cool_down"
       const val REPETITIONS = "repetitions"
-      const val START_REP_BLOCK = "start_rep_block"
-      const val END_REP_BLOCK = "end_rep_block"
+      const val REPETITION_BLOCK = "repetition_block"
     }
   }
 }

@@ -30,7 +30,11 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onAddClick() {
+  fun onAddClick(hierarchy: List<String>) {
+    trainingSteps.value = onAddClickHelper(hierarchy, trainingSteps.value)
+  }
+
+  private fun onAddClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>) : List<TrainingStep> {
     val trainingStep = TrainingStep(
       id = UUID.randomUUID().toString(),
       type = TrainingStep.Type.REPETITIONS,
@@ -40,45 +44,92 @@ class EditRepetitionsViewModel @Inject constructor(
       recoverType = TrainingStep.DurationType.TIME,
       recoverDuration = 180,
     )
-    trainingSteps.value = trainingSteps.value + trainingStep
+
+    return if (hierarchy.isEmpty()) {
+      trainingSteps + trainingStep
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = onAddClickHelper(hierarchy.drop(1), it.stepsInRepetition))
+        } else {
+          it
+        }
+      }
+    }
   }
 
   fun onAddRepetitionClick(repetitions: Int) {
-    val startId = UUID.randomUUID().toString()
-    val repetitionBlockStart = TrainingStep(
-      id = startId,
-      type = TrainingStep.Type.START_REP_BLOCK,
+    val repetitionBlock = TrainingStep(
+      id = UUID.randomUUID().toString(),
+      type = TrainingStep.Type.REPETITION_BLOCK,
       repetitions = repetitions,
       recover = true,
       recoverType = TrainingStep.DurationType.TIME,
       recoverDuration = 300,
+      stepsInRepetition = List(2){
+        TrainingStep(
+          id = UUID.randomUUID().toString(),
+          type = TrainingStep.Type.REPETITIONS,
+          durationType = TrainingStep.DurationType.DISTANCE,
+          distance = 200,
+          recover = true,
+          recoverType = TrainingStep.DurationType.TIME,
+          recoverDuration = 180,
+        )
+        TrainingStep(
+          id = UUID.randomUUID().toString(),
+          type = TrainingStep.Type.REPETITIONS,
+          durationType = TrainingStep.DurationType.DISTANCE,
+          distance = 200,
+          recover = true,
+          recoverType = TrainingStep.DurationType.TIME,
+          recoverDuration = 180,
+        )
+      }
     )
-    val repetitionBlockEnd = TrainingStep(
-      id = UUID.randomUUID().toString(),
-      type = TrainingStep.Type.END_REP_BLOCK,
-      repetitionBlock = startId
-    )
-    trainingSteps.value = trainingSteps.value + repetitionBlockStart + repetitionBlockEnd
+    trainingSteps.value = trainingSteps.value + repetitionBlock
   }
 
-  fun onDeleteClick(trainingStep: TrainingStep) {
-    val trainingSteps = trainingSteps.value.toMutableList();
-    trainingSteps.remove(trainingStep)
-    this.trainingSteps.value = trainingSteps
+  fun onDeleteClick(hierarchy: List<String>, trainingStep: TrainingStep) {
+    trainingSteps.value = onDeleteClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
   }
 
-  fun onEditClick(trainingStep: TrainingStep) {
-
+  private fun onDeleteClickHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, trainingStep: TrainingStep) : List<TrainingStep> {
+    return if (hierarchy.isEmpty()) {
+      trainingSteps.remove(trainingStep)
+      trainingSteps
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = onDeleteClickHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), trainingStep))
+        } else {
+          it
+        }
+      }
+    }
   }
 
-  fun moveStep(from: ItemPosition, to: ItemPosition) {
-    val trainingSteps = trainingSteps.value.toMutableList();
-    var trainingStep = trainingSteps.removeAt(from.index)
-    trainingStep = if (to.index < trainingSteps.size)
-      trainingStep.copy(repetitionBlock = trainingSteps[to.index].repetitionBlock)
-    else trainingStep.copy(repetitionBlock = "")
-    trainingSteps.add(to.index, trainingStep)
-    this.trainingSteps.value = trainingSteps
+  fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
+  }
+
+  fun moveStep(hierarchy: List<String>, from: ItemPosition, to: ItemPosition) {
+    trainingSteps.value = moveStepHelper(hierarchy, trainingSteps.value.toMutableList(), from, to)
+  }
+
+  private fun moveStepHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, from: ItemPosition, to: ItemPosition) : List<TrainingStep> {
+    return if (hierarchy.isEmpty()) {
+      trainingSteps.apply {
+        add(to.index, removeAt(from.index))
+      }
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = moveStepHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), from, to))
+        } else {
+          it
+        }
+      }
+    }
   }
 
   fun onDoneClick(popUpScreen: () -> Unit) {
