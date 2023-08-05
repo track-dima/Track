@@ -127,6 +127,30 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
+  fun onEditRepetitionsClick(hierarchy: List<String>, repetitions: Int) {
+    trainingSteps.value = onEditRepetitionsClickHelper(hierarchy, trainingSteps.value, repetitions)
+  }
+
+  private fun onEditRepetitionsClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, repetitions: Int) : List<TrainingStep> {
+    return if (hierarchy.size == 1) {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(repetitions = repetitions)
+        } else {
+          it
+        }
+      }
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = onEditRepetitionsClickHelper(hierarchy.drop(1), it.stepsInRepetition, repetitions))
+        } else {
+          it
+        }
+      }
+    }
+  }
+
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
       training.value = training.value.copy(trainingSteps = trainingSteps.value)

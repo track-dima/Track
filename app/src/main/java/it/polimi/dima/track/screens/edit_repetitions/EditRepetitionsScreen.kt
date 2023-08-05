@@ -2,10 +2,12 @@ package it.polimi.dima.track.screens.edit_repetitions
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,27 +17,43 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.NumberPicker
+import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
@@ -54,6 +72,8 @@ fun EditRepetitionsScreen(
   modifier: Modifier = Modifier,
   viewModel: EditRepetitionsViewModel = hiltViewModel()
 ) {
+  // TODO is resetting on change orientation
+
   val trainingSteps by viewModel.trainingSteps
 
   LaunchedEffect(Unit) {
@@ -62,38 +82,91 @@ fun EditRepetitionsScreen(
 
   Scaffold(
     floatingActionButton = {
-      Column(
-        horizontalAlignment = Alignment.End,
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-        SmallFloatingActionButton(
-          modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp),
-          containerColor = MaterialTheme.colorScheme.primary,
-          onClick = { /*TODO*/ }
-        ) {
-          Text(text = "10x")
-        }
-        SmallFloatingActionButton(
-          modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp),
-          containerColor = MaterialTheme.colorScheme.primary,
-          onClick = { /*TODO*/ }
-        ) {
-          Text(text = "5x")
-        }
-        SmallFloatingActionButton(
-          modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp),
-          containerColor = MaterialTheme.colorScheme.primary,
-          onClick = { viewModel.onAddBlockClick(listOf(), 3) }
-        ) {
-          Text(text = "3x")
-        }
         ExtendedFloatingActionButton(
           onClick = { viewModel.onAddClick(listOf()) },
           icon = { Icon(Icons.Filled.Add, stringResource(R.string.add_repetition)) },
           text = { Text(text = stringResource(R.string.add_repetition)) },
         )
+        SmallFloatingActionButton(
+          containerColor = MaterialTheme.colorScheme.primary,
+          onClick = { viewModel.onAddBlockClick(listOf(), 3) }
+        ) {
+          Text(text = "3x")
+        }
+        SmallFloatingActionButton(
+          containerColor = MaterialTheme.colorScheme.primary,
+          onClick = { viewModel.onAddBlockClick(listOf(), 5) }
+        ) {
+          Text(text = "5x")
+        }
       }
     }
   ) {
+
+    val openRepetitionsDialog = rememberSaveable { mutableStateOf(false) }
+    val repetitionsPickerState = rememberPickerState()
+    val currentRepetitions = rememberSaveable { mutableStateOf(2) }
+    val currentHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
+
+    if (openRepetitionsDialog.value) {
+      AlertDialog(
+        onDismissRequest = {
+          openRepetitionsDialog.value = false
+        },
+        title = {
+          Text(text = "Repetition number")
+        },
+        text = {
+          Surface(modifier = Modifier.height(160.dp)) {
+            Column(
+              horizontalAlignment = Alignment.CenterHorizontally,
+              verticalArrangement = Arrangement.Center,
+              modifier = Modifier.fillMaxSize()
+            ) {
+
+              val values = remember { (2..50).map { it.toString() } }
+
+              NumberPicker(
+                state = repetitionsPickerState,
+                items = values,
+                visibleItemsCount = 3,
+                startIndex = currentRepetitions.value - 2,
+                textModifier = Modifier.padding(8.dp),
+                textStyle = TextStyle(fontSize = 24.sp)
+              )
+            }
+          }
+        },
+        confirmButton = {
+          TextButton(
+            onClick = {
+              openRepetitionsDialog.value = false
+              viewModel.onEditRepetitionsClick(
+                currentHierarchy.value,
+                repetitionsPickerState.selectedItem.toInt()
+              )
+            }
+          ) {
+            Text("Confirm")
+          }
+        },
+        dismissButton = {
+          TextButton(
+            onClick = {
+              openRepetitionsDialog.value = false
+            }
+          ) {
+            Text("Dismiss")
+          }
+        }
+      )
+    }
+
+
     Column(
       modifier = modifier
         .fillMaxWidth()
@@ -149,6 +222,10 @@ fun EditRepetitionsScreen(
                 onEditClick = { hierarchy, trainingStep -> viewModel.onEditClick(hierarchy, trainingStep) },
                 onAddClick = { hierarchy -> viewModel.onAddClick(hierarchy) },
                 onAddBlockClick = { hierarchy, repetitions -> viewModel.onAddBlockClick(hierarchy, repetitions) },
+                onRepetitionsClick = { hierarchy, repetitions ->
+                  openRepetitionsDialog.value = true
+                  currentRepetitions.value = repetitions
+                  currentHierarchy.value = hierarchy },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) }
               )
             }
@@ -193,7 +270,7 @@ fun WarmUpCardContent(
             Text(text = trainingStep.distance.toString() + 'm')
         }
       }
-      FilledTonalIconButton(
+      IconButton(
         modifier = Modifier.padding(8.dp),
         onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
@@ -240,7 +317,7 @@ fun CoolDownCardContent(
             Text(text = trainingStep.distance.toString() + 'm')
         }
       }
-      FilledTonalIconButton(
+      IconButton(
         modifier = Modifier.padding(8.dp),
         onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
@@ -260,7 +337,7 @@ fun RepetitionsCardContent(
   onDeleteClick: (List<String>, TrainingStep) -> Unit,
   onEditClick: (List<String>, TrainingStep) -> Unit
 ) {
-  OutlinedCard(
+  ElevatedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
@@ -298,7 +375,7 @@ fun RepetitionsCardContent(
           }
         }
       }
-      FilledTonalIconButton(
+      IconButton(
         modifier = Modifier.padding(8.dp),
         onClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) }
       ) {
@@ -319,6 +396,7 @@ fun RepetitionBlockContent(
     onEditClick: (List<String>, TrainingStep) -> Unit,
     onAddClick: (List<String>) -> Unit,
     onAddBlockClick: (List<String>, Int) -> Unit,
+    onRepetitionsClick: (List<String>, Int) -> Unit,
     onMove: (List<String>, ItemPosition, ItemPosition) -> Unit
 ) {
   OutlinedCard(
@@ -334,8 +412,10 @@ fun RepetitionBlockContent(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      Text(text = repetitionBlock.repetitions.toString() + "x", fontWeight = FontWeight.Bold)
-      FilledTonalIconButton(
+      Button(onClick = { onRepetitionsClick(listOf(repetitionBlock.id), repetitionBlock.repetitions) }) {
+        Text(text = repetitionBlock.repetitions.toString() + " times")
+      }
+      IconButton(
         modifier = Modifier.padding(8.dp),
         onClick = { onDeleteClick(listOf(), repetitionBlock) }
       ) {
@@ -379,45 +459,68 @@ fun RepetitionBlockContent(
               onEditClick = { descendants, trainingStep -> onEditClick(listOf(repetitionBlock.id) + descendants, trainingStep) },
               onAddClick = { descendants -> onAddClick(listOf(repetitionBlock.id) + descendants) },
               onAddBlockClick = { descendants, repetitions -> onAddBlockClick(listOf(repetitionBlock.id) + descendants, repetitions) },
+              onRepetitionsClick = { descendants, repetitions -> onRepetitionsClick(listOf(repetitionBlock.id) + descendants, repetitions) },
               onMove = { descendants, from, to -> onMove(listOf(repetitionBlock.id) + descendants, from, to) }
             )
           }
         }
       }
     }
-    Row {
-      OutlinedCard(
-        modifier = Modifier
-          .fieldModifier()
-          .weight(1f)
-          .height(70.dp),
-        onClick = { onAddClick(listOf(repetitionBlock.id))}
-      ) {
-        Column(
-          modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center
+    AddButtons(
+      onAddClick = { _ -> onAddClick(listOf(repetitionBlock.id)) },
+      onAddBlockClick = { _, repetitions -> onAddBlockClick(listOf(repetitionBlock.id), repetitions) }
+    )
+  }
+}
+
+
+@Composable
+fun AddButtons(
+  onAddClick: (List<String>) -> Unit,
+  onAddBlockClick: (List<String>, Int) -> Unit
+) {
+  BoxWithConstraints {
+    val availableWidth = with(LocalDensity.current) { constraints.maxWidth.toDp() }
+    val isEnoughSpaceForIcon = availableWidth > 320.dp
+    val isEnoughSpaceForText = availableWidth > 260.dp
+
+    Row (
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+      horizontalArrangement = Arrangement.SpaceAround
+    ) {
+      if (isEnoughSpaceForText) {
+        Button(
+          onClick = { onAddClick(listOf()) }
         ) {
-          Text(text = "+", style = MaterialTheme.typography.titleLarge)
+          Text(text = "Add repetition")
+        }
+      } else {
+        FilledIconButton(
+          onClick = { onAddClick(listOf()) }
+        ) {
+          Icon(
+            Icons.Outlined.Add,
+            contentDescription = stringResource(R.string.add_repetition)
+          )
         }
       }
-      OutlinedCard(
-        modifier = Modifier
-          .fieldModifier()
-          .weight(1f)
-          .height(70.dp),
-        onClick = { onAddBlockClick(listOf(repetitionBlock.id), 3)}
+      FilledTonalIconButton(
+        onClick = { onAddBlockClick(listOf(), 3) }
       ) {
-        Column(
-          modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center
+        Text(text = "3x")
+      }
+      FilledTonalIconButton(
+        onClick = { onAddBlockClick(listOf(), 5) }
+      ) {
+        Text(text = "5x")
+      }
+      if (isEnoughSpaceForIcon) {
+        FilledTonalIconButton(
+          onClick = { onAddBlockClick(listOf(), 10) }
         ) {
-          Text(text = "+", style = MaterialTheme.typography.titleLarge)
+          Text(text = "10x")
         }
       }
     }
