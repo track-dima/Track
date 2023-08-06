@@ -59,4 +59,10 @@
     <string name="duration_type">Duration type</string>
     <string name="save">Save</string>
     <string name="recover_type">Recover type</string>
+    <string name="recover_time">Recover time</string>
+    <string name="recover_duration">Recover duration</string>
+    <string name="duration">Duration</string>
+    <string name="distance">Distance</string>
+    <string name="cool_down">Cool down</string>
+    <string name="warm_up">Warm up</string>
 </resources>

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -57,6 +58,7 @@ import it.polimi.dima.track.common.composable.CardSelector
 import it.polimi.dima.track.common.composable.FullScreenDialog
 import it.polimi.dima.track.common.composable.NumberPicker
 import it.polimi.dima.track.common.composable.PickerState
+import it.polimi.dima.track.common.composable.RegularCardEditor
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
@@ -254,11 +256,11 @@ fun WarmUpCardContent(
         modifier = Modifier.padding(8.dp, 0.dp)
       ) {
         Row {
-          Text(text = "Riscaldamento", fontWeight = FontWeight.Bold)
+          Text(text = stringResource(id = R.string.warm_up), fontWeight = FontWeight.Bold)
         }
         Row {
           if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-            Text(text = trainingStep.duration.toString() + 's')
+            Text(text = secondsToHhMmSs(trainingStep.duration))
           else
             Text(text = trainingStep.distance.toString() + trainingStep.distanceUnit)
         }
@@ -301,11 +303,11 @@ fun CoolDownCardContent(
         modifier = Modifier.padding(8.dp, 0.dp)
       ) {
         Row {
-          Text(text = "Defaticamento", fontWeight = FontWeight.Bold)
+          Text(text = stringResource(id = R.string.cool_down), fontWeight = FontWeight.Bold)
         }
         Row {
           if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-            Text(text = trainingStep.duration.toString() + 's')
+            Text(text = secondsToHhMmSs(trainingStep.duration))
           else
             Text(text = trainingStep.distance.toString() + trainingStep.distanceUnit)
         }
@@ -350,7 +352,7 @@ fun RepetitionsCardContent(
         Row {
           if (trainingStep.durationType == TrainingStep.DurationType.TIME) {
             Text(text = "Duration: ", fontWeight = FontWeight.Bold)
-            Text(text = trainingStep.duration.toString() + 's')
+            Text(text = secondsToHhMmSs(trainingStep.duration))
           }
           else {
             Text(text = "Distance: ", fontWeight = FontWeight.Bold)
@@ -360,7 +362,7 @@ fun RepetitionsCardContent(
         Row {
           if (trainingStep.recoverType == TrainingStep.DurationType.TIME) {
             Text(text = "Recover time: ", fontWeight = FontWeight.Bold)
-            Text(text = trainingStep.recoverDuration.toString() + 's')
+            Text(text = secondsToHhMmSs(trainingStep.recoverDuration))
           }
           else {
             Text(text = "Recover distance: ", fontWeight = FontWeight.Bold)
@@ -381,7 +383,6 @@ fun RepetitionsCardContent(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepetitionBlockContent(
     repetitionBlock: TrainingStep,
@@ -740,6 +741,10 @@ fun EditStepDialog (
         modifier = Modifier.card()
       ) { newValue -> currentStep.value = currentStep.value.copy(type = newValue) }
 
+      Divider(
+        modifier = Modifier.padding(top = 8.dp, bottom =  16.dp)
+      )
+
       CardSelector(
         label = R.string.duration_type,
         options = TrainingStep.DurationType.getOptions(),
@@ -750,8 +755,8 @@ fun EditStepDialog (
       if (currentStep.value.durationType == TrainingStep.DurationType.TIME) {
         val openTimeDialog = rememberSaveable { mutableStateOf(false) }
 
-        Button(onClick = { openTimeDialog.value = true }) {
-          Text(text = "Select time")
+        RegularCardEditor(R.string.duration, R.drawable.ic_clock, secondsToHhMmSs(currentStep.value.duration), Modifier.card()) {
+          openTimeDialog.value = true
         }
 
         val durationSelection = currentStep.value.duration
@@ -777,8 +782,9 @@ fun EditStepDialog (
       } else {
         val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
 
-        Button(onClick = { openDistanceDialog.value = true }) {
-          Text(text = "Select distance")
+        // TODO change icon
+        RegularCardEditor(R.string.distance, R.drawable.ic_clock, "${currentStep.value.distance} ${currentStep.value.distanceUnit}", Modifier.card()) {
+          openDistanceDialog.value = true
         }
 
         val distanceSelection = currentStep.value.distance
@@ -807,6 +813,10 @@ fun EditStepDialog (
       }
 
       if (currentStep.value.type == TrainingStep.Type.REPETITION) {
+        Divider(
+          modifier = Modifier.padding(top = 8.dp, bottom =  16.dp)
+        )
+
         CardSelector(
           label = R.string.recover_type,
           options = TrainingStep.DurationType.getOptions(),
@@ -817,8 +827,8 @@ fun EditStepDialog (
         if (currentStep.value.recoverType == TrainingStep.DurationType.TIME) {
           val openTimeDialog = rememberSaveable { mutableStateOf(false) }
 
-          Button(onClick = { openTimeDialog.value = true }) {
-            Text(text = "Select recover time")
+          RegularCardEditor(R.string.recover_duration, R.drawable.ic_clock, secondsToHhMmSs(currentStep.value.recoverDuration), Modifier.card()) {
+            openTimeDialog.value = true
           }
 
           val durationSelection = currentStep.value.recoverDuration
@@ -844,8 +854,9 @@ fun EditStepDialog (
         } else {
           val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
 
-          Button(onClick = { openDistanceDialog.value = true }) {
-            Text(text = "Select distance")
+          // TODO change icon
+          RegularCardEditor(R.string.distance, R.drawable.ic_clock, "${currentStep.value.recoverDistance} ${currentStep.value.recoverDistanceUnit}", Modifier.card()) {
+            openDistanceDialog.value = true
           }
 
           val distanceSelection = currentStep.value.recoverDistance
@@ -874,6 +885,20 @@ fun EditStepDialog (
         }
       }
     }
+  }
+}
+
+fun secondsToHhMmSs(seconds: Int): String {
+  val hours = seconds / 3600
+  val minutes = (seconds % 3600) / 60
+  val remainingSeconds = seconds % 60
+
+  return if (hours > 0) {
+    String.format("%d:%02d:%02d", hours, minutes, remainingSeconds)
+  } else {
+    if (minutes < 10) {
+      String.format("%d:%02d", minutes, remainingSeconds)
+    } else String.format("%02d:%02d", minutes, remainingSeconds)
   }
 }
 
