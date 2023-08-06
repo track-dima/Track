@@ -16,6 +16,21 @@ data class TrainingStep(
   val stepsInRepetition: List<TrainingStep> = listOf()
 ) {
 
+  fun calculateTree(): Pair<Int, Int> {
+    // calculate how many descendants are normal steps and how many are repetition blocks
+    return if (type == Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
+      Pair(0, 1)
+    } else if (stepsInRepetition.isEmpty()) {
+      Pair(1, 0)
+    } else {
+      val (normalSteps, repetitionBlocks) = stepsInRepetition.map { it.calculateTree() }.reduce { acc, pair ->
+        Pair(acc.first + pair.first, acc.second + pair.second)
+      }
+      Pair(normalSteps, repetitionBlocks + 1)
+    }
+
+  }
+
   class DurationType {
 
     companion object {

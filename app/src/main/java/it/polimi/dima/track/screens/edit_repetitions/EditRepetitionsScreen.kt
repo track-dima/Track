@@ -391,13 +391,15 @@ fun RepetitionBlockContent(
     onAddClick: (List<String>) -> Unit,
     onAddBlockClick: (List<String>, Int) -> Unit,
     onRepetitionsClick: (List<String>, Int) -> Unit,
-    onMove: (List<String>, ItemPosition, ItemPosition) -> Unit
+    onMove: (List<String>, ItemPosition, ItemPosition) -> Unit,
 ) {
+  val tree = repetitionBlock.calculateTree()
+
   OutlinedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
-      .height(70.dp + 80.dp * (repetitionBlock.stepsInRepetition.size + 1)),
+      .height(78.dp * (tree.first) + 156.dp * (tree.second)),
   ) {
     Row(
       modifier = Modifier
@@ -406,7 +408,7 @@ fun RepetitionBlockContent(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      Button(onClick = { onRepetitionsClick(listOf(repetitionBlock.id), repetitionBlock.repetitions) }) {
+      TextButton(onClick = { onRepetitionsClick(listOf(repetitionBlock.id), repetitionBlock.repetitions) }) {
         Text(text = repetitionBlock.repetitions.toString() + " times")
       }
       IconButton(
@@ -427,7 +429,8 @@ fun RepetitionBlockContent(
       state = state.listState,
       modifier = Modifier
         .reorderable(state)
-        .detectReorderAfterLongPress(state)
+        .detectReorderAfterLongPress(state),
+      userScrollEnabled = false
     ) {
       items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
         ReorderableItem(state, key = trainingStep.id) {
