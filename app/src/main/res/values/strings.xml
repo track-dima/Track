@@ -55,4 +55,8 @@
     <string name="more_options">More options</string>
     <string name="delete_repetition">Elimina ripetizione</string>
     <string name="add_repetition">Add repetition</string>
+    <string name="edit_repetition">Edit repetition</string>
+    <string name="duration_type">Duration type</string>
+    <string name="save">Save</string>
+    <string name="recover_type">Recover type</string>
 </resources>

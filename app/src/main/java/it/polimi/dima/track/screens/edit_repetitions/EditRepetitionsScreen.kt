@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,8 +53,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.CardSelector
+import it.polimi.dima.track.common.composable.FullScreenDialog
 import it.polimi.dima.track.common.composable.NumberPicker
+import it.polimi.dima.track.common.composable.PickerState
 import it.polimi.dima.track.common.composable.rememberPickerState
+import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
@@ -113,59 +118,35 @@ fun EditRepetitionsScreen(
     val currentHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
 
     if (openRepetitionsDialog.value) {
-      AlertDialog(
-        onDismissRequest = {
+      RepetitionsSelectionDialog(
+        onDismissRequest = { openRepetitionsDialog.value = false },
+        onConfirm = {
           openRepetitionsDialog.value = false
-        },
-        title = {
-          Text(text = "Repetition number")
-        },
-        text = {
-          Surface(modifier = Modifier.height(160.dp)) {
-            Column(
-              horizontalAlignment = Alignment.CenterHorizontally,
-              verticalArrangement = Arrangement.Center,
-              modifier = Modifier.fillMaxSize()
-            ) {
-
-              val values = remember { (2..50).map { it.toString() } }
-
-              NumberPicker(
-                state = repetitionsPickerState,
-                items = values,
-                visibleItemsCount = 3,
-                startIndex = currentRepetitions.value - 2,
-                textModifier = Modifier.padding(8.dp),
-                textStyle = TextStyle(fontSize = 24.sp)
-              )
-            }
-          }
-        },
-        confirmButton = {
-          TextButton(
-            onClick = {
-              openRepetitionsDialog.value = false
-              viewModel.onEditRepetitionsClick(
-                currentHierarchy.value,
-                repetitionsPickerState.selectedItem.toInt()
-              )
-            }
-          ) {
-            Text("Confirm")
-          }
-        },
-        dismissButton = {
-          TextButton(
-            onClick = {
-              openRepetitionsDialog.value = false
-            }
-          ) {
-            Text("Dismiss")
-          }
-        }
+          viewModel.onEditRepetitionsClick(
+            currentHierarchy.value,
+            repetitionsPickerState.selectedItem.toInt()
+          ) },
+        currentRepetitions = currentRepetitions.value,
+        repetitionsPickerState = repetitionsPickerState,
       )
     }
 
+
+    val openEditDialog = rememberSaveable { mutableStateOf(false) }
+    // TODO remember saveable
+    val currentStep = remember { mutableStateOf(TrainingStep()) }
+    val currentEditHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
+
+    if (openEditDialog.value) {
+      EditStepDialog(
+        onDismissRequest = { openEditDialog.value = false },
+        onConfirm = {
+          openEditDialog.value = false
+          viewModel.onEditClick(currentEditHierarchy.value, currentStep.value)
+                    },
+        currentStep = currentStep
+      )
+    }
 
     Column(
       modifier = modifier
@@ -204,22 +185,34 @@ fun EditRepetitionsScreen(
               TrainingStep.Type.WARM_UP -> WarmUpCardContent(
                 trainingStep,
                 onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
-                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+                onEditClick = { _, trainingStep ->
+                  openEditDialog.value = true
+                  currentStep.value = trainingStep
+                  currentEditHierarchy.value = listOf() }
               )
               TrainingStep.Type.COOL_DOWN -> CoolDownCardContent(
                 trainingStep,
                 onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
-                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+                onEditClick = { _, trainingStep ->
+                  openEditDialog.value = true
+                  currentStep.value = trainingStep
+                  currentEditHierarchy.value = listOf() }
               )
-              TrainingStep.Type.REPETITIONS -> RepetitionsCardContent(
+              TrainingStep.Type.REPETITION -> RepetitionsCardContent(
                 trainingStep,
                 onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
-                onEditClick = { _, trainingStep -> viewModel.onEditClick(listOf(), trainingStep) }
+                onEditClick = { _, trainingStep ->
+                  openEditDialog.value = true
+                  currentStep.value = trainingStep
+                  currentEditHierarchy.value = listOf() },
               )
               TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockContent(
                 trainingStep,
                 onDeleteClick = { hierarchy, trainingStep -> viewModel.onDeleteClick(hierarchy, trainingStep) },
-                onEditClick = { hierarchy, trainingStep -> viewModel.onEditClick(hierarchy, trainingStep) },
+                onEditClick = { hierarchy, trainingStep ->
+                  openEditDialog.value = true
+                  currentStep.value = trainingStep
+                  currentEditHierarchy.value = hierarchy },
                 onAddClick = { hierarchy -> viewModel.onAddClick(hierarchy) },
                 onAddBlockClick = { hierarchy, repetitions -> viewModel.onAddBlockClick(hierarchy, repetitions) },
                 onRepetitionsClick = { hierarchy, repetitions ->
@@ -267,7 +260,7 @@ fun WarmUpCardContent(
           if (trainingStep.durationType == TrainingStep.DurationType.TIME)
             Text(text = trainingStep.duration.toString() + 's')
           else
-            Text(text = trainingStep.distance.toString() + 'm')
+            Text(text = trainingStep.distance.toString() + trainingStep.distanceUnit)
         }
       }
       IconButton(
@@ -314,7 +307,7 @@ fun CoolDownCardContent(
           if (trainingStep.durationType == TrainingStep.DurationType.TIME)
             Text(text = trainingStep.duration.toString() + 's')
           else
-            Text(text = trainingStep.distance.toString() + 'm')
+            Text(text = trainingStep.distance.toString() + trainingStep.distanceUnit)
         }
       }
       IconButton(
@@ -361,7 +354,7 @@ fun RepetitionsCardContent(
           }
           else {
             Text(text = "Distance: ", fontWeight = FontWeight.Bold)
-            Text(text = trainingStep.distance.toString() + 'm')
+            Text(text = trainingStep.distance.toString() + trainingStep.distanceUnit)
           }
         }
         Row {
@@ -371,7 +364,7 @@ fun RepetitionsCardContent(
           }
           else {
             Text(text = "Recover distance: ", fontWeight = FontWeight.Bold)
-            Text(text = trainingStep.recoverDistance.toString() + 'm')
+            Text(text = trainingStep.recoverDistance.toString() + trainingStep.recoverDistanceUnit)
           }
         }
       }
@@ -448,7 +441,7 @@ fun RepetitionBlockContent(
               onDeleteClick = { _, trainingStep -> onDeleteClick(listOf(repetitionBlock.id), trainingStep) },
               onEditClick = { _, trainingStep -> onEditClick(listOf(repetitionBlock.id), trainingStep) }
             )
-            TrainingStep.Type.REPETITIONS -> RepetitionsCardContent(
+            TrainingStep.Type.REPETITION -> RepetitionsCardContent(
               trainingStep,
               onDeleteClick = { _, trainingStep -> onDeleteClick(listOf(repetitionBlock.id), trainingStep) },
               onEditClick = { _, trainingStep -> onEditClick(listOf(repetitionBlock.id), trainingStep) }
@@ -526,3 +519,362 @@ fun AddButtons(
     }
   }
 }
+
+@Composable
+fun TimeSelectionDialog(
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  durationSelection: Int,
+  hourPickerState: PickerState,
+  minutePickerState: PickerState,
+  secondPickerState: PickerState
+) {
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = "Duration time (h:m:s)")
+    },
+    text = {
+      Surface(modifier = Modifier.height(160.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+
+          Row(modifier = Modifier.fillMaxWidth()) {
+            NumberPicker(
+              state = hourPickerState,
+              items = remember { (0..23).map { it.toString() } },
+              modifier = Modifier.weight(1f),
+              visibleItemsCount = 3,
+              startIndex = durationSelection / 3600,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = minutePickerState,
+              items = remember { (0..59).map { it.toString() } },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(1f),
+              startIndex = durationSelection / 60 % 60,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = secondPickerState,
+              items = remember { (0..59).map { it.toString() } },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(1f),
+              startIndex = durationSelection % 60,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+          }
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(
+        onClick = onConfirm
+      ) {
+        Text("Confirm")
+      }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onDismissRequest
+      ) {
+        Text("Dismiss")
+      }
+    }
+  )
+}
+
+@Composable
+fun DistanceSelectionDialog(
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  distanceSelection: Int,
+  distanceUnitSelection: String,
+  mostSignificantDigitPickerState: PickerState,
+  leastSignificantDigitsPickerState: PickerState,
+  measurementPickerState: PickerState
+) {
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = "Distance")
+    },
+    text = {
+      Surface(modifier = Modifier.height(160.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+
+          Row(modifier = Modifier.fillMaxWidth()) {
+            NumberPicker(
+              state = mostSignificantDigitPickerState,
+              items = remember { (0..9).map { it.toString() } },
+              modifier = Modifier.weight(1f),
+              visibleItemsCount = 3,
+              startIndex = distanceSelection / 100,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = leastSignificantDigitsPickerState,
+              items = remember { (0..99).map { it.toString().padStart(2, '0') } },
+              modifier = Modifier.weight(1f),
+              visibleItemsCount = 3,
+              startIndex = distanceSelection % 100,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = measurementPickerState,
+              items = remember { listOf("m", "km", "mi") },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(1f),
+              startIndex = when (distanceUnitSelection) {
+                "km" -> 1
+                "mi" -> 2
+                else -> 0
+              },
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+          }
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(
+        onClick = onConfirm
+      ) {
+        Text("Confirm")
+      }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onDismissRequest
+      ) {
+        Text("Dismiss")
+      }
+    }
+  )
+}
+
+@Composable
+fun RepetitionsSelectionDialog(
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  currentRepetitions: Int,
+  repetitionsPickerState: PickerState
+) {
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = "Repetition number")
+    },
+    text = {
+      Surface(modifier = Modifier.height(160.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+
+          val values = remember { (2..50).map { it.toString() } }
+
+          NumberPicker(
+            state = repetitionsPickerState,
+            items = values,
+            visibleItemsCount = 3,
+            startIndex = currentRepetitions - 2,
+            textModifier = Modifier.padding(8.dp),
+            textStyle = TextStyle(fontSize = 24.sp)
+          )
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(
+        onClick = onConfirm
+      ) {
+        Text("Confirm")
+      }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onDismissRequest
+      ) {
+        Text("Dismiss")
+      }
+    }
+  )
+}
+
+@Composable
+fun EditStepDialog (
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  currentStep: MutableState<TrainingStep>
+) {
+  FullScreenDialog (
+    onDismissRequest = onDismissRequest,
+    onConfirm = onConfirm,
+    title = stringResource(id = R.string.edit_repetition),
+  ) {
+    Column {
+      val typeSelection = currentStep.value.type
+      val durationTypeSelection = currentStep.value.durationType
+      val recoverTypeSelection = currentStep.value.recoverType
+
+      CardSelector(
+        label = R.string.type,
+        options = TrainingStep.Type.getOptions(),
+        selection = typeSelection,
+        modifier = Modifier.card()
+      ) { newValue -> currentStep.value = currentStep.value.copy(type = newValue) }
+
+      CardSelector(
+        label = R.string.duration_type,
+        options = TrainingStep.DurationType.getOptions(),
+        selection = durationTypeSelection,
+        modifier = Modifier.card()
+      ) { newValue -> currentStep.value = currentStep.value.copy(durationType = newValue) }
+
+      if (currentStep.value.durationType == TrainingStep.DurationType.TIME) {
+        val openTimeDialog = rememberSaveable { mutableStateOf(false) }
+
+        Button(onClick = { openTimeDialog.value = true }) {
+          Text(text = "Select time")
+        }
+
+        val durationSelection = currentStep.value.duration
+        val durationHourPickerState = rememberPickerState()
+        val durationMinutePickerState = rememberPickerState()
+        val durationSecondPickerState = rememberPickerState()
+
+        if (openTimeDialog.value) {
+          TimeSelectionDialog(
+            onDismissRequest = { openTimeDialog.value = false },
+            onConfirm = {
+              openTimeDialog.value = false
+              currentStep.value = currentStep.value.copy(
+                duration = durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
+              )
+            },
+            durationSelection = durationSelection,
+            hourPickerState = durationHourPickerState,
+            minutePickerState = durationMinutePickerState,
+            secondPickerState = durationSecondPickerState
+          )
+        }
+      } else {
+        val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
+
+        Button(onClick = { openDistanceDialog.value = true }) {
+          Text(text = "Select distance")
+        }
+
+        val distanceSelection = currentStep.value.distance
+        val distanceUnitSelection = currentStep.value.distanceUnit
+        val mostSignificantDigitPickerState = rememberPickerState()
+        val leastSignificantDigitsPickerState = rememberPickerState()
+        val measurementPickerState = rememberPickerState()
+
+        if (openDistanceDialog.value) {
+          DistanceSelectionDialog(
+            onDismissRequest = { openDistanceDialog.value = false },
+            onConfirm = {
+              openDistanceDialog.value = false
+              currentStep.value = currentStep.value.copy(
+                distance = mostSignificantDigitPickerState.selectedItem.toInt() * 100 + leastSignificantDigitsPickerState.selectedItem.toInt(),
+                distanceUnit = measurementPickerState.selectedItem
+              )
+            },
+            distanceSelection = distanceSelection,
+            distanceUnitSelection = distanceUnitSelection,
+            mostSignificantDigitPickerState = mostSignificantDigitPickerState,
+            leastSignificantDigitsPickerState = leastSignificantDigitsPickerState,
+            measurementPickerState = measurementPickerState
+          )
+        }
+      }
+
+      if (currentStep.value.type == TrainingStep.Type.REPETITION) {
+        CardSelector(
+          label = R.string.recover_type,
+          options = TrainingStep.DurationType.getOptions(),
+          selection = recoverTypeSelection,
+          modifier = Modifier.card()
+        ) { newValue -> currentStep.value = currentStep.value.copy(recoverType = newValue) }
+
+        if (currentStep.value.recoverType == TrainingStep.DurationType.TIME) {
+          val openTimeDialog = rememberSaveable { mutableStateOf(false) }
+
+          Button(onClick = { openTimeDialog.value = true }) {
+            Text(text = "Select recover time")
+          }
+
+          val durationSelection = currentStep.value.recoverDuration
+          val durationHourPickerState = rememberPickerState()
+          val durationMinutePickerState = rememberPickerState()
+          val durationSecondPickerState = rememberPickerState()
+
+          if (openTimeDialog.value) {
+            TimeSelectionDialog(
+              onDismissRequest = { openTimeDialog.value = false },
+              onConfirm = {
+                openTimeDialog.value = false
+                currentStep.value = currentStep.value.copy(
+                  recoverDuration = durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
+                )
+              },
+              durationSelection = durationSelection,
+              hourPickerState = durationHourPickerState,
+              minutePickerState = durationMinutePickerState,
+              secondPickerState = durationSecondPickerState
+            )
+          }
+        } else {
+          val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
+
+          Button(onClick = { openDistanceDialog.value = true }) {
+            Text(text = "Select distance")
+          }
+
+          val distanceSelection = currentStep.value.recoverDistance
+          val distanceUnitSelection = currentStep.value.recoverDistanceUnit
+          val mostSignificantDigitPickerState = rememberPickerState()
+          val leastSignificantDigitsPickerState = rememberPickerState()
+          val measurementPickerState = rememberPickerState()
+
+          if (openDistanceDialog.value) {
+            DistanceSelectionDialog(
+              onDismissRequest = { openDistanceDialog.value = false },
+              onConfirm = {
+                openDistanceDialog.value = false
+                currentStep.value = currentStep.value.copy(
+                  recoverDistance = mostSignificantDigitPickerState.selectedItem.toInt() * 100 + leastSignificantDigitsPickerState.selectedItem.toInt(),
+                  recoverDistanceUnit = measurementPickerState.selectedItem
+                )
+              },
+              distanceSelection = distanceSelection,
+              distanceUnitSelection = distanceUnitSelection,
+              mostSignificantDigitPickerState = mostSignificantDigitPickerState,
+              leastSignificantDigitsPickerState = leastSignificantDigitsPickerState,
+              measurementPickerState = measurementPickerState
+            )
+          }
+        }
+      }
+    }
+  }
+}
+
+

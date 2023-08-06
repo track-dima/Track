@@ -37,7 +37,7 @@ class EditRepetitionsViewModel @Inject constructor(
   private fun onAddClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>) : List<TrainingStep> {
     val trainingStep = TrainingStep(
       id = UUID.randomUUID().toString(),
-      type = TrainingStep.Type.REPETITIONS,
+      type = TrainingStep.Type.REPETITION,
       durationType = TrainingStep.DurationType.DISTANCE,
       distance = 200,
       recover = true,
@@ -105,6 +105,24 @@ class EditRepetitionsViewModel @Inject constructor(
   }
 
   fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
+    trainingSteps.value = onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+  }
+
+  private fun onEditClickHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, trainingStep: TrainingStep) : List<TrainingStep> {
+    return if (hierarchy.isEmpty()) {
+      trainingSteps.apply {
+        val index = indexOfFirst { it.id == trainingStep.id }
+        set(index, trainingStep)
+      }
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(stepsInRepetition = onEditClickHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), trainingStep))
+        } else {
+          it
+        }
+      }
+    }
   }
 
   fun moveStep(hierarchy: List<String>, from: ItemPosition, to: ItemPosition) {
