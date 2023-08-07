@@ -21,6 +21,8 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,6 +61,7 @@ import it.polimi.dima.track.common.composable.FullScreenDialog
 import it.polimi.dima.track.common.composable.NumberPicker
 import it.polimi.dima.track.common.composable.PickerState
 import it.polimi.dima.track.common.composable.RegularCardEditor
+import it.polimi.dima.track.common.composable.SegmentedControl
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
@@ -115,6 +118,7 @@ fun EditRepetitionsScreen(
   ) {
 
     val openRepetitionsDialog = rememberSaveable { mutableStateOf(false) }
+    val openRecoverDialog = rememberSaveable { mutableStateOf(false) }
     val repetitionsPickerState = rememberPickerState()
     val currentRepetitions = rememberSaveable { mutableStateOf(2) }
     val currentHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
@@ -130,6 +134,30 @@ fun EditRepetitionsScreen(
           ) },
         currentRepetitions = currentRepetitions.value,
         repetitionsPickerState = repetitionsPickerState,
+      )
+    }
+
+    val currentRecoverType = rememberSaveable { mutableStateOf(TrainingStep.DurationType.TIME) }
+    val currentRecoverDuration = rememberSaveable { mutableStateOf(0) }
+    val currentRecoverDistance = rememberSaveable { mutableStateOf(0) }
+    val currentRecoverDistanceUnit = rememberSaveable { mutableStateOf("m") }
+
+    if (openRecoverDialog.value) {
+      RecoverSelectionDialog(
+        onDismissRequest = { openRecoverDialog.value = false },
+        onConfirm = { recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
+          openRecoverDialog.value = false
+          viewModel.onEditRecoverClick(
+            currentHierarchy.value,
+            recoverType,
+            recoverDuration,
+            recoverDistance,
+            recoverDistanceUnit
+          )  },
+        currentRecoverType = currentRecoverType.value,
+        currentRecoverDuration = currentRecoverDuration.value,
+        currentRecoverDistance = currentRecoverDistance.value,
+        currentRecoverDistanceUnit = currentRecoverDistanceUnit.value,
       )
     }
 
@@ -221,6 +249,13 @@ fun EditRepetitionsScreen(
                   openRepetitionsDialog.value = true
                   currentRepetitions.value = repetitions
                   currentHierarchy.value = hierarchy },
+                onRecoverClick = { hierarchy, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
+                  openRecoverDialog.value = true
+                  currentRecoverType.value = recoverType
+                  currentRecoverDuration.value = recoverDuration
+                  currentRecoverDistance.value = recoverDistance
+                  currentRecoverDistanceUnit.value = recoverDistanceUnit
+                  currentHierarchy.value = hierarchy },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) }
               )
             }
@@ -238,7 +273,7 @@ fun WarmUpCardContent(
   onDeleteClick: (List<String>, TrainingStep) -> Unit,
   onEditClick: (List<String>, TrainingStep) -> Unit
 ) {
-  OutlinedCard(
+  ElevatedCard(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
@@ -285,12 +320,15 @@ fun CoolDownCardContent(
     onDeleteClick: (List<String>, TrainingStep) -> Unit,
     onEditClick: (List<String>, TrainingStep) -> Unit
 ) {
-  OutlinedCard(
+  Card(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
       .height(70.dp),
-    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) }
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.tertiary,
+    )
   ) {
     Row(
       modifier = Modifier
@@ -391,6 +429,7 @@ fun RepetitionBlockContent(
     onAddClick: (List<String>) -> Unit,
     onAddBlockClick: (List<String>, Int) -> Unit,
     onRepetitionsClick: (List<String>, Int) -> Unit,
+    onRecoverClick: (List<String>, String, Int, Int, String) -> Unit,
     onMove: (List<String>, ItemPosition, ItemPosition) -> Unit,
 ) {
   val tree = repetitionBlock.calculateTree()
@@ -410,6 +449,17 @@ fun RepetitionBlockContent(
     ) {
       TextButton(onClick = { onRepetitionsClick(listOf(repetitionBlock.id), repetitionBlock.repetitions) }) {
         Text(text = repetitionBlock.repetitions.toString() + " times")
+      }
+      TextButton(
+        onClick = {
+          onRecoverClick(listOf(repetitionBlock.id), repetitionBlock.recoverType, repetitionBlock.recoverDuration, repetitionBlock.recoverDistance, repetitionBlock.recoverDistanceUnit)
+        }
+      ) {
+        Text(
+          text = (if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
+            secondsToHhMmSs(repetitionBlock.recoverDuration)
+          else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}")
+                  + " in between")
       }
       IconButton(
         modifier = Modifier.padding(8.dp),
@@ -457,6 +507,7 @@ fun RepetitionBlockContent(
               onAddClick = { descendants -> onAddClick(listOf(repetitionBlock.id) + descendants) },
               onAddBlockClick = { descendants, repetitions -> onAddBlockClick(listOf(repetitionBlock.id) + descendants, repetitions) },
               onRepetitionsClick = { descendants, repetitions -> onRepetitionsClick(listOf(repetitionBlock.id) + descendants, repetitions) },
+              onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit -> onRecoverClick(listOf(repetitionBlock.id) + descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit) },
               onMove = { descendants, from, to -> onMove(listOf(repetitionBlock.id) + descendants, from, to) }
             )
           }
@@ -539,44 +590,12 @@ fun TimeSelectionDialog(
       Text(text = "Duration time (h:m:s)")
     },
     text = {
-      Surface(modifier = Modifier.height(160.dp)) {
-        Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center,
-          modifier = Modifier.fillMaxSize()
-        ) {
-
-          Row(modifier = Modifier.fillMaxWidth()) {
-            NumberPicker(
-              state = hourPickerState,
-              items = remember { (0..23).map { it.toString() } },
-              modifier = Modifier.weight(1f),
-              visibleItemsCount = 3,
-              startIndex = durationSelection / 3600,
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-            NumberPicker(
-              state = minutePickerState,
-              items = remember { (0..59).map { it.toString() } },
-              visibleItemsCount = 3,
-              modifier = Modifier.weight(1f),
-              startIndex = durationSelection / 60 % 60,
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-            NumberPicker(
-              state = secondPickerState,
-              items = remember { (0..59).map { it.toString() } },
-              visibleItemsCount = 3,
-              modifier = Modifier.weight(1f),
-              startIndex = durationSelection % 60,
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-          }
-        }
-      }
+      TimeSelectionDialogContent(
+        durationSelection,
+        hourPickerState,
+        minutePickerState,
+        secondPickerState
+      )
     },
     confirmButton = {
       TextButton(
@@ -596,6 +615,53 @@ fun TimeSelectionDialog(
 }
 
 @Composable
+fun TimeSelectionDialogContent(
+  durationSelection: Int,
+  hourPickerState: PickerState,
+  minutePickerState: PickerState,
+  secondPickerState: PickerState
+) {
+  Surface(modifier = Modifier.height(160.dp)) {
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center,
+      modifier = Modifier.fillMaxSize()
+    ) {
+
+      Row(modifier = Modifier.fillMaxWidth()) {
+        NumberPicker(
+          state = hourPickerState,
+          items = remember { (0..23).map { it.toString() } },
+          modifier = Modifier.weight(1f),
+          visibleItemsCount = 3,
+          startIndex = durationSelection / 3600,
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+        NumberPicker(
+          state = minutePickerState,
+          items = remember { (0..59).map { it.toString().padStart(2, '0') } },
+          visibleItemsCount = 3,
+          modifier = Modifier.weight(1f),
+          startIndex = durationSelection / 60 % 60,
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+        NumberPicker(
+          state = secondPickerState,
+          items = remember { (0..59).map { it.toString().padStart(2, '0') } },
+          visibleItemsCount = 3,
+          modifier = Modifier.weight(1f),
+          startIndex = durationSelection % 60,
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+      }
+    }
+  }
+}
+
+@Composable
 fun DistanceSelectionDialog(
   onDismissRequest: () -> Unit,
   onConfirm: () -> Unit,
@@ -611,48 +677,13 @@ fun DistanceSelectionDialog(
       Text(text = "Distance")
     },
     text = {
-      Surface(modifier = Modifier.height(160.dp)) {
-        Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center,
-          modifier = Modifier.fillMaxSize()
-        ) {
-
-          Row(modifier = Modifier.fillMaxWidth()) {
-            NumberPicker(
-              state = mostSignificantDigitPickerState,
-              items = remember { (0..9).map { it.toString() } },
-              modifier = Modifier.weight(1f),
-              visibleItemsCount = 3,
-              startIndex = distanceSelection / 100,
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-            NumberPicker(
-              state = leastSignificantDigitsPickerState,
-              items = remember { (0..99).map { it.toString().padStart(2, '0') } },
-              modifier = Modifier.weight(1f),
-              visibleItemsCount = 3,
-              startIndex = distanceSelection % 100,
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-            NumberPicker(
-              state = measurementPickerState,
-              items = remember { listOf("m", "km", "mi") },
-              visibleItemsCount = 3,
-              modifier = Modifier.weight(1f),
-              startIndex = when (distanceUnitSelection) {
-                "km" -> 1
-                "mi" -> 2
-                else -> 0
-              },
-              textModifier = Modifier.padding(8.dp),
-              textStyle = TextStyle(fontSize = 24.sp)
-            )
-          }
-        }
-      }
+      DistanceSelectionDialogContent(
+          distanceSelection,
+          distanceUnitSelection,
+          mostSignificantDigitPickerState,
+          leastSignificantDigitsPickerState,
+          measurementPickerState
+      )
     },
     confirmButton = {
       TextButton(
@@ -669,6 +700,58 @@ fun DistanceSelectionDialog(
       }
     }
   )
+}
+
+@Composable
+fun DistanceSelectionDialogContent(
+  distanceSelection: Int,
+  distanceUnitSelection: String,
+  mostSignificantDigitPickerState: PickerState,
+  leastSignificantDigitsPickerState: PickerState,
+  measurementPickerState: PickerState
+) {
+  Surface(modifier = Modifier.height(160.dp)) {
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center,
+      modifier = Modifier.fillMaxSize()
+    ) {
+
+      Row(modifier = Modifier.fillMaxWidth()) {
+        NumberPicker(
+          state = mostSignificantDigitPickerState,
+          items = remember { (0..9).map { it.toString() } },
+          modifier = Modifier.weight(1f),
+          visibleItemsCount = 3,
+          startIndex = distanceSelection / 100,
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+        NumberPicker(
+          state = leastSignificantDigitsPickerState,
+          items = remember { (0..99).map { it.toString().padStart(2, '0') } },
+          modifier = Modifier.weight(1f),
+          visibleItemsCount = 3,
+          startIndex = distanceSelection % 100,
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+        NumberPicker(
+          state = measurementPickerState,
+          items = remember { listOf("m", "km", "mi") },
+          visibleItemsCount = 3,
+          modifier = Modifier.weight(1f),
+          startIndex = when (distanceUnitSelection) {
+            "km" -> 1
+            "mi" -> 2
+            else -> 0
+          },
+          textModifier = Modifier.padding(8.dp),
+          textStyle = TextStyle(fontSize = 24.sp)
+        )
+      }
+    }
+  }
 }
 
 @Composable
@@ -707,6 +790,96 @@ fun RepetitionsSelectionDialog(
     confirmButton = {
       TextButton(
         onClick = onConfirm
+      ) {
+        Text("Confirm")
+      }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onDismissRequest
+      ) {
+        Text("Dismiss")
+      }
+    }
+  )
+}
+
+@Composable
+fun RecoverSelectionDialog(
+  onDismissRequest: () -> Unit,
+  onConfirm: (String, Int, Int, String) -> Unit,
+  currentRecoverType: String,
+  currentRecoverDuration: Int,
+  currentRecoverDistance: Int,
+  currentRecoverDistanceUnit: String,
+) {
+  val recoverType = rememberSaveable { mutableStateOf(currentRecoverType) }
+  val durationHourPickerState = rememberPickerState()
+  val durationMinutePickerState = rememberPickerState()
+  val durationSecondPickerState = rememberPickerState()
+  val distanceMostSignificantDigitPickerState = rememberPickerState()
+  val distanceLeastSignificantDigitsPickerState = rememberPickerState()
+  val distanceMeasurementPickerState = rememberPickerState()
+
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = "In between recover")
+    },
+    text = {
+      Surface(modifier = Modifier.height(220.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+          SegmentedControl(
+            items = TrainingStep.DurationType.getOptions(),
+            defaultSelectedItemIndex = if (currentRecoverType == TrainingStep.DurationType.TIME) 0 else 1,
+            cornerRadius = 50,
+            color = MaterialTheme.colorScheme.primary,
+            onItemSelection = { index ->
+              recoverType.value =
+                if (index == 0) TrainingStep.DurationType.TIME else TrainingStep.DurationType.DISTANCE
+            }
+          )
+
+          Spacer(modifier = Modifier.height(16.dp))
+
+          if (recoverType.value == TrainingStep.DurationType.TIME) {
+            TimeSelectionDialogContent(
+              durationSelection = currentRecoverDuration,
+              hourPickerState = durationHourPickerState,
+              minutePickerState = durationMinutePickerState,
+              secondPickerState = durationSecondPickerState
+            )
+          }
+          else {
+            DistanceSelectionDialogContent(
+              distanceSelection = currentRecoverDistance,
+              distanceUnitSelection = currentRecoverDistanceUnit,
+              mostSignificantDigitPickerState = distanceMostSignificantDigitPickerState,
+              leastSignificantDigitsPickerState = distanceLeastSignificantDigitsPickerState,
+              measurementPickerState = distanceMeasurementPickerState
+            )
+          }
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(
+        onClick = { onConfirm(
+          recoverType.value,
+          if (recoverType.value == TrainingStep.DurationType.TIME)
+            durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
+          else currentRecoverDuration,
+          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+            distanceMostSignificantDigitPickerState.selectedItem.toInt() * 100 + distanceLeastSignificantDigitsPickerState.selectedItem.toInt()
+          else currentRecoverDistance,
+          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+            distanceMeasurementPickerState.selectedItem
+          else currentRecoverDistanceUnit
+        ) }
       ) {
         Text("Confirm")
       }

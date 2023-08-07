@@ -87,7 +87,7 @@ fun TrainingCard(
                 contentDescription = "Favourite"
               )
             }
-            Text(text = "4 repetitions", style = MaterialTheme.typography.titleSmall)
+            Text(text = training.calculateRepetitions().toString() + " repetitions", style = MaterialTheme.typography.titleSmall)
             Text(text = "~1:30h", style = MaterialTheme.typography.titleSmall)
             if (training.type.isNotEmpty() && training.type != Type.None.name) {
               Text(text = training.type, style = MaterialTheme.typography.titleSmall)

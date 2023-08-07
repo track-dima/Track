@@ -17,7 +17,7 @@ data class TrainingStep(
 ) {
 
   fun calculateTree(): Pair<Int, Int> {
-    // calculate how many descendants are normal steps and how many are repetition blocks
+    // Calculate the number of normal steps and the number of repetition blocks
     return if (type == Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
       Pair(0, 1)
     } else if (stepsInRepetition.isEmpty()) {
@@ -29,6 +29,17 @@ data class TrainingStep(
       Pair(normalSteps, repetitionBlocks + 1)
     }
 
+  }
+
+  fun calculateRepetitions(): Int {
+    // Calculate the number of repetitions
+    return if (type == Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
+      0
+    } else if (stepsInRepetition.isEmpty()) {
+      1
+    } else {
+      stepsInRepetition.sumOf { it.calculateRepetitions() } * repetitions
+    }
   }
 
   class DurationType {

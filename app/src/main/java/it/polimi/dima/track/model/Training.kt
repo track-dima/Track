@@ -13,10 +13,14 @@ data class Training(
   val dueTimeString: String = "",
   val description: String = "",
   val favourite: Boolean = false,
+  val trainingSteps: List<TrainingStep> = listOf(),
 
   // UNUSED
   val personalBest: Boolean = false,
   val url: String = "",
-  val completed: Boolean = false,
-  val trainingSteps: List<TrainingStep> = listOf()
-)
+  val completed: Boolean = false
+) {
+  fun calculateRepetitions(): Int {
+    return trainingSteps.sumOf { it.calculateRepetitions() }
+  }
+}
