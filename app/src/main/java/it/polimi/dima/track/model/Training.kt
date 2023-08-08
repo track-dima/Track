@@ -12,7 +12,7 @@ data class Training(
   val dueTime: Map<String, Int>? = null,
   val dueTimeString: String = "",
   val description: String = "",
-  val favourite: Boolean = false,
+  val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
 
   // UNUSED
@@ -22,5 +22,18 @@ data class Training(
 ) {
   fun calculateRepetitions(): Int {
     return trainingSteps.sumOf { it.calculateRepetitions() }
+  }
+
+  fun calculateTree(): Pair<Int, Int> {
+    if (trainingSteps.isEmpty()) {
+      return Pair(0, 0)
+    }
+    return trainingSteps.map { it.calculateTree() }.reduce { acc, pair ->
+      Pair(acc.first + pair.first, acc.second + pair.second)
+    }
+  }
+
+  fun calculateTotalTime(): Int {
+    return trainingSteps.sumOf { it.calculateTotalTime(it.id == trainingSteps.last().id) }
   }
 }

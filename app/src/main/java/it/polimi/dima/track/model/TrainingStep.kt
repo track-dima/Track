@@ -42,6 +42,43 @@ data class TrainingStep(
     }
   }
 
+  fun calculateTotalTime(lastInBlock: Boolean): Int {
+    // Calculate the total time of the step
+    return if (type == Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
+      0
+    } else if (stepsInRepetition.isEmpty()) {
+      val durationTime = if (durationType == DurationType.TIME) {
+        duration
+      } else {
+        toMeters(distance, distanceUnit) * 5 * 60 / 1000 // 5 min/km
+      }
+      val recoverTime = if (type == Type.WARM_UP || type == Type.COOL_DOWN || lastInBlock)
+        0
+      else if (recoverType == DurationType.TIME)
+        recoverDuration
+      else
+        toMeters(recoverDistance, recoverDistanceUnit) * 5 * 60 / 1000
+
+      durationTime + recoverTime
+    } else {
+      val recoverTime = if (recoverType == DurationType.TIME) {
+        recoverDuration
+      } else {
+        toMeters(recoverDistance, recoverDistanceUnit) * 5 * 60 / 1000
+      }
+      stepsInRepetition.sumOf { it.calculateTotalTime(it.id == stepsInRepetition.last().id) } * repetitions + recoverTime * (repetitions - 1)
+    }
+  }
+
+  private fun toMeters(distance: Int, distanceUnit: String): Int {
+    // Convert the distance to meters
+    return when (distanceUnit) {
+      "km" -> distance * 1000
+      "mi" -> (distance * 1609.344).toInt()
+      else -> distance
+    }
+  }
+
   class DurationType {
 
     companion object {

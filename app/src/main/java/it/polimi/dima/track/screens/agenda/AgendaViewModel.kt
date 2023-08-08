@@ -47,7 +47,7 @@ class AgendaViewModel @Inject constructor(
   }
 
   private fun onFavouriteTrainingClick(training: Training) {
-    launchCatching { storageService.update(training.copy(favourite = !training.favourite)) }
+    launchCatching { storageService.update(training.copy(favorite = !training.favorite)) }
   }
 
   private fun onDeleteTaskClick(training: Training) {

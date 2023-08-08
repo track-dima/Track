@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -23,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
@@ -32,9 +35,11 @@ import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.Type
+import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMm
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import it.polimi.dima.track.ui.theme.BrightYellow
 import it.polimi.dima.track.ui.theme.DarkOrange
+import it.polimi.dima.track.ui.theme.DarkRed
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -80,15 +85,15 @@ fun TrainingCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
           ) {
-            if (training.favourite) {
+            if (training.favorite) {
               Icon(
-                imageVector = Icons.Default.Star,
-                tint = BrightYellow,
-                contentDescription = "Favourite"
+                imageVector = Icons.Default.Favorite,
+                tint = DarkRed,
+                contentDescription = stringResource(id = R.string.favorite),
               )
             }
             Text(text = training.calculateRepetitions().toString() + " repetitions", style = MaterialTheme.typography.titleSmall)
-            Text(text = "~1:30h", style = MaterialTheme.typography.titleSmall)
+            Text(text = "~${secondsToHhMm(training.calculateTotalTime())}h", style = MaterialTheme.typography.titleSmall)
             if (training.type.isNotEmpty() && training.type != Type.None.name) {
               Text(text = training.type, style = MaterialTheme.typography.titleSmall)
             }
