@@ -54,7 +54,7 @@ fun AgendaScreen(
         val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
         val options by viewModel.options
 
-        Column(modifier = Modifier.fillMaxWidth() .fillMaxHeight()) {
+        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             ActionToolbar(
                 title = R.string.agenda,
                 modifier = Modifier.toolbarActions(),

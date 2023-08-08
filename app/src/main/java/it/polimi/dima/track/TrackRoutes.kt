@@ -8,6 +8,7 @@ const val TRAININGS_SCREEN = "TrainingsScreen"
 const val AGENDA_SCREEN = "AgendaScreen"
 const val PROFILE_SCREEN = "ProfileScreen"
 const val EDIT_TRAINING_SCREEN = "EditTrainingScreen"
+const val EDIT_REPETITIONS_SCREEN = "EditRepetitionsScreen"
 const val TRAINING_SCREEN = "TrainingScreen"
 
 

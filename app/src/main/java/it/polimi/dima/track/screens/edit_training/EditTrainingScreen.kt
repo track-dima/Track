@@ -7,45 +7,39 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.BasicField
 import it.polimi.dima.track.common.composable.CardSelector
 import it.polimi.dima.track.common.composable.RegularCardEditor
+import it.polimi.dima.track.common.composable.TrainingStepsListBox
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
-import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.model.Training
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
+import it.polimi.dima.track.model.Type
 
 @Composable
 fun EditTrainingScreen(
+  openScreen: (String) -> Unit,
   popUpScreen: () -> Unit,
   trainingId: String,
   modifier: Modifier = Modifier,
@@ -83,18 +77,11 @@ fun EditTrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
-    CardSelectors(training, viewModel::onTypeChange, viewModel::onFavouriteToggle)
+    CardSelectors(training, viewModel::onTypeChange, viewModel::onFavoriteToggle)
 
     Spacer(modifier = Modifier.spacer())
 
-    OutlinedCard(modifier = Modifier.fieldModifier().fillMaxWidth().height(200.dp)) {
-      FilledTonalIconButton(
-        modifier = Modifier.align(Alignment.End).padding(8.dp),
-        onClick = { /* doSomething() */ }
-      ) {
-        Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
-      }
-    }
+    TrainingStepsListBox(training, openScreen)
   }
 }
 
@@ -149,8 +136,8 @@ private fun CardSelectors(
     onTypeChange(newValue)
   }
 
-  val favouriteSelection = EditFavouriteOption.getByCheckedState(training.favourite).name
-  CardSelector(R.string.favourite, EditFavouriteOption.getOptions(), favouriteSelection, Modifier.card()) { newValue
+  val favouriteSelection = EditFavouriteOption.getByCheckedState(training.favorite).name
+  CardSelector(R.string.favorite, EditFavouriteOption.getOptions(), favouriteSelection, Modifier.card()) { newValue
     ->
     onFavouriteToggle(newValue)
   }

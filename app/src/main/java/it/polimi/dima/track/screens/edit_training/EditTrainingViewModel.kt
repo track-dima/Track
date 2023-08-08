@@ -52,9 +52,9 @@ class EditTrainingViewModel @Inject constructor(
     )
   }
 
-  fun onFavouriteToggle(newValue: String) {
-    val newFavouriteOption = EditFavouriteOption.getBooleanValue(newValue)
-    training.value = training.value.copy(favourite = newFavouriteOption)
+  fun onFavoriteToggle(newValue: String) {
+    val newFavoriteOption = EditFavouriteOption.getBooleanValue(newValue)
+    training.value = training.value.copy(favorite = newFavoriteOption)
   }
 
   fun onTypeChange(newValue: String) {
@@ -63,11 +63,11 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTask = training.value
-      if (editedTask.id.isBlank()) {
-        storageService.save(editedTask)
+      val editedTraining = training.value
+      if (editedTraining.id.isBlank()) {
+        storageService.save(editedTraining)
       } else {
-        storageService.update(editedTask)
+        storageService.update(editedTraining)
       }
       popUpScreen()
     }

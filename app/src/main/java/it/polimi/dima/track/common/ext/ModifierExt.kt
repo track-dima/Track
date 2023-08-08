@@ -34,7 +34,7 @@ fun Modifier.toolbarActions(): Modifier {
 }
 
 fun Modifier.spacer(): Modifier {
-  return this.fillMaxWidth().padding(12.dp)
+  return this.fillMaxWidth().height(24.dp)
 }
 
 fun Modifier.smallSpacer(): Modifier {

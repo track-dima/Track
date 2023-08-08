@@ -39,6 +39,7 @@ class AgendaViewModel @Inject constructor(
   fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
+      TrainingActionOption.CopyTraining -> Unit
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
       TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
@@ -46,7 +47,7 @@ class AgendaViewModel @Inject constructor(
   }
 
   private fun onFavouriteTrainingClick(training: Training) {
-    launchCatching { storageService.update(training.copy(favourite = !training.favourite)) }
+    launchCatching { storageService.update(training.copy(favorite = !training.favorite)) }
   }
 
   private fun onDeleteTaskClick(training: Training) {
