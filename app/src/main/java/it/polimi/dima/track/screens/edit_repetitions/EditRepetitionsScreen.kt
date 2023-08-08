@@ -13,14 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.DragIndicator
 import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material.icons.outlined.Timer
@@ -98,6 +96,12 @@ fun EditRepetitionsScreen(
     viewModel.initialize(trainingId)
   }
 
+  val openEditDialog = rememberSaveable { mutableStateOf(false) }
+  // TODO remember saveable
+  val currentStep = remember { mutableStateOf(TrainingStep()) }
+  val currentEditHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
+  val deleteOnDismissEdit = rememberSaveable { mutableStateOf(false) }
+
   Scaffold(
     floatingActionButton = {
       Row(
@@ -105,7 +109,11 @@ fun EditRepetitionsScreen(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
       ) {
         ExtendedFloatingActionButton(
-          onClick = { viewModel.onAddClick(listOf()) },
+          onClick = {
+            currentStep.value = viewModel.onAddClick(listOf())
+            openEditDialog.value = true
+            currentEditHierarchy.value = listOf()
+            deleteOnDismissEdit.value = true },
           icon = { Icon(Icons.Filled.Add, stringResource(R.string.add_repetition)) },
           text = { Text(text = stringResource(R.string.add_repetition)) },
         )
@@ -169,15 +177,14 @@ fun EditRepetitionsScreen(
       )
     }
 
-
-    val openEditDialog = rememberSaveable { mutableStateOf(false) }
-    // TODO remember saveable
-    val currentStep = remember { mutableStateOf(TrainingStep()) }
-    val currentEditHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
-
     if (openEditDialog.value) {
       EditStepDialog(
-        onDismissRequest = { openEditDialog.value = false },
+        onDismissRequest = {
+          openEditDialog.value = false
+          if (deleteOnDismissEdit.value) {
+            viewModel.onDeleteClick(currentEditHierarchy.value, currentStep.value)
+            deleteOnDismissEdit.value = false
+          } },
         onConfirm = {
           openEditDialog.value = false
           viewModel.onEditClick(currentEditHierarchy.value, currentStep.value)
@@ -234,7 +241,8 @@ fun EditRepetitionsScreen(
                 onEditClick = { _, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
-                  currentEditHierarchy.value = listOf() }
+                  currentEditHierarchy.value = listOf()
+                  deleteOnDismissEdit.value = false }
               )
               TrainingStep.Type.REPETITION -> RepetitionsCardContent(
                 trainingStep,
@@ -243,7 +251,8 @@ fun EditRepetitionsScreen(
                 onEditClick = { _, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
-                  currentEditHierarchy.value = listOf() },
+                  currentEditHierarchy.value = listOf()
+                  deleteOnDismissEdit.value = false },
               )
               TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockContent(
                 trainingStep,
@@ -251,8 +260,13 @@ fun EditRepetitionsScreen(
                 onEditClick = { hierarchy, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
-                  currentEditHierarchy.value = hierarchy },
-                onAddClick = { hierarchy -> viewModel.onAddClick(hierarchy) },
+                  currentEditHierarchy.value = hierarchy
+                  deleteOnDismissEdit.value = false },
+                onAddClick = { hierarchy ->
+                  openEditDialog.value = true
+                  currentStep.value = viewModel.onAddClick(hierarchy)
+                  currentEditHierarchy.value = hierarchy
+                  deleteOnDismissEdit.value = true },
                 onAddBlockClick = { hierarchy, repetitions -> viewModel.onAddBlockClick(hierarchy, repetitions) },
                 onRepetitionsClick = { hierarchy, repetitions ->
                   openRepetitionsDialog.value = true
@@ -265,7 +279,8 @@ fun EditRepetitionsScreen(
                   currentRecoverDistance.value = recoverDistance
                   currentRecoverDistanceUnit.value = recoverDistanceUnit
                   currentHierarchy.value = hierarchy },
-                onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) }
+                onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) },
+                level = 1
               )
             }
           }
@@ -417,6 +432,7 @@ fun RepetitionBlockContent(
     onRepetitionsClick: (List<String>, Int) -> Unit,
     onRecoverClick: (List<String>, String, Int, Int, String) -> Unit,
     onMove: (List<String>, ItemPosition, ItemPosition) -> Unit,
+    level: Int
 ) {
   val tree = repetitionBlock.calculateTree()
 
@@ -495,7 +511,8 @@ fun RepetitionBlockContent(
               onAddBlockClick = { descendants, repetitions -> onAddBlockClick(listOf(repetitionBlock.id) + descendants, repetitions) },
               onRepetitionsClick = { descendants, repetitions -> onRepetitionsClick(listOf(repetitionBlock.id) + descendants, repetitions) },
               onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit -> onRecoverClick(listOf(repetitionBlock.id) + descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit) },
-              onMove = { descendants, from, to -> onMove(listOf(repetitionBlock.id) + descendants, from, to) }
+              onMove = { descendants, from, to -> onMove(listOf(repetitionBlock.id) + descendants, from, to) },
+              level = level + 1
             )
           }
         }
@@ -503,7 +520,8 @@ fun RepetitionBlockContent(
     }
     AddButtons(
       onAddClick = { _ -> onAddClick(listOf(repetitionBlock.id)) },
-      onAddBlockClick = { _, repetitions -> onAddBlockClick(listOf(repetitionBlock.id), repetitions) }
+      onAddBlockClick = { _, repetitions -> onAddBlockClick(listOf(repetitionBlock.id), repetitions) },
+      repetitionsBlockAllowed = level < 2
     )
   }
 }
@@ -640,7 +658,8 @@ fun DeleteDialog(
 @Composable
 fun AddButtons(
   onAddClick: (List<String>) -> Unit,
-  onAddBlockClick: (List<String>, Int) -> Unit
+  onAddBlockClick: (List<String>, Int) -> Unit,
+  repetitionsBlockAllowed: Boolean
 ) {
   BoxWithConstraints {
     val availableWidth = with(LocalDensity.current) { constraints.maxWidth.toDp() }
@@ -669,21 +688,23 @@ fun AddButtons(
           )
         }
       }
-      FilledTonalIconButton(
-        onClick = { onAddBlockClick(listOf(), 3) }
-      ) {
-        Text(text = "3x")
-      }
-      FilledTonalIconButton(
-        onClick = { onAddBlockClick(listOf(), 5) }
-      ) {
-        Text(text = "5x")
-      }
-      if (isEnoughSpaceForIcon) {
+      if (repetitionsBlockAllowed) {
         FilledTonalIconButton(
-          onClick = { onAddBlockClick(listOf(), 10) }
+          onClick = { onAddBlockClick(listOf(), 3) }
         ) {
-          Text(text = "10x")
+          Text(text = "3x")
+        }
+        FilledTonalIconButton(
+          onClick = { onAddBlockClick(listOf(), 5) }
+        ) {
+          Text(text = "5x")
+        }
+        if (isEnoughSpaceForIcon) {
+          FilledTonalIconButton(
+            onClick = { onAddBlockClick(listOf(), 10) }
+          ) {
+            Text(text = "10x")
+          }
         }
       }
     }
