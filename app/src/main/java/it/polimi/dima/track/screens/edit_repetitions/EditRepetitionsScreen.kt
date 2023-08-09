@@ -309,6 +309,7 @@ fun EditRepetitionsScreen(
                   currentIsExtraRecover.value = extraRecover
                 },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) },
+                lastStep = trainingStep.id == trainingSteps.last().id,
                 level = 1
               )
             }

@@ -205,7 +205,7 @@ fun RepetitionsCard(
 
 @Composable
 fun RepetitionBlockCard(
-   repetitionBlock: TrainingStep,
+  repetitionBlock: TrainingStep,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onAddClick: (List<String>) -> Unit = { _ -> },
@@ -214,6 +214,7 @@ fun RepetitionBlockCard(
   onRecoverClick: (List<String>, String, Int, Int, String, Boolean) -> Unit = { _, _, _, _, _, _ -> },
   onMove: (List<String>, ItemPosition, ItemPosition) -> Unit = { _, _, _ -> },
   readOnly: Boolean = false,
+  lastStep: Boolean = false,
   level: Int = 0
 ) {
   val tree = repetitionBlock.calculateTree()
@@ -271,28 +272,30 @@ fun RepetitionBlockCard(
             else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}"
           )
         }
-        TextButton(
-          onClick = {
-            onRecoverClick(
-              listOf(repetitionBlock.id),
-              repetitionBlock.extraRecoverType,
-              repetitionBlock.extraRecoverDuration,
-              repetitionBlock.extraRecoverDistance,
-              repetitionBlock.extraRecoverDistanceUnit,
-              true
+        if (!lastStep) {
+          TextButton(
+            onClick = {
+              onRecoverClick(
+                listOf(repetitionBlock.id),
+                repetitionBlock.extraRecoverType,
+                repetitionBlock.extraRecoverDuration,
+                repetitionBlock.extraRecoverDistance,
+                repetitionBlock.extraRecoverDistanceUnit,
+                true
+              )
+            }
+          ) {
+            Icon(
+              Icons.Rounded.MoreTime,
+              contentDescription = stringResource(R.string.extra_recover),
+              modifier = Modifier.padding(end = 4.dp)
+            )
+            Text(
+              text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
+                secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
+              else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
             )
           }
-        ) {
-          Icon(
-            Icons.Rounded.MoreTime,
-            contentDescription = stringResource(R.string.extra_recover),
-            modifier = Modifier.padding(end = 4.dp)
-          )
-          Text(
-            text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
-              secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
-            else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
-          )
         }
       }
     }
@@ -408,6 +411,7 @@ fun RepetitionBlockCard(
                     to
                   )
                 },
+                lastStep = trainingStep.id == repetitionBlock.stepsInRepetition.last().id,
                 level = level + 1
               )
             }
@@ -645,7 +649,8 @@ fun ReadOnlyStepsList(
 
         TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
           repetitionBlock = trainingStep,
-          readOnly = true
+          readOnly = true,
+          lastStep = trainingStep.id == trainingSteps.last().id
         )
       }
     }
@@ -669,7 +674,7 @@ fun TrainingStepsListBox(
   ) {
     Scaffold(
       floatingActionButton = {
-        Row (
+        Row(
           modifier = Modifier
             .fillMaxHeight()
             .padding(end = 8.dp, top = 40.dp),
@@ -680,16 +685,21 @@ fun TrainingStepsListBox(
             onClick = {
               if (filling) {
                 openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
-              }
-              else {
+              } else {
                 // TODO save training
                 openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
               }
             },
           ) {
             if (filling)
-              Icon(Icons.Rounded.InsertChartOutlined, contentDescription = stringResource(R.string.fill_training))
-            else Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
+              Icon(
+                Icons.Rounded.InsertChartOutlined,
+                contentDescription = stringResource(R.string.fill_training)
+              )
+            else Icon(
+              Icons.Rounded.Edit,
+              contentDescription = stringResource(R.string.edit_repetitions)
+            )
           }
         }
       },
