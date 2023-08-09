@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,68 +17,97 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.screens.training.TrainingActionOption
 import it.polimi.dima.track.screens.training.TrainingCard
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AgendaScreen(
-    openScreen: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    navigationType: NavigationType,
-    viewModel: AgendaViewModel = hiltViewModel(),
-    onTrainingPressed: (Training) -> Unit
+  openScreen: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  navigationType: NavigationType,
+  viewModel: AgendaViewModel = hiltViewModel(),
+  onTrainingPressed: (Training) -> Unit
 ) {
-    Scaffold(
-        floatingActionButton = {
-            if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
-                LargeFloatingActionButton(
-                    onClick = { viewModel.onAddClick(openScreen) },
-                    modifier = modifier.padding(16.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Add,
-                        modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
-                        contentDescription = stringResource(id = R.string.add_training),
-                    )
-                }
-            }
+  val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
+  val currentTraining = rememberSaveable { mutableStateOf("") }
+
+  if (openDeleteDialog.value) {
+    DeleteDialog(
+      title = stringResource(R.string.delete_training),
+      text = stringResource(R.string.delete_training_confirmation),
+      onDeleteClick = {
+        openDeleteDialog.value = false
+        viewModel.onDeleteTaskClick(currentTraining.value)
+      },
+      onDismissRequest = { openDeleteDialog.value = false }
+    )
+  }
+
+  Scaffold(
+    floatingActionButton = {
+      if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+        LargeFloatingActionButton(
+          onClick = { viewModel.onAddClick(openScreen) },
+          modifier = modifier.padding(16.dp)
+        ) {
+          Icon(
+            Icons.Filled.Add,
+            modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
+            contentDescription = stringResource(id = R.string.add_training),
+          )
         }
-    ) {
-        val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
-
-        // TODO is this sorting efficient?
-        val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
-        val options by viewModel.options
-
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-            ActionToolbar(
-                title = R.string.agenda,
-                modifier = Modifier.toolbarActions(),
-                endActionIcon = Icons.Default.Settings,
-                endActionDescription = R.string.settings,
-                endAction = { viewModel.onSettingsClick(openScreen) }
-            )
-
-            Spacer(modifier = Modifier.smallSpacer())
-
-            LazyColumn {
-                items(sortedTrainings, key = { it.id }) { trainingItem ->
-                    TrainingCard(
-                        training = trainingItem,
-                        options = options,
-                        onCheckChange = { viewModel.onTrainingCheckChange(trainingItem) },
-                        onClick = { onTrainingPressed(trainingItem) },
-                        onActionClick = { action -> viewModel.onTrainingActionClick(openScreen, trainingItem, action) }
-                    )
-                }
-            }
-        }
+      }
     }
+  ) {
+    val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
 
-    LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
+    // TODO is this sorting efficient?
+    val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
+    val options by viewModel.options
+
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+    ) {
+      ActionToolbar(
+        title = R.string.agenda,
+        modifier = Modifier.toolbarActions(),
+        endActionIcon = Icons.Default.Settings,
+        endActionDescription = R.string.settings,
+        endAction = { viewModel.onSettingsClick(openScreen) }
+      )
+
+      Spacer(modifier = Modifier.smallSpacer())
+
+      LazyColumn {
+        items(sortedTrainings, key = { it.id }) { trainingItem ->
+          TrainingCard(
+            training = trainingItem,
+            options = options,
+            onCheckChange = { viewModel.onTrainingCheckChange(trainingItem) },
+            onClick = { onTrainingPressed(trainingItem) },
+            onActionClick = { action ->
+              when (TrainingActionOption.getByTitle(action)) {
+                TrainingActionOption.DeleteTask -> {
+                  currentTraining.value = trainingItem.id
+                  openDeleteDialog.value = true
+                }
+                else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action)
+              }
+            }
+          )
+        }
+      }
+    }
+  }
+
+  LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
 }

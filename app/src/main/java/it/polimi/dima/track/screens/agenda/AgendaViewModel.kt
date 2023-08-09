@@ -42,7 +42,7 @@ class AgendaViewModel @Inject constructor(
       TrainingActionOption.CopyTraining -> Unit
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
-      TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
+      else -> {}
     }
   }
 
@@ -50,8 +50,8 @@ class AgendaViewModel @Inject constructor(
     launchCatching { storageService.update(training.copy(favorite = !training.favorite)) }
   }
 
-  private fun onDeleteTaskClick(training: Training) {
-    launchCatching { storageService.delete(training.id) }
+  fun onDeleteTaskClick(trainingId: String) {
+    launchCatching { storageService.delete(trainingId) }
   }
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
