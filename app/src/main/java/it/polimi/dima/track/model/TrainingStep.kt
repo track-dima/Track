@@ -12,8 +12,13 @@ data class TrainingStep(
   val recoverDistance: Int = 0,
   val recoverDistanceUnit: String = "m",
   val recoverDuration: Int = 0,
+  val extraRecoverType: String = "",
+  val extraRecoverDistance: Int = 0,
+  val extraRecoverDistanceUnit: String = "m",
+  val extraRecoverDuration: Int = 0,
   val repetitions: Int = 0,
-  val stepsInRepetition: List<TrainingStep> = listOf()
+  val stepsInRepetition: List<TrainingStep> = listOf(),
+  val results: List<String> = listOf()
 ) {
 
   fun calculateTree(): Pair<Int, Int> {

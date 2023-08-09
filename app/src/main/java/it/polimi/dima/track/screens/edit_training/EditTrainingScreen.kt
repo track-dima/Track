@@ -86,7 +86,11 @@ fun EditTrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
 
-    TrainingStepsListBox(training, openScreen)
+    TrainingStepsListBox(
+      training = training,
+      filling = false,
+      openScreen = openScreen
+    )
   }
 }
 

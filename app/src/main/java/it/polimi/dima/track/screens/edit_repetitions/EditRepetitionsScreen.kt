@@ -141,9 +141,15 @@ fun EditRepetitionsScreen(
     val currentRecoverDuration = rememberSaveable { mutableStateOf(0) }
     val currentRecoverDistance = rememberSaveable { mutableStateOf(0) }
     val currentRecoverDistanceUnit = rememberSaveable { mutableStateOf("m") }
+    val currentIsExtraRecover = rememberSaveable { mutableStateOf(false) }
 
     if (openRecoverDialog.value) {
       RecoverSelectionDialog(
+        title = if (currentIsExtraRecover.value) {
+          "Recover after block"
+        } else {
+          "In between recover"
+        },
         onDismissRequest = { openRecoverDialog.value = false },
         onConfirm = { recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
           openRecoverDialog.value = false
@@ -152,7 +158,8 @@ fun EditRepetitionsScreen(
             recoverType,
             recoverDuration,
             recoverDistance,
-            recoverDistanceUnit
+            recoverDistanceUnit,
+            currentIsExtraRecover.value
           )
         },
         currentRecoverType = currentRecoverType.value,
@@ -292,13 +299,14 @@ fun EditRepetitionsScreen(
                   currentRepetitions.value = repetitions
                   currentHierarchy.value = hierarchy
                 },
-                onRecoverClick = { hierarchy, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
+                onRecoverClick = { hierarchy, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit, extraRecover ->
                   openRecoverDialog.value = true
                   currentRecoverType.value = recoverType
                   currentRecoverDuration.value = recoverDuration
                   currentRecoverDistance.value = recoverDistance
                   currentRecoverDistanceUnit.value = recoverDistanceUnit
                   currentHierarchy.value = hierarchy
+                  currentIsExtraRecover.value = extraRecover
                 },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) },
                 level = 1
@@ -542,6 +550,7 @@ fun RepetitionsSelectionDialog(
 
 @Composable
 fun RecoverSelectionDialog(
+  title : String,
   onDismissRequest: () -> Unit,
   onConfirm: (String, Int, Int, String) -> Unit,
   currentRecoverType: String,
@@ -560,7 +569,7 @@ fun RecoverSelectionDialog(
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = {
-      Text(text = "In between recover")
+      Text(text = title)
     },
     text = {
       Surface(modifier = Modifier.height(220.dp)) {

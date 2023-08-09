@@ -207,7 +207,11 @@ fun TrainingScreen(
 
     Spacer(modifier = Modifier.spacer())
 
-    TrainingStepsListBox(training, openScreen)
+    TrainingStepsListBox(
+      training = training,
+      filling = true,
+      openScreen = openScreen
+    )
   }
 
   LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }

@@ -13,11 +13,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AvTimer
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.DirectionsWalk
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.InsertChartOutlined
+import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.AlertDialog
@@ -49,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
+import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.fieldModifier
@@ -201,13 +205,13 @@ fun RepetitionsCard(
 
 @Composable
 fun RepetitionBlockCard(
-  repetitionBlock: TrainingStep,
+   repetitionBlock: TrainingStep,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onAddClick: (List<String>) -> Unit = { _ -> },
   onAddBlockClick: (List<String>, Int) -> Unit = { _, _ -> },
   onRepetitionsClick: (List<String>, Int) -> Unit = { _, _ -> },
-  onRecoverClick: (List<String>, String, Int, Int, String) -> Unit = { _, _, _, _, _ -> },
+  onRecoverClick: (List<String>, String, Int, Int, String, Boolean) -> Unit = { _, _, _, _, _, _ -> },
   onMove: (List<String>, ItemPosition, ItemPosition) -> Unit = { _, _, _ -> },
   readOnly: Boolean = false,
   level: Int = 0
@@ -242,7 +246,7 @@ fun RepetitionBlockCard(
             contentDescription = stringResource(R.string.repetitions),
             modifier = Modifier.padding(end = 4.dp)
           )
-          Text(text = repetitionBlock.repetitions.toString() + " times")
+          Text(text = repetitionBlock.repetitions.toString())
         }
         TextButton(
           onClick = {
@@ -251,7 +255,8 @@ fun RepetitionBlockCard(
               repetitionBlock.recoverType,
               repetitionBlock.recoverDuration,
               repetitionBlock.recoverDistance,
-              repetitionBlock.recoverDistanceUnit
+              repetitionBlock.recoverDistanceUnit,
+              false
             )
           }
         ) {
@@ -261,10 +266,32 @@ fun RepetitionBlockCard(
             modifier = Modifier.padding(end = 4.dp)
           )
           Text(
-            text = (if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
+            text = if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
               secondsToHhMmSs(repetitionBlock.recoverDuration)
-            else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}")
-                + " in between"
+            else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}"
+          )
+        }
+        TextButton(
+          onClick = {
+            onRecoverClick(
+              listOf(repetitionBlock.id),
+              repetitionBlock.extraRecoverType,
+              repetitionBlock.extraRecoverDuration,
+              repetitionBlock.extraRecoverDistance,
+              repetitionBlock.extraRecoverDistanceUnit,
+              true
+            )
+          }
+        ) {
+          Icon(
+            Icons.Rounded.MoreTime,
+            contentDescription = stringResource(R.string.extra_recover),
+            modifier = Modifier.padding(end = 4.dp)
+          )
+          Text(
+            text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
+              secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
+            else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
           )
         }
       }
@@ -364,13 +391,14 @@ fun RepetitionBlockCard(
                     ) + descendants, repetitions
                   )
                 },
-                onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
+                onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit, extraRecover ->
                   onRecoverClick(
                     listOf(repetitionBlock.id) + descendants,
                     recoverType,
                     recoverDuration,
                     recoverDistance,
-                    recoverDistanceUnit
+                    recoverDistanceUnit,
+                    extraRecover
                   )
                 },
                 onMove = { descendants, from, to ->
@@ -628,6 +656,7 @@ fun ReadOnlyStepsList(
 @Composable
 fun TrainingStepsListBox(
   training: Training,
+  filling: Boolean = false,
   openScreen: (String) -> Unit
 ) {
   val tree = training.calculateTree()
@@ -640,13 +669,28 @@ fun TrainingStepsListBox(
   ) {
     Scaffold(
       floatingActionButton = {
-        FloatingActionButton(
-          onClick = {
-            // TODO save training
-            openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
-          },
+        Row (
+          modifier = Modifier
+            .fillMaxHeight()
+            .padding(end = 8.dp, top = 40.dp),
+          verticalAlignment = Alignment.Top
         ) {
-          Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
+          FloatingActionButton(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            onClick = {
+              if (filling) {
+                openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+              }
+              else {
+                // TODO save training
+                openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+              }
+            },
+          ) {
+            if (filling)
+              Icon(Icons.Rounded.InsertChartOutlined, contentDescription = stringResource(R.string.fill_training))
+            else Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
+          }
         }
       },
       floatingActionButtonPosition = FabPosition.End

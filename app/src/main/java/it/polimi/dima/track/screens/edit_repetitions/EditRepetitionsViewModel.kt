@@ -84,7 +84,9 @@ class EditRepetitionsViewModel @Inject constructor(
       repetitions = repetitions,
       recover = true,
       recoverType = TrainingStep.DurationType.TIME,
-      recoverDuration = 300,
+      recoverDuration = 180,
+      extraRecoverType = TrainingStep.DurationType.TIME,
+      extraRecoverDuration = 300,
     )
 
     return if (hierarchy.isEmpty()) {
@@ -239,7 +241,8 @@ class EditRepetitionsViewModel @Inject constructor(
     recoverType: String,
     recoverDuration: Int,
     recoverDistance: Int,
-    recoverDistanceUnit: String
+    recoverDistanceUnit: String,
+    extraRecover: Boolean,
   ) {
     trainingSteps.value = onEditRecoverClickHelper(
       hierarchy,
@@ -247,7 +250,8 @@ class EditRepetitionsViewModel @Inject constructor(
       recoverType,
       recoverDuration,
       recoverDistance,
-      recoverDistanceUnit
+      recoverDistanceUnit,
+      extraRecover
     )
   }
 
@@ -257,17 +261,28 @@ class EditRepetitionsViewModel @Inject constructor(
     recoverType: String,
     recoverDuration: Int,
     recoverDistance: Int,
-    recoverDistanceUnit: String
+    recoverDistanceUnit: String,
+    extraRecover: Boolean,
   ): List<TrainingStep> {
     return if (hierarchy.size == 1) {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(
-            recoverType = recoverType,
-            recoverDuration = recoverDuration,
-            recoverDistance = recoverDistance,
-            recoverDistanceUnit = recoverDistanceUnit,
-          )
+          if (extraRecover) {
+            it.copy(
+              extraRecoverType = recoverType,
+              extraRecoverDuration = recoverDuration,
+              extraRecoverDistance = recoverDistance,
+              extraRecoverDistanceUnit = recoverDistanceUnit,
+            )
+          }
+          else {
+            it.copy(
+              recoverType = recoverType,
+              recoverDuration = recoverDuration,
+              recoverDistance = recoverDistance,
+              recoverDistanceUnit = recoverDistanceUnit,
+            )
+          }
         } else {
           it
         }
@@ -282,7 +297,8 @@ class EditRepetitionsViewModel @Inject constructor(
               recoverType,
               recoverDuration,
               recoverDistance,
-              recoverDistanceUnit
+              recoverDistanceUnit,
+              extraRecover
             )
           )
         } else {
