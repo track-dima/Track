@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +36,6 @@ import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMm
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
-import it.polimi.dima.track.ui.theme.BrightYellow
 import it.polimi.dima.track.ui.theme.DarkOrange
 import it.polimi.dima.track.ui.theme.DarkRed
 import java.util.Calendar
@@ -92,8 +90,14 @@ fun TrainingCard(
                 contentDescription = stringResource(id = R.string.favorite),
               )
             }
-            Text(text = training.calculateRepetitions().toString() + " repetitions", style = MaterialTheme.typography.titleSmall)
-            Text(text = "~${secondsToHhMm(training.calculateTotalTime())}h", style = MaterialTheme.typography.titleSmall)
+            Text(
+              text = training.calculateRepetitions().toString() + " repetitions",
+              style = MaterialTheme.typography.titleSmall
+            )
+            Text(
+              text = "~${secondsToHhMm(training.calculateTotalTime())}h",
+              style = MaterialTheme.typography.titleSmall
+            )
             if (training.type.isNotEmpty() && training.type != Type.None.name) {
               Text(text = training.type, style = MaterialTheme.typography.titleSmall)
             }

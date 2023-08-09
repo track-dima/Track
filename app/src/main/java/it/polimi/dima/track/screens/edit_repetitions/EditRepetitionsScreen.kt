@@ -62,6 +62,7 @@ import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EditRepetitionsScreen(
   popUpScreen: () -> Unit,
@@ -94,7 +95,8 @@ fun EditRepetitionsScreen(
             currentStep.value = viewModel.onAddClick(listOf())
             openEditDialog.value = true
             currentEditHierarchy.value = listOf()
-            deleteOnDismissEdit.value = true },
+            deleteOnDismissEdit.value = true
+          },
           icon = { Icon(Icons.Filled.Add, stringResource(R.string.add_repetition)) },
           text = { Text(text = stringResource(R.string.add_repetition)) },
         )
@@ -128,7 +130,8 @@ fun EditRepetitionsScreen(
           viewModel.onEditRepetitionsClick(
             currentHierarchy.value,
             repetitionsPickerState.selectedItem.toInt()
-          ) },
+          )
+        },
         currentRepetitions = currentRepetitions.value,
         repetitionsPickerState = repetitionsPickerState,
       )
@@ -150,7 +153,8 @@ fun EditRepetitionsScreen(
             recoverDuration,
             recoverDistance,
             recoverDistanceUnit
-          )  },
+          )
+        },
         currentRecoverType = currentRecoverType.value,
         currentRecoverDuration = currentRecoverDuration.value,
         currentRecoverDistance = currentRecoverDistance.value,
@@ -165,11 +169,12 @@ fun EditRepetitionsScreen(
           if (deleteOnDismissEdit.value) {
             viewModel.onDeleteClick(currentEditHierarchy.value, currentStep.value)
             deleteOnDismissEdit.value = false
-          } },
+          }
+        },
         onConfirm = {
           openEditDialog.value = false
           viewModel.onEditClick(currentEditHierarchy.value, currentStep.value)
-                    },
+        },
         currentStep = currentStep
       )
     }
@@ -210,56 +215,91 @@ fun EditRepetitionsScreen(
             when (trainingStep.type) {
               TrainingStep.Type.WARM_UP -> WarmUpCard(
                 trainingStep,
-                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
-                onEditClick = { _, trainingStep ->
-                  openEditDialog.value = true
-                  currentStep.value = trainingStep
-                  currentEditHierarchy.value = listOf() }
-              )
-              TrainingStep.Type.COOL_DOWN -> CoolDownCard(
-                trainingStep,
-                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
+                onDeleteClick = { _, trainingStep ->
+                  viewModel.onDeleteClick(
+                    listOf(),
+                    trainingStep
+                  )
+                },
                 onEditClick = { _, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
                   currentEditHierarchy.value = listOf()
-                  deleteOnDismissEdit.value = false }
+                }
               )
+
+              TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+                trainingStep,
+                onDeleteClick = { _, trainingStep ->
+                  viewModel.onDeleteClick(
+                    listOf(),
+                    trainingStep
+                  )
+                },
+                onEditClick = { _, trainingStep ->
+                  openEditDialog.value = true
+                  currentStep.value = trainingStep
+                  currentEditHierarchy.value = listOf()
+                  deleteOnDismissEdit.value = false
+                }
+              )
+
               TrainingStep.Type.REPETITION -> RepetitionsCard(
                 trainingStep,
                 showRecover = trainingStep.id != trainingSteps.last().id,
-                onDeleteClick = { _, trainingStep -> viewModel.onDeleteClick(listOf(), trainingStep) },
+                onDeleteClick = { _, trainingStep ->
+                  viewModel.onDeleteClick(
+                    listOf(),
+                    trainingStep
+                  )
+                },
                 onEditClick = { _, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
                   currentEditHierarchy.value = listOf()
-                  deleteOnDismissEdit.value = false },
+                  deleteOnDismissEdit.value = false
+                },
               )
+
               TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
                 trainingStep,
-                onDeleteClick = { hierarchy, trainingStep -> viewModel.onDeleteClick(hierarchy, trainingStep) },
+                onDeleteClick = { hierarchy, trainingStep ->
+                  viewModel.onDeleteClick(
+                    hierarchy,
+                    trainingStep
+                  )
+                },
                 onEditClick = { hierarchy, trainingStep ->
                   openEditDialog.value = true
                   currentStep.value = trainingStep
                   currentEditHierarchy.value = hierarchy
-                  deleteOnDismissEdit.value = false },
+                  deleteOnDismissEdit.value = false
+                },
                 onAddClick = { hierarchy ->
                   openEditDialog.value = true
                   currentStep.value = viewModel.onAddClick(hierarchy)
                   currentEditHierarchy.value = hierarchy
-                  deleteOnDismissEdit.value = true },
-                onAddBlockClick = { hierarchy, repetitions -> viewModel.onAddBlockClick(hierarchy, repetitions) },
+                  deleteOnDismissEdit.value = true
+                },
+                onAddBlockClick = { hierarchy, repetitions ->
+                  viewModel.onAddBlockClick(
+                    hierarchy,
+                    repetitions
+                  )
+                },
                 onRepetitionsClick = { hierarchy, repetitions ->
                   openRepetitionsDialog.value = true
                   currentRepetitions.value = repetitions
-                  currentHierarchy.value = hierarchy },
+                  currentHierarchy.value = hierarchy
+                },
                 onRecoverClick = { hierarchy, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
                   openRecoverDialog.value = true
                   currentRecoverType.value = recoverType
                   currentRecoverDuration.value = recoverDuration
                   currentRecoverDistance.value = recoverDistance
                   currentRecoverDistanceUnit.value = recoverDistanceUnit
-                  currentHierarchy.value = hierarchy },
+                  currentHierarchy.value = hierarchy
+                },
                 onMove = { hierarchy, from, to -> viewModel.moveStep(hierarchy, from, to) },
                 level = 1
               )
@@ -374,11 +414,11 @@ fun DistanceSelectionDialog(
     },
     text = {
       DistanceSelectionDialogContent(
-          distanceSelection,
-          distanceUnitSelection,
-          mostSignificantDigitPickerState,
-          leastSignificantDigitsPickerState,
-          measurementPickerState
+        distanceSelection,
+        distanceUnitSelection,
+        mostSignificantDigitPickerState,
+        leastSignificantDigitsPickerState,
+        measurementPickerState
       )
     },
     confirmButton = {
@@ -549,8 +589,7 @@ fun RecoverSelectionDialog(
               minutePickerState = durationMinutePickerState,
               secondPickerState = durationSecondPickerState
             )
-          }
-          else {
+          } else {
             DistanceSelectionDialogContent(
               distanceSelection = currentRecoverDistance,
               distanceUnitSelection = currentRecoverDistanceUnit,
@@ -564,18 +603,20 @@ fun RecoverSelectionDialog(
     },
     confirmButton = {
       TextButton(
-        onClick = { onConfirm(
-          recoverType.value,
-          if (recoverType.value == TrainingStep.DurationType.TIME)
-            durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
-          else currentRecoverDuration,
-          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
-            distanceMostSignificantDigitPickerState.selectedItem.toInt() * 100 + distanceLeastSignificantDigitsPickerState.selectedItem.toInt()
-          else currentRecoverDistance,
-          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
-            distanceMeasurementPickerState.selectedItem
-          else currentRecoverDistanceUnit
-        ) }
+        onClick = {
+          onConfirm(
+            recoverType.value,
+            if (recoverType.value == TrainingStep.DurationType.TIME)
+              durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
+            else currentRecoverDuration,
+            if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+              distanceMostSignificantDigitPickerState.selectedItem.toInt() * 100 + distanceLeastSignificantDigitsPickerState.selectedItem.toInt()
+            else currentRecoverDistance,
+            if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+              distanceMeasurementPickerState.selectedItem
+            else currentRecoverDistanceUnit
+          )
+        }
       ) {
         Text("Confirm")
       }
@@ -591,12 +632,12 @@ fun RecoverSelectionDialog(
 }
 
 @Composable
-fun EditStepDialog (
+fun EditStepDialog(
   onDismissRequest: () -> Unit,
   onConfirm: () -> Unit,
   currentStep: MutableState<TrainingStep>
 ) {
-  FullScreenDialog (
+  FullScreenDialog(
     onDismissRequest = onDismissRequest,
     onConfirm = onConfirm,
     title = stringResource(id = R.string.edit_repetition),
@@ -614,7 +655,7 @@ fun EditStepDialog (
       ) { newValue -> currentStep.value = currentStep.value.copy(type = newValue) }
 
       Divider(
-        modifier = Modifier.padding(top = 8.dp, bottom =  16.dp)
+        modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
       )
 
       CardSelector(
@@ -627,7 +668,12 @@ fun EditStepDialog (
       if (currentStep.value.durationType == TrainingStep.DurationType.TIME) {
         val openTimeDialog = rememberSaveable { mutableStateOf(false) }
 
-        RegularCardEditor(R.string.duration, R.drawable.ic_clock, secondsToHhMmSs(currentStep.value.duration), Modifier.card()) {
+        RegularCardEditor(
+          R.string.duration,
+          R.drawable.ic_clock,
+          secondsToHhMmSs(currentStep.value.duration),
+          Modifier.card()
+        ) {
           openTimeDialog.value = true
         }
 
@@ -655,7 +701,12 @@ fun EditStepDialog (
         val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
 
         // TODO change icon
-        RegularCardEditor(R.string.distance, R.drawable.ic_clock, "${currentStep.value.distance} ${currentStep.value.distanceUnit}", Modifier.card()) {
+        RegularCardEditor(
+          R.string.distance,
+          R.drawable.ic_clock,
+          "${currentStep.value.distance} ${currentStep.value.distanceUnit}",
+          Modifier.card()
+        ) {
           openDistanceDialog.value = true
         }
 
@@ -686,20 +737,28 @@ fun EditStepDialog (
 
       if (currentStep.value.type == TrainingStep.Type.REPETITION) {
         Divider(
-          modifier = Modifier.padding(top = 8.dp, bottom =  16.dp)
+          modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
         )
 
         CardSelector(
           label = R.string.recover_type,
-          options = TrainingStep.DurationType.getOptions(),
+          options = TrainingStep.DurationType.getFullOptions(),
           selection = recoverTypeSelection,
           modifier = Modifier.card()
-        ) { newValue -> currentStep.value = currentStep.value.copy(recoverType = newValue) }
+        ) { newValue -> currentStep.value = currentStep.value.copy(
+          recoverType = newValue,
+          recover = newValue != TrainingStep.DurationType.NONE
+        ) }
 
         if (currentStep.value.recoverType == TrainingStep.DurationType.TIME) {
           val openTimeDialog = rememberSaveable { mutableStateOf(false) }
 
-          RegularCardEditor(R.string.recover_duration, R.drawable.ic_clock, secondsToHhMmSs(currentStep.value.recoverDuration), Modifier.card()) {
+          RegularCardEditor(
+            R.string.recover_duration,
+            R.drawable.ic_clock,
+            secondsToHhMmSs(currentStep.value.recoverDuration),
+            Modifier.card()
+          ) {
             openTimeDialog.value = true
           }
 
@@ -723,11 +782,16 @@ fun EditStepDialog (
               secondPickerState = durationSecondPickerState
             )
           }
-        } else {
+        } else if (currentStep.value.recoverType == TrainingStep.DurationType.DISTANCE) {
           val openDistanceDialog = rememberSaveable { mutableStateOf(false) }
 
           // TODO change icon
-          RegularCardEditor(R.string.distance, R.drawable.ic_clock, "${currentStep.value.recoverDistance} ${currentStep.value.recoverDistanceUnit}", Modifier.card()) {
+          RegularCardEditor(
+            R.string.distance,
+            R.drawable.ic_clock,
+            "${currentStep.value.recoverDistance} ${currentStep.value.recoverDistanceUnit}",
+            Modifier.card()
+          ) {
             openDistanceDialog.value = true
           }
 

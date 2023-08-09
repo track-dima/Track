@@ -23,9 +23,10 @@ data class TrainingStep(
     } else if (stepsInRepetition.isEmpty()) {
       Pair(1, 0)
     } else {
-      val (normalSteps, repetitionBlocks) = stepsInRepetition.map { it.calculateTree() }.reduce { acc, pair ->
-        Pair(acc.first + pair.first, acc.second + pair.second)
-      }
+      val (normalSteps, repetitionBlocks) = stepsInRepetition.map { it.calculateTree() }
+        .reduce { acc, pair ->
+          Pair(acc.first + pair.first, acc.second + pair.second)
+        }
       Pair(normalSteps, repetitionBlocks + 1)
     }
 
@@ -89,8 +90,17 @@ data class TrainingStep(
         return options
       }
 
+      fun getFullOptions(): List<String> {
+        val options = mutableListOf<String>()
+        options.add(TIME)
+        options.add(DISTANCE)
+        options.add(NONE)
+        return options
+      }
+
       const val TIME = "Time"
       const val DISTANCE = "Distance"
+      const val NONE = "None"
     }
   }
 

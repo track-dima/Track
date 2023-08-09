@@ -64,600 +64,601 @@ import org.burnoutcrew.reorderable.reorderable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarmUpCard(
-    trainingStep: TrainingStep,
-    onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    readOnly: Boolean = false
+  trainingStep: TrainingStep,
+  onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  readOnly: Boolean = false
 ) {
-    Card(
-        modifier = Modifier
-            .fieldModifier()
-            .fillMaxWidth()
-            .height(70.dp),
-        onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+  Card(
+    modifier = Modifier
+        .fieldModifier()
+        .fillMaxWidth()
+        .height(70.dp),
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.secondaryContainer
+    )
+  ) {
+    StepCardHeader(
+      modifier = Modifier.fillMaxHeight(),
+      stepType = TrainingStep.Type.WARM_UP,
+      onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
+      readOnly = readOnly
     ) {
-        StepCardHeader(
-            modifier = Modifier.fillMaxHeight(),
-            stepType = TrainingStep.Type.WARM_UP,
-            onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
-            readOnly = readOnly
-        ) {
-            Column(
-                modifier = Modifier.padding(8.dp, 0.dp)
-            ) {
-                Row {
-                    Text(text = stringResource(id = R.string.warm_up))
-                }
-                Row {
-                    Text(
-                        text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-                            secondsToHhMmSs(trainingStep.duration)
-                        else "${trainingStep.distance} ${trainingStep.distanceUnit}",
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+      Column(
+        modifier = Modifier.padding(8.dp, 0.dp)
+      ) {
+        Row {
+          Text(text = stringResource(id = R.string.warm_up))
         }
+        Row {
+          Text(
+            text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
+              secondsToHhMmSs(trainingStep.duration)
+            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
+            fontWeight = FontWeight.Bold
+          )
+        }
+      }
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoolDownCard(
-    trainingStep: TrainingStep,
-    onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    readOnly: Boolean = false
+  trainingStep: TrainingStep,
+  onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  readOnly: Boolean = false
 ) {
-    Card(
-        modifier = Modifier
-            .fieldModifier()
-            .fillMaxWidth()
-            .height(70.dp),
-        onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        )
+  Card(
+    modifier = Modifier
+        .fieldModifier()
+        .fillMaxWidth()
+        .height(70.dp),
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.secondaryContainer,
+    )
+  ) {
+    StepCardHeader(
+      modifier = Modifier.fillMaxHeight(),
+      stepType = TrainingStep.Type.COOL_DOWN,
+      onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
+      readOnly = readOnly
     ) {
-        StepCardHeader(
-            modifier = Modifier.fillMaxHeight(),
-            stepType = TrainingStep.Type.COOL_DOWN,
-            onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
-            readOnly = readOnly
-        ) {
-            Column(
-                modifier = Modifier.padding(8.dp, 0.dp)
-            ) {
-                Row {
-                    Text(text = stringResource(id = R.string.cool_down))
-                }
-                Row {
-                    Text(
-                        text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-                            secondsToHhMmSs(trainingStep.duration)
-                        else "${trainingStep.distance} ${trainingStep.distanceUnit}",
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+      Column(
+        modifier = Modifier.padding(8.dp, 0.dp)
+      ) {
+        Row {
+          Text(text = stringResource(id = R.string.cool_down))
         }
+        Row {
+          Text(
+            text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
+              secondsToHhMmSs(trainingStep.duration)
+            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
+            fontWeight = FontWeight.Bold
+          )
+        }
+      }
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepetitionsCard(
-    trainingStep: TrainingStep,
-    showRecover: Boolean,
-    onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    readOnly: Boolean = false
+  trainingStep: TrainingStep,
+  showRecover: Boolean,
+  onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  readOnly: Boolean = false
 ) {
-    Card(
-        modifier = Modifier
-            .fieldModifier()
-            .fillMaxWidth()
-            .height(70.dp),
-        onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        )
+  Card(
+    modifier = Modifier
+        .fieldModifier()
+        .fillMaxWidth()
+        .height(70.dp),
+    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.secondaryContainer,
+    )
+  ) {
+    StepCardHeader(
+      modifier = Modifier.fillMaxHeight(),
+      stepType = TrainingStep.Type.REPETITION,
+      onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
+      readOnly = readOnly
     ) {
-        StepCardHeader(
-            modifier = Modifier.fillMaxHeight(),
-            stepType = TrainingStep.Type.REPETITION,
-            onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
-            readOnly = readOnly
-        ) {
-            Column(
-                modifier = Modifier.padding(8.dp, 0.dp)
-            ) {
-                Column {
-                    Text(
-                        text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-                            secondsToHhMmSs(trainingStep.duration)
-                        else "${trainingStep.distance} ${trainingStep.distanceUnit}",
-                        fontWeight = FontWeight.Bold
-                    )
-                    if (showRecover) {
-                        Row {
-                            Text(text = "Recover ")
-                            Text(
-                                text = if (trainingStep.recoverType == TrainingStep.DurationType.TIME)
-                                    secondsToHhMmSs(trainingStep.recoverDuration)
-                                else "${trainingStep.recoverDistance}  ${trainingStep.recoverDistanceUnit}",
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
+      Column(
+        modifier = Modifier.padding(8.dp, 0.dp)
+      ) {
+        Column {
+          Text(
+            text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
+              secondsToHhMmSs(trainingStep.duration)
+            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
+            fontWeight = FontWeight.Bold
+          )
+          if (showRecover && trainingStep.recover) {
+            Row {
+              Text(text = "Recover ")
+              Text(
+                text = if (trainingStep.recoverType == TrainingStep.DurationType.TIME)
+                  secondsToHhMmSs(trainingStep.recoverDuration)
+                else "${trainingStep.recoverDistance} ${trainingStep.recoverDistanceUnit}",
+                fontWeight = FontWeight.Bold
+              )
             }
+          }
         }
+      }
     }
+  }
 }
 
 @Composable
 fun RepetitionBlockCard(
-    repetitionBlock: TrainingStep,
-    onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-    onAddClick: (List<String>) -> Unit = { _ -> },
-    onAddBlockClick: (List<String>, Int) -> Unit = { _, _ -> },
-    onRepetitionsClick: (List<String>, Int) -> Unit = { _, _ -> },
-    onRecoverClick: (List<String>, String, Int, Int, String) -> Unit = { _, _, _, _, _ -> },
-    onMove: (List<String>, ItemPosition, ItemPosition) -> Unit = { _, _, _ -> },
-    readOnly: Boolean = false,
-    level: Int = 0
+  repetitionBlock: TrainingStep,
+  onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  onAddClick: (List<String>) -> Unit = { _ -> },
+  onAddBlockClick: (List<String>, Int) -> Unit = { _, _ -> },
+  onRepetitionsClick: (List<String>, Int) -> Unit = { _, _ -> },
+  onRecoverClick: (List<String>, String, Int, Int, String) -> Unit = { _, _, _, _, _ -> },
+  onMove: (List<String>, ItemPosition, ItemPosition) -> Unit = { _, _, _ -> },
+  readOnly: Boolean = false,
+  level: Int = 0
 ) {
-    val tree = repetitionBlock.calculateTree()
+  val tree = repetitionBlock.calculateTree()
 
-    OutlinedCard(
-        modifier = Modifier
-            .fieldModifier()
-            .fillMaxWidth()
-            .height(78.dp * (tree.first) + (if (readOnly) 70.dp else 156.dp) * (tree.second))
+  OutlinedCard(
+    modifier = Modifier
+        .fieldModifier()
+        .fillMaxWidth()
+        .height(78.dp * (tree.first) + (if (readOnly) 70.dp else 156.dp) * (tree.second))
+  ) {
+    StepCardHeader(
+      stepType = TrainingStep.Type.REPETITION_BLOCK,
+      onDeleteClick = { onDeleteClick(listOf(), repetitionBlock) },
+      readOnly = readOnly
     ) {
-        StepCardHeader(
-            stepType = TrainingStep.Type.REPETITION_BLOCK,
-            onDeleteClick = { onDeleteClick(listOf(), repetitionBlock) },
-            readOnly = readOnly
+      Row(
+        modifier = if (readOnly) Modifier.fillMaxWidth() else Modifier,
+        horizontalArrangement = if (readOnly) Arrangement.Center else Arrangement.Start
+      ) {
+        TextButton(
+          onClick = {
+            onRepetitionsClick(
+              listOf(repetitionBlock.id),
+              repetitionBlock.repetitions
+            )
+          }
         ) {
-            Row (
-                modifier = if (readOnly) Modifier.fillMaxWidth() else Modifier,
-                horizontalArrangement = if (readOnly) Arrangement.Center else Arrangement.Start
-            ) {
-                TextButton(
-                    onClick = {
-                        onRepetitionsClick(
-                            listOf(repetitionBlock.id),
-                            repetitionBlock.repetitions
-                        )
-                    }
-                ) {
-                    Icon(
-                        Icons.Rounded.Repeat,
-                        contentDescription = stringResource(R.string.repetitions),
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-                    Text(text = repetitionBlock.repetitions.toString() + " times")
-                }
-                TextButton(
-                    onClick = {
-                        onRecoverClick(
-                            listOf(repetitionBlock.id),
-                            repetitionBlock.recoverType,
-                            repetitionBlock.recoverDuration,
-                            repetitionBlock.recoverDistance,
-                            repetitionBlock.recoverDistanceUnit
-                        )
-                    }
-                ) {
-                    Icon(
-                        Icons.Rounded.Timer,
-                        contentDescription = stringResource(R.string.recover),
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-                    Text(
-                        text = (if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
-                            secondsToHhMmSs(repetitionBlock.recoverDuration)
-                        else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}")
-                                + " in between"
-                    )
-                }
-            }
+          Icon(
+            Icons.Rounded.Repeat,
+            contentDescription = stringResource(R.string.repetitions),
+            modifier = Modifier.padding(end = 4.dp)
+          )
+          Text(text = repetitionBlock.repetitions.toString() + " times")
         }
-
-        if (readOnly) {
-            ReadOnlyStepsList(trainingSteps = repetitionBlock.stepsInRepetition)
-        } else {
-            val state = rememberReorderableLazyListState(
-                onMove = { from, to -> onMove(listOf(repetitionBlock.id), from, to) }
+        TextButton(
+          onClick = {
+            onRecoverClick(
+              listOf(repetitionBlock.id),
+              repetitionBlock.recoverType,
+              repetitionBlock.recoverDuration,
+              repetitionBlock.recoverDistance,
+              repetitionBlock.recoverDistanceUnit
             )
-            LazyColumn(
-                state = state.listState,
-                modifier = Modifier
-                    .reorderable(state)
-                    .detectReorderAfterLongPress(state),
-                userScrollEnabled = false
-            ) {
-                items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
-                    ReorderableItem(state, key = trainingStep.id) {
-                        when (trainingStep.type) {
-                            TrainingStep.Type.WARM_UP -> WarmUpCard(
-                                trainingStep,
-                                onDeleteClick = { _, trainingStep ->
-                                    onDeleteClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                },
-                                onEditClick = { _, trainingStep ->
-                                    onEditClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                }
-                            )
-
-                            TrainingStep.Type.COOL_DOWN -> CoolDownCard(
-                                trainingStep,
-                                onDeleteClick = { _, trainingStep ->
-                                    onDeleteClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                },
-                                onEditClick = { _, trainingStep ->
-                                    onEditClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                }
-                            )
-
-                            TrainingStep.Type.REPETITION -> RepetitionsCard(
-                                trainingStep,
-                                showRecover = trainingStep.id != repetitionBlock.stepsInRepetition.last().id,
-                                onDeleteClick = { _, trainingStep ->
-                                    onDeleteClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                },
-                                onEditClick = { _, trainingStep ->
-                                    onEditClick(
-                                        listOf(repetitionBlock.id),
-                                        trainingStep
-                                    )
-                                }
-                            )
-
-                            TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
-                                trainingStep,
-                                onDeleteClick = { descendants, trainingStep ->
-                                    onDeleteClick(
-                                        listOf(repetitionBlock.id) + descendants,
-                                        trainingStep
-                                    )
-                                },
-                                onEditClick = { descendants, trainingStep ->
-                                    onEditClick(
-                                        listOf(repetitionBlock.id) + descendants,
-                                        trainingStep
-                                    )
-                                },
-                                onAddClick = { descendants -> onAddClick(listOf(repetitionBlock.id) + descendants) },
-                                onAddBlockClick = { descendants, repetitions ->
-                                    onAddBlockClick(
-                                        listOf(
-                                            repetitionBlock.id
-                                        ) + descendants, repetitions
-                                    )
-                                },
-                                onRepetitionsClick = { descendants, repetitions ->
-                                    onRepetitionsClick(
-                                        listOf(
-                                            repetitionBlock.id
-                                        ) + descendants, repetitions
-                                    )
-                                },
-                                onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
-                                    onRecoverClick(
-                                        listOf(repetitionBlock.id) + descendants,
-                                        recoverType,
-                                        recoverDuration,
-                                        recoverDistance,
-                                        recoverDistanceUnit
-                                    )
-                                },
-                                onMove = { descendants, from, to ->
-                                    onMove(
-                                        listOf(repetitionBlock.id) + descendants,
-                                        from,
-                                        to
-                                    )
-                                },
-                                level = level + 1
-                            )
-                        }
-                    }
-                }
-            }
-            AddButtons(
-                onAddClick = { _ -> onAddClick(listOf(repetitionBlock.id)) },
-                onAddBlockClick = { _, repetitions ->
-                    onAddBlockClick(
-                        listOf(repetitionBlock.id),
-                        repetitions
-                    )
-                },
-                repetitionsBlockAllowed = level < 2
-            )
+          }
+        ) {
+          Icon(
+            Icons.Rounded.Timer,
+            contentDescription = stringResource(R.string.recover),
+            modifier = Modifier.padding(end = 4.dp)
+          )
+          Text(
+            text = (if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
+              secondsToHhMmSs(repetitionBlock.recoverDuration)
+            else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}")
+                + " in between"
+          )
         }
+      }
     }
+
+    if (readOnly) {
+      ReadOnlyStepsList(trainingSteps = repetitionBlock.stepsInRepetition)
+    } else {
+      val state = rememberReorderableLazyListState(
+        onMove = { from, to -> onMove(listOf(repetitionBlock.id), from, to) }
+      )
+      LazyColumn(
+        state = state.listState,
+        modifier = Modifier
+            .reorderable(state)
+            .detectReorderAfterLongPress(state),
+        userScrollEnabled = false
+      ) {
+        items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
+          ReorderableItem(state, key = trainingStep.id) {
+            when (trainingStep.type) {
+              TrainingStep.Type.WARM_UP -> WarmUpCard(
+                trainingStep,
+                onDeleteClick = { _, trainingStep ->
+                  onDeleteClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                },
+                onEditClick = { _, trainingStep ->
+                  onEditClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                }
+              )
+
+              TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+                trainingStep,
+                onDeleteClick = { _, trainingStep ->
+                  onDeleteClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                },
+                onEditClick = { _, trainingStep ->
+                  onEditClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                }
+              )
+
+              TrainingStep.Type.REPETITION -> RepetitionsCard(
+                trainingStep,
+                showRecover = trainingStep.id != repetitionBlock.stepsInRepetition.last().id,
+                onDeleteClick = { _, trainingStep ->
+                  onDeleteClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                },
+                onEditClick = { _, trainingStep ->
+                  onEditClick(
+                    listOf(repetitionBlock.id),
+                    trainingStep
+                  )
+                }
+              )
+
+              TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
+                trainingStep,
+                onDeleteClick = { descendants, trainingStep ->
+                  onDeleteClick(
+                    listOf(repetitionBlock.id) + descendants,
+                    trainingStep
+                  )
+                },
+                onEditClick = { descendants, trainingStep ->
+                  onEditClick(
+                    listOf(repetitionBlock.id) + descendants,
+                    trainingStep
+                  )
+                },
+                onAddClick = { descendants -> onAddClick(listOf(repetitionBlock.id) + descendants) },
+                onAddBlockClick = { descendants, repetitions ->
+                  onAddBlockClick(
+                    listOf(
+                      repetitionBlock.id
+                    ) + descendants, repetitions
+                  )
+                },
+                onRepetitionsClick = { descendants, repetitions ->
+                  onRepetitionsClick(
+                    listOf(
+                      repetitionBlock.id
+                    ) + descendants, repetitions
+                  )
+                },
+                onRecoverClick = { descendants, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
+                  onRecoverClick(
+                    listOf(repetitionBlock.id) + descendants,
+                    recoverType,
+                    recoverDuration,
+                    recoverDistance,
+                    recoverDistanceUnit
+                  )
+                },
+                onMove = { descendants, from, to ->
+                  onMove(
+                    listOf(repetitionBlock.id) + descendants,
+                    from,
+                    to
+                  )
+                },
+                level = level + 1
+              )
+            }
+          }
+        }
+      }
+      AddButtons(
+        onAddClick = { _ -> onAddClick(listOf(repetitionBlock.id)) },
+        onAddBlockClick = { _, repetitions ->
+          onAddBlockClick(
+            listOf(repetitionBlock.id),
+            repetitions
+          )
+        },
+        repetitionsBlockAllowed = level < 2
+      )
+    }
+  }
 }
 
 @Composable
 fun StepCardHeader(
-    modifier: Modifier = Modifier,
-    stepType: String,
-    onDeleteClick: () -> Unit,
-    readOnly: Boolean = false,
-    content: @Composable () -> Unit
+  modifier: Modifier = Modifier,
+  stepType: String,
+  onDeleteClick: () -> Unit,
+  readOnly: Boolean = false,
+  content: @Composable () -> Unit
 ) {
+  Row(
+    modifier = modifier
+        .fillMaxWidth()
+        .padding(start = if (readOnly) 0.dp else 16.dp),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween,
+  ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = if (readOnly) 0.dp else 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (!readOnly) {
-                Icon(
-                    Icons.Rounded.DragIndicator,
-                    contentDescription = stringResource(R.string.move_step),
-                )
-            }
+      if (!readOnly) {
+        Icon(
+          Icons.Rounded.DragIndicator,
+          contentDescription = stringResource(R.string.move_step),
+        )
+      }
 
-            when (
-                stepType
-            ) {
-                TrainingStep.Type.WARM_UP -> {
-                    Icon(
-                        Icons.Rounded.DirectionsWalk,
-                        contentDescription = stringResource(R.string.warm_up),
-                        modifier = Modifier
-                            .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                            .drawBehind {
-                                drawCircle(
-                                    color = Color.Green.copy(alpha = 0.4f),
-                                    radius = 16.dp.toPx()
-                                )
-                            },
-                        tint = Color.White
+      when (
+        stepType
+      ) {
+        TrainingStep.Type.WARM_UP -> {
+          Icon(
+            Icons.Rounded.DirectionsWalk,
+            contentDescription = stringResource(R.string.warm_up),
+            modifier = Modifier
+                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color.Green.copy(alpha = 0.4f),
+                        radius = 16.dp.toPx()
                     )
-                }
-
-                TrainingStep.Type.COOL_DOWN -> {
-                    Icon(
-                        Icons.Rounded.DirectionsWalk,
-                        contentDescription = stringResource(R.string.cool_down),
-                        modifier = Modifier
-                            .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                            .drawBehind {
-                                drawCircle(
-                                    color = Color.Blue.copy(alpha = 0.4f),
-                                    radius = 16.dp.toPx()
-                                )
-                            },
-                        tint = Color.White
-                    )
-                }
-
-                TrainingStep.Type.REPETITION -> {
-                    Icon(
-                        Icons.Rounded.DirectionsRun,
-                        contentDescription = stringResource(R.string.repetition),
-                        modifier = Modifier
-                            .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                            .drawBehind {
-                                drawCircle(
-                                    color = Color.Red.copy(alpha = 0.4f),
-                                    radius = 16.dp.toPx()
-                                )
-                            },
-                        tint = Color.White
-                    )
-                }
-            }
-
-            content()
+                },
+            tint = Color.White
+          )
         }
 
-        if (!readOnly) {
-            val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
-
-            IconButton(
-                modifier = Modifier.padding(8.dp),
-                onClick = { openDeleteDialog.value = true }
-            ) {
-                Icon(
-                    Icons.Rounded.Delete,
-                    contentDescription = stringResource(R.string.delete_repetition)
-                )
-            }
-
-            if (openDeleteDialog.value) {
-                DeleteDialog(
-                    onDeleteClick = {
-                        openDeleteDialog.value = false
-                        onDeleteClick()
-                    },
-                    onDismissRequest = { openDeleteDialog.value = false }
-                )
-            }
+        TrainingStep.Type.COOL_DOWN -> {
+          Icon(
+            Icons.Rounded.DirectionsWalk,
+            contentDescription = stringResource(R.string.cool_down),
+            modifier = Modifier
+                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color.Blue.copy(alpha = 0.4f),
+                        radius = 16.dp.toPx()
+                    )
+                },
+            tint = Color.White
+          )
         }
+
+        TrainingStep.Type.REPETITION -> {
+          Icon(
+            Icons.Rounded.DirectionsRun,
+            contentDescription = stringResource(R.string.repetition),
+            modifier = Modifier
+                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color.Red.copy(alpha = 0.4f),
+                        radius = 16.dp.toPx()
+                    )
+                },
+            tint = Color.White
+          )
+        }
+      }
+
+      content()
     }
+
+    if (!readOnly) {
+      val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
+
+      IconButton(
+        modifier = Modifier.padding(8.dp),
+        onClick = { openDeleteDialog.value = true }
+      ) {
+        Icon(
+          Icons.Rounded.Delete,
+          contentDescription = stringResource(R.string.delete_repetition)
+        )
+      }
+
+      if (openDeleteDialog.value) {
+        DeleteDialog(
+          onDeleteClick = {
+            openDeleteDialog.value = false
+            onDeleteClick()
+          },
+          onDismissRequest = { openDeleteDialog.value = false }
+        )
+      }
+    }
+  }
 }
 
 @Composable
 fun AddButtons(
-    onAddClick: (List<String>) -> Unit,
-    onAddBlockClick: (List<String>, Int) -> Unit,
-    repetitionsBlockAllowed: Boolean
+  onAddClick: (List<String>) -> Unit,
+  onAddBlockClick: (List<String>, Int) -> Unit,
+  repetitionsBlockAllowed: Boolean
 ) {
-    BoxWithConstraints {
-        val availableWidth = with(LocalDensity.current) { constraints.maxWidth.toDp() }
-        val isEnoughSpaceForIcon = availableWidth > 320.dp
-        val isEnoughSpaceForText = availableWidth > 260.dp
+  BoxWithConstraints {
+    val availableWidth = with(LocalDensity.current) { constraints.maxWidth.toDp() }
+    val isEnoughSpaceForIcon = availableWidth > 320.dp
+    val isEnoughSpaceForText = availableWidth > 260.dp
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
+    Row(
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(16.dp),
+      horizontalArrangement = Arrangement.SpaceAround
+    ) {
+      if (isEnoughSpaceForText) {
+        Button(
+          onClick = { onAddClick(listOf()) }
         ) {
-            if (isEnoughSpaceForText) {
-                Button(
-                    onClick = { onAddClick(listOf()) }
-                ) {
-                    Text(text = "Add repetition")
-                }
-            } else {
-                FilledIconButton(
-                    onClick = { onAddClick(listOf()) }
-                ) {
-                    Icon(
-                        Icons.Rounded.Add,
-                        contentDescription = stringResource(R.string.add_repetition)
-                    )
-                }
-            }
-            if (repetitionsBlockAllowed) {
-                FilledTonalIconButton(
-                    onClick = { onAddBlockClick(listOf(), 3) }
-                ) {
-                    Text(text = "3x")
-                }
-                FilledTonalIconButton(
-                    onClick = { onAddBlockClick(listOf(), 5) }
-                ) {
-                    Text(text = "5x")
-                }
-                if (isEnoughSpaceForIcon) {
-                    FilledTonalIconButton(
-                        onClick = { onAddBlockClick(listOf(), 10) }
-                    ) {
-                        Text(text = "10x")
-                    }
-                }
-            }
+          Text(text = "Add repetition")
         }
+      } else {
+        FilledIconButton(
+          onClick = { onAddClick(listOf()) }
+        ) {
+          Icon(
+            Icons.Rounded.Add,
+            contentDescription = stringResource(R.string.add_repetition)
+          )
+        }
+      }
+      if (repetitionsBlockAllowed) {
+        FilledTonalIconButton(
+          onClick = { onAddBlockClick(listOf(), 3) }
+        ) {
+          Text(text = "3x")
+        }
+        FilledTonalIconButton(
+          onClick = { onAddBlockClick(listOf(), 5) }
+        ) {
+          Text(text = "5x")
+        }
+        if (isEnoughSpaceForIcon) {
+          FilledTonalIconButton(
+            onClick = { onAddBlockClick(listOf(), 10) }
+          ) {
+            Text(text = "10x")
+          }
+        }
+      }
     }
+  }
 }
 
 @Composable
 fun DeleteDialog(
-    title: String = stringResource(R.string.delete_repetition),
-    text: String = stringResource(R.string.delete_repetition_confirmation),
-    onDeleteClick: () -> Unit,
-    onDismissRequest: () -> Unit
+  title: String = stringResource(R.string.delete_repetition),
+  text: String = stringResource(R.string.delete_repetition_confirmation),
+  onDeleteClick: () -> Unit,
+  onDismissRequest: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text(text = title) },
-        text = { Text(text = text) },
-        confirmButton = {
-            TextButton(
-                onClick = onDeleteClick
-            ) {
-                Text(text = stringResource(R.string.delete))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismissRequest
-            ) {
-                Text(text = stringResource(R.string.cancel))
-            }
-        }
-    )
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = { Text(text = title) },
+    text = { Text(text = text) },
+    confirmButton = {
+      TextButton(
+        onClick = onDeleteClick
+      ) {
+        Text(text = stringResource(R.string.delete))
+      }
+    },
+    dismissButton = {
+      TextButton(
+        onClick = onDismissRequest
+      ) {
+        Text(text = stringResource(R.string.cancel))
+      }
+    }
+  )
 }
 
 @Composable
-fun ReadOnlyStepsList (
-    trainingSteps: List<TrainingStep>
+fun ReadOnlyStepsList(
+  trainingSteps: List<TrainingStep>
 ) {
-    LazyColumn (
-        userScrollEnabled = false
-    ) {
-        items(trainingSteps, { it.id }) { trainingStep ->
-            when (trainingStep.type) {
-                TrainingStep.Type.WARM_UP -> WarmUpCard(
-                    trainingStep = trainingStep,
-                    readOnly = true
-                )
+  LazyColumn(
+    userScrollEnabled = false
+  ) {
+    items(trainingSteps, { it.id }) { trainingStep ->
+      when (trainingStep.type) {
+        TrainingStep.Type.WARM_UP -> WarmUpCard(
+          trainingStep = trainingStep,
+          readOnly = true
+        )
 
-                TrainingStep.Type.COOL_DOWN -> CoolDownCard(
-                    trainingStep = trainingStep,
-                    readOnly = true
-                )
+        TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+          trainingStep = trainingStep,
+          readOnly = true
+        )
 
-                TrainingStep.Type.REPETITION -> RepetitionsCard(
-                    trainingStep = trainingStep,
-                    showRecover = trainingStep.id != trainingSteps.last().id,
-                    readOnly = true
-                )
+        TrainingStep.Type.REPETITION -> RepetitionsCard(
+          trainingStep = trainingStep,
+          showRecover = trainingStep.id != trainingSteps.last().id,
+          readOnly = true
+        )
 
-                TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
-                    repetitionBlock = trainingStep,
-                    readOnly = true
-                )
-            }
-        }
+        TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
+          repetitionBlock = trainingStep,
+          readOnly = true
+        )
+      }
     }
+  }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun TrainingStepsListBox(
-    training: Training,
-    openScreen: (String) -> Unit
+  training: Training,
+  openScreen: (String) -> Unit
 ) {
-    val tree = training.calculateTree()
+  val tree = training.calculateTree()
 
-    OutlinedCard(modifier = Modifier
+  OutlinedCard(
+    modifier = Modifier
         .fieldModifier()
         .fillMaxWidth()
         .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
-    ) {
-        Scaffold (
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        // TODO save training
-                        openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
-                    },
-                ) {
-                    Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End
+  ) {
+    Scaffold(
+      floatingActionButton = {
+        FloatingActionButton(
+          onClick = {
+            // TODO save training
+            openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+          },
         ) {
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ReadOnlyStepsList(trainingSteps = training.trainingSteps)
-            }
+          Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
         }
+      },
+      floatingActionButtonPosition = FabPosition.End
+    ) {
+      Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        ReadOnlyStepsList(trainingSteps = training.trainingSteps)
+      }
     }
+  }
 }

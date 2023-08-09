@@ -73,7 +73,12 @@ fun EditTrainingScreen(
 
     val fieldModifier = Modifier.fieldModifier()
     BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier)
-    BasicField(R.string.description, training.description, viewModel::onDescriptionChange, fieldModifier)
+    BasicField(
+      R.string.description,
+      training.description,
+      viewModel::onDescriptionChange,
+      fieldModifier
+    )
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
@@ -98,7 +103,12 @@ private fun CardEditors(
    */
   val openDateDialog = rememberSaveable { mutableStateOf(false) }
   val openTimeDialog = rememberSaveable { mutableStateOf(false) }
-  RegularCardEditor(R.string.date, R.drawable.ic_calendar, training.dueDateString, Modifier.card()) {
+  RegularCardEditor(
+    R.string.date,
+    R.drawable.ic_calendar,
+    training.dueDateString,
+    Modifier.card()
+  ) {
     openDateDialog.value = true
   }
 
@@ -131,13 +141,17 @@ private fun CardSelectors(
   onFavouriteToggle: (String) -> Unit
 ) {
   val typeSelection = Type.getByName(training.type).name
-  CardSelector(R.string.type, Type.getOptions(), typeSelection, Modifier.card()) {
-    newValue ->
+  CardSelector(R.string.type, Type.getOptions(), typeSelection, Modifier.card()) { newValue ->
     onTypeChange(newValue)
   }
 
   val favouriteSelection = EditFavouriteOption.getByCheckedState(training.favorite).name
-  CardSelector(R.string.favorite, EditFavouriteOption.getOptions(), favouriteSelection, Modifier.card()) { newValue
+  CardSelector(
+    R.string.favorite,
+    EditFavouriteOption.getOptions(),
+    favouriteSelection,
+    Modifier.card()
+  ) { newValue
     ->
     onFavouriteToggle(newValue)
   }
@@ -147,10 +161,10 @@ private fun CardSelectors(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EmbeddedDatePicker(
-    training: Training,
-    onClose: () -> Unit,
-    onDateChange: (Long) -> Unit
-    ) {
+  training: Training,
+  onClose: () -> Unit,
+  onDateChange: (Long) -> Unit
+) {
 
   val initialDate = remember(training.hasDueDate()) {
     if (training.hasDueDate()) {
@@ -226,7 +240,11 @@ private fun EmbeddedTimePicker(
   )
 }*/
 
-private fun showTimePicker(activity: AppCompatActivity?, training: Training, onTimeChange: (Int, Int) -> Unit) {
+private fun showTimePicker(
+  activity: AppCompatActivity?,
+  training: Training,
+  onTimeChange: (Int, Int) -> Unit
+) {
   var selectedHour = 0
   var selectedMinute = 0
   if (training.hasDueTime()) {

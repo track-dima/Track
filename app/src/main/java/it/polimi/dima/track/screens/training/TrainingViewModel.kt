@@ -44,7 +44,11 @@ class TrainingViewModel @Inject constructor(
     }
   }
 
-  fun onDuplicateTrainingClick(training: Training, popUpScreen: () -> Unit, editTraining: (Training) -> Unit) {
+  fun onDuplicateTrainingClick(
+    training: Training,
+    popUpScreen: () -> Unit,
+    editTraining: (Training) -> Unit
+  ) {
     launchCatching {
       val newId = storageService.duplicate(training.copy(transient = true))
       popUpScreen()

@@ -78,7 +78,7 @@ fun TrainingScreen(
       .fillMaxWidth()
       .fillMaxHeight()
       .verticalScroll(rememberScrollState()),
-    ) {
+  ) {
     NoTitleToolbar(
       navigationIcon = {
         FilledTonalIconButton(
@@ -93,10 +93,10 @@ fun TrainingScreen(
         modifier = Modifier.padding(4.dp, 0.dp),
         checked = training.favorite,
         onCheckedChange = { viewModel.onFavoriteClick() }) {
-          Icon(
-            if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-            contentDescription = stringResource(R.string.favorite)
-          )
+        Icon(
+          if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+          contentDescription = stringResource(R.string.favorite)
+        )
       }
       FilledTonalIconButton(
         modifier = Modifier.padding(4.dp, 0.dp),
@@ -109,11 +109,17 @@ fun TrainingScreen(
         modifier = Modifier
           .contextMenu()
           .padding(4.dp, 0.dp, 8.dp, 0.dp),
-        onActionClick = {
-            action -> when (TrainingActionOption.getByTitle(action)) {
-          TrainingActionOption.DeleteTask -> openDeleteDialog.value = true
-          TrainingActionOption.DuplicateTraining -> viewModel.onDuplicateTrainingClick(training, popUpScreen, onEditPressed)
-          else -> {} }
+        onActionClick = { action ->
+          when (TrainingActionOption.getByTitle(action)) {
+            TrainingActionOption.DeleteTask -> openDeleteDialog.value = true
+            TrainingActionOption.DuplicateTraining -> viewModel.onDuplicateTrainingClick(
+              training,
+              popUpScreen,
+              onEditPressed
+            )
+
+            else -> {}
+          }
         },
         style = IconButtonStyle.FilledTonal,
       )
@@ -125,7 +131,7 @@ fun TrainingScreen(
         .padding(16.dp),
       verticalArrangement = Arrangement.Center
     ) {
-      Row (
+      Row(
         modifier = Modifier
           .fillMaxWidth()
           .padding(top = 16.dp),
@@ -171,7 +177,9 @@ fun TrainingScreen(
           Column {
             Row {
               Text(text = training.dueDateString)
-              if (training.dueDateString.isNotEmpty() && training.dueTimeString.isNotEmpty()) Text(text = " ･ ")
+              if (training.dueDateString.isNotEmpty() && training.dueTimeString.isNotEmpty()) Text(
+                text = " ･ "
+              )
               Text(text = training.dueTimeString)
             }
             Text(
@@ -182,19 +190,19 @@ fun TrainingScreen(
         }
       }
 
-        if (training.type.isNotEmpty()) {
-            Spacer(modifier = Modifier.spacer())
-            Row {
-                Icon(
-                    Icons.Rounded.Terrain,
-                    contentDescription = stringResource(R.string.type),
-                    modifier = Modifier
-                      .padding(end = 16.dp)
-                      .align(Alignment.CenterVertically)
-                )
-                Text(text = training.type)
-            }
+      if (training.type.isNotEmpty()) {
+        Spacer(modifier = Modifier.spacer())
+        Row {
+          Icon(
+            Icons.Rounded.Terrain,
+            contentDescription = stringResource(R.string.type),
+            modifier = Modifier
+              .padding(end = 16.dp)
+              .align(Alignment.CenterVertically)
+          )
+          Text(text = training.type)
         }
+      }
     }
 
     Spacer(modifier = Modifier.spacer())
