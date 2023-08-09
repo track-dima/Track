@@ -12,14 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.DragIndicator
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Repeat
-import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.DirectionsWalk
+import androidx.compose.material.icons.rounded.DragIndicator
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Repeat
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -238,7 +238,7 @@ fun RepetitionBlockCard(
                     }
                 ) {
                     Icon(
-                        Icons.Outlined.Repeat,
+                        Icons.Rounded.Repeat,
                         contentDescription = stringResource(R.string.repetitions),
                         modifier = Modifier.padding(end = 4.dp)
                     )
@@ -256,7 +256,7 @@ fun RepetitionBlockCard(
                     }
                 ) {
                     Icon(
-                        Icons.Outlined.Timer,
+                        Icons.Rounded.Timer,
                         contentDescription = stringResource(R.string.recover),
                         modifier = Modifier.padding(end = 4.dp)
                     )
@@ -420,7 +420,7 @@ fun StepCardHeader(
         ) {
             if (!readOnly) {
                 Icon(
-                    Icons.Outlined.DragIndicator,
+                    Icons.Rounded.DragIndicator,
                     contentDescription = stringResource(R.string.move_step),
                 )
             }
@@ -488,7 +488,7 @@ fun StepCardHeader(
                 onClick = { openDeleteDialog.value = true }
             ) {
                 Icon(
-                    Icons.Outlined.Delete,
+                    Icons.Rounded.Delete,
                     contentDescription = stringResource(R.string.delete_repetition)
                 )
             }
@@ -534,7 +534,7 @@ fun AddButtons(
                     onClick = { onAddClick(listOf()) }
                 ) {
                     Icon(
-                        Icons.Outlined.Add,
+                        Icons.Rounded.Add,
                         contentDescription = stringResource(R.string.add_repetition)
                     )
                 }
@@ -564,13 +564,15 @@ fun AddButtons(
 
 @Composable
 fun DeleteDialog(
+    title: String = stringResource(R.string.delete_repetition),
+    text: String = stringResource(R.string.delete_repetition_confirmation),
     onDeleteClick: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(text = stringResource(R.string.delete_repetition)) },
-        text = { Text(text = stringResource(R.string.delete_repetition_confirmation)) },
+        title = { Text(text = title) },
+        text = { Text(text = text) },
         confirmButton = {
             TextButton(
                 onClick = onDeleteClick
@@ -633,7 +635,7 @@ fun TrainingStepsListBox(
     OutlinedCard(modifier = Modifier
         .fieldModifier()
         .fillMaxWidth()
-        .height(max(16.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
+        .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
     ) {
         Scaffold (
             floatingActionButton = {
@@ -643,7 +645,7 @@ fun TrainingStepsListBox(
                         openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
                     },
                 ) {
-                    Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.edit_repetitions))
+                    Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_repetitions))
                 }
             },
             floatingActionButtonPosition = FabPosition.End

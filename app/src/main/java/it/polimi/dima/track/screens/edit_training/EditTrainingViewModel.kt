@@ -63,7 +63,7 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTraining = training.value
+      val editedTraining = training.value.copy(transient = false)
       if (editedTraining.id.isBlank()) {
         storageService.save(editedTraining)
       } else {
@@ -74,6 +74,11 @@ class EditTrainingViewModel @Inject constructor(
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {
+    if (training.value.transient) {
+      launchCatching {
+        storageService.delete(training.value.id)
+      }
+    }
     popUpScreen()
   }
 

@@ -14,6 +14,7 @@ data class Training(
   val description: String = "",
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
+  val transient: Boolean = false,
 
   // UNUSED
   val personalBest: Boolean = false,

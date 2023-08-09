@@ -71,4 +71,7 @@
     <string name="delete">Delete</string>
     <string name="repetition">Repetition</string>
     <string name="favorite">Favorite</string>
+    <string name="run">Run</string>
+    <string name="delete_training">Delete training</string>
+    <string name="delete_training_confirmation">Are you sure you want to delete this training?</string>
 </resources>

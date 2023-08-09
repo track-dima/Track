@@ -56,7 +56,7 @@ class AgendaViewModel @Inject constructor(
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
-      val newId = storageService.duplicate(training)
+      val newId = storageService.duplicate(training.copy(transient = true))
       openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
     }
   }

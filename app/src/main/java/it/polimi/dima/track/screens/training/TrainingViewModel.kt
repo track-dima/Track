@@ -37,25 +37,16 @@ class TrainingViewModel @Inject constructor(
     }
   }
 
-  fun onTrainingActionClick(editTraining: (Training) -> Unit, popUpScreen: () -> Unit, training: Training, action: String) {
-    when (TrainingActionOption.getByTitle(action)) {
-      TrainingActionOption.DeleteTask -> onDeleteTaskClick(training, popUpScreen)
-      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, popUpScreen, editTraining)
-      else -> {}
-    }
-  }
-
-  private fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
+  fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
     launchCatching {
       storageService.delete(training.id)
       popUpScreen()
     }
   }
 
-  private fun onDuplicateTrainingClick(training: Training, popUpScreen: () -> Unit, editTraining: (Training) -> Unit) {
+  fun onDuplicateTrainingClick(training: Training, popUpScreen: () -> Unit, editTraining: (Training) -> Unit) {
     launchCatching {
-      // TODO duplicate non dovrebbe salvare finché non si conferma la modifica
-      val newId = storageService.duplicate(training)
+      val newId = storageService.duplicate(training.copy(transient = true))
       popUpScreen()
       editTraining(Training(id = newId))
     }
