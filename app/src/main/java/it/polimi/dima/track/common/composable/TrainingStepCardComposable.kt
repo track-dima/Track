@@ -71,9 +71,9 @@ fun WarmUpCard(
 ) {
   Card(
     modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(70.dp),
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(70.dp),
     onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -114,9 +114,9 @@ fun CoolDownCard(
 ) {
   Card(
     modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(70.dp),
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(70.dp),
     onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -158,9 +158,9 @@ fun RepetitionsCard(
 ) {
   Card(
     modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(70.dp),
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(70.dp),
     onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -216,9 +216,9 @@ fun RepetitionBlockCard(
 
   OutlinedCard(
     modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(78.dp * (tree.first) + (if (readOnly) 70.dp else 156.dp) * (tree.second))
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(78.dp * (tree.first) + (if (readOnly) 70.dp else 156.dp) * (tree.second))
   ) {
     StepCardHeader(
       stepType = TrainingStep.Type.REPETITION_BLOCK,
@@ -279,8 +279,8 @@ fun RepetitionBlockCard(
       LazyColumn(
         state = state.listState,
         modifier = Modifier
-            .reorderable(state)
-            .detectReorderAfterLongPress(state),
+          .reorderable(state)
+          .detectReorderAfterLongPress(state),
         userScrollEnabled = false
       ) {
         items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
@@ -410,8 +410,8 @@ fun StepCardHeader(
 ) {
   Row(
     modifier = modifier
-        .fillMaxWidth()
-        .padding(start = if (readOnly) 0.dp else 16.dp),
+      .fillMaxWidth()
+      .padding(start = if (readOnly) 0.dp else 16.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
@@ -433,13 +433,13 @@ fun StepCardHeader(
             Icons.Rounded.DirectionsWalk,
             contentDescription = stringResource(R.string.warm_up),
             modifier = Modifier
-                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                .drawBehind {
-                    drawCircle(
-                        color = Color.Green.copy(alpha = 0.4f),
-                        radius = 16.dp.toPx()
-                    )
-                },
+              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+              .drawBehind {
+                drawCircle(
+                  color = Color.Green.copy(alpha = 0.4f),
+                  radius = 16.dp.toPx()
+                )
+              },
             tint = Color.White
           )
         }
@@ -449,13 +449,13 @@ fun StepCardHeader(
             Icons.Rounded.DirectionsWalk,
             contentDescription = stringResource(R.string.cool_down),
             modifier = Modifier
-                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                .drawBehind {
-                    drawCircle(
-                        color = Color.Blue.copy(alpha = 0.4f),
-                        radius = 16.dp.toPx()
-                    )
-                },
+              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+              .drawBehind {
+                drawCircle(
+                  color = Color.Blue.copy(alpha = 0.4f),
+                  radius = 16.dp.toPx()
+                )
+              },
             tint = Color.White
           )
         }
@@ -465,13 +465,13 @@ fun StepCardHeader(
             Icons.Rounded.DirectionsRun,
             contentDescription = stringResource(R.string.repetition),
             modifier = Modifier
-                .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-                .drawBehind {
-                    drawCircle(
-                        color = Color.Red.copy(alpha = 0.4f),
-                        radius = 16.dp.toPx()
-                    )
-                },
+              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+              .drawBehind {
+                drawCircle(
+                  color = Color.Red.copy(alpha = 0.4f),
+                  radius = 16.dp.toPx()
+                )
+              },
             tint = Color.White
           )
         }
@@ -519,8 +519,8 @@ fun AddButtons(
 
     Row(
       modifier = Modifier
-          .fillMaxWidth()
-          .padding(16.dp),
+        .fillMaxWidth()
+        .padding(16.dp),
       horizontalArrangement = Arrangement.SpaceAround
     ) {
       if (isEnoughSpaceForText) {
@@ -634,9 +634,9 @@ fun TrainingStepsListBox(
 
   OutlinedCard(
     modifier = Modifier
-        .fieldModifier()
-        .fillMaxWidth()
-        .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
+      .fieldModifier()
+      .fillMaxWidth()
+      .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
   ) {
     Scaffold(
       floatingActionButton = {
@@ -653,8 +653,8 @@ fun TrainingStepsListBox(
     ) {
       Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+          .fillMaxWidth()
+          .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically
       ) {
         ReadOnlyStepsList(trainingSteps = training.trainingSteps)

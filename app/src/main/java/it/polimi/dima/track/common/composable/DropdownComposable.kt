@@ -16,6 +16,7 @@ import it.polimi.dima.track.R
 enum class IconButtonStyle {
   Normal, Filled, FilledTonal
 }
+
 @Composable
 fun DropdownContextMenu(
   options: List<String>,

@@ -6,11 +6,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 fun Modifier.textButton(): Modifier {
-  return this.fillMaxWidth().padding(16.dp, 8.dp, 16.dp, 0.dp)
+  return this
+    .fillMaxWidth()
+    .padding(16.dp, 8.dp, 16.dp, 0.dp)
 }
 
 fun Modifier.basicButton(): Modifier {
-  return this.fillMaxWidth().padding(16.dp, 8.dp)
+  return this
+    .fillMaxWidth()
+    .padding(16.dp, 8.dp)
 }
 
 fun Modifier.card(): Modifier {
@@ -26,7 +30,9 @@ fun Modifier.dropdownSelector(): Modifier {
 }
 
 fun Modifier.fieldModifier(): Modifier {
-  return this.fillMaxWidth().padding(16.dp, 4.dp)
+  return this
+    .fillMaxWidth()
+    .padding(16.dp, 4.dp)
 }
 
 fun Modifier.toolbarActions(): Modifier {
@@ -34,9 +40,13 @@ fun Modifier.toolbarActions(): Modifier {
 }
 
 fun Modifier.spacer(): Modifier {
-  return this.fillMaxWidth().height(24.dp)
+  return this
+    .fillMaxWidth()
+    .height(24.dp)
 }
 
 fun Modifier.smallSpacer(): Modifier {
-  return this.fillMaxWidth().height(8.dp)
+  return this
+    .fillMaxWidth()
+    .height(8.dp)
 }

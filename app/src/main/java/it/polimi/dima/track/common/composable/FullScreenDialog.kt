@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -33,55 +32,55 @@ import it.polimi.dima.track.common.ext.spacer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FullScreenDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    title: String,
-    content: @Composable () -> Unit
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  title: String,
+  content: @Composable () -> Unit
 ) {
-    AlertDialog(
-        modifier = Modifier.fillMaxSize(),
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onDismissRequest,
+  AlertDialog(
+    modifier = Modifier.fillMaxSize(),
+    properties = DialogProperties(usePlatformDefaultWidth = false),
+    onDismissRequest = onDismissRequest,
+  ) {
+    Surface(
+      modifier = Modifier
+          .wrapContentWidth()
+          .wrapContentHeight(),
+      shape = MaterialTheme.shapes.large,
+      tonalElevation = AlertDialogDefaults.TonalElevation
     ) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large,
-            tonalElevation = AlertDialogDefaults.TonalElevation
+      Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp, 16.dp)
+      ) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp, 16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(onClick = onDismissRequest) {
-                        Icon(Icons.Filled.Close, stringResource(R.string.close))
-                    }
-                    Text(
-                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(0.dp, 0.dp, 8.dp, 0.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = onConfirm) {
-                            Text(text = stringResource(R.string.save))
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.spacer())
-                content()
+          IconButton(onClick = onDismissRequest) {
+            Icon(Icons.Filled.Close, stringResource(R.string.close))
+          }
+          Text(
+            modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+          )
+          Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(0.dp, 0.dp, 8.dp, 0.dp),
+            horizontalArrangement = Arrangement.End
+          ) {
+            TextButton(onClick = onConfirm) {
+              Text(text = stringResource(R.string.save))
             }
+          }
         }
+        Spacer(modifier = Modifier.spacer())
+        content()
+      }
     }
+  }
 }

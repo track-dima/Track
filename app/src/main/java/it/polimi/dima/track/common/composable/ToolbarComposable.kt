@@ -22,7 +22,7 @@ fun BasicToolbar(@StringRes title: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoTitleToolbar(
-  navigationIcon : @Composable () -> Unit,
+  navigationIcon: @Composable () -> Unit,
   actions: @Composable RowScope.() -> Unit
 ) {
   TopAppBar(
@@ -48,26 +48,27 @@ fun ActionToolbar(
   @StringRes endActionDescription: Int,
   endAction: () -> Unit
 ) {
-  val hasStartAction = startActionIcon != null && startAction != null && startActionDescription != null
+  val hasStartAction =
+    startActionIcon != null && startAction != null && startActionDescription != null
 
   TopAppBar(
     title = {
       if (hasStartAction) {
-          Text(
-            stringResource(title),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-          )
+        Text(
+          stringResource(title),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
       } else {
-          Text(
-            stringResource(title),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-          )
+        Text(
+          stringResource(title),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
       }
-            },
+    },
     navigationIcon = {
       if (hasStartAction) {
         IconButton(onClick = startAction!!) {

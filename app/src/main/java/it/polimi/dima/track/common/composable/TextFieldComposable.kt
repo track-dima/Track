@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import it.polimi.dima.track.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BasicField(
   @StringRes text: Int,
@@ -32,7 +31,6 @@ fun BasicField(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
   OutlinedTextField(
