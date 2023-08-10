@@ -2,6 +2,7 @@ package it.polimi.dima.track.common.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -246,6 +247,7 @@ fun RepetitionBlockCard(
   readOnly: Boolean = false,
   lastStep: Boolean = false,
   fillTime: Boolean = false,
+  resultIndex: Int = 0,
   level: Int = 0
 ) {
   val tree = repetitionBlock.calculateTree()
@@ -263,88 +265,97 @@ fun RepetitionBlockCard(
       onDeleteClick = { onDeleteClick(listOf(), repetitionBlock) },
       readOnly = readOnly
     ) {
-      Row(
-        modifier = if (readOnly) Modifier.fillMaxWidth() else Modifier,
-        horizontalArrangement = if (readOnly) Arrangement.Center else Arrangement.Start
+      Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
       ) {
         if (fillTime || readOnly) {
           TextButton(onClick = { currentIndex.value = maxOf(currentIndex.value - 1 , 0) }) {
             Icon(
               Icons.Rounded.ArrowLeft,
               contentDescription = stringResource(R.string.back),
-              modifier = Modifier.padding(end = 4.dp)
             )
           }
         }
-        TextButton(
-          onClick = {
-            onRepetitionsClick(
-              listOf(repetitionBlock.id),
-              repetitionBlock.repetitions
-            )
-          }
+
+        Row(
+          horizontalArrangement = if (readOnly) Arrangement.Center else Arrangement.Start
         ) {
-          Icon(
-            Icons.Rounded.Repeat,
-            contentDescription = stringResource(R.string.repetitions),
-            modifier = Modifier.padding(end = 4.dp)
-          )
-          Text(text = (if (fillTime || readOnly) "${currentIndex.value + 1}/" else "") + repetitionBlock.repetitions.toString())
-        }
-        TextButton(
-          onClick = {
-            onRecoverClick(
-              listOf(repetitionBlock.id),
-              repetitionBlock.recoverType,
-              repetitionBlock.recoverDuration,
-              repetitionBlock.recoverDistance,
-              repetitionBlock.recoverDistanceUnit,
-              false
-            )
-          }
-        ) {
-          Icon(
-            Icons.Rounded.Timer,
-            contentDescription = stringResource(R.string.recover),
-            modifier = Modifier.padding(end = 4.dp)
-          )
-          Text(
-            text = if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
-              secondsToHhMmSs(repetitionBlock.recoverDuration)
-            else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}"
-          )
-        }
-        if (!lastStep) {
-          TextButton(
-            onClick = {
-              onRecoverClick(
-                listOf(repetitionBlock.id),
-                repetitionBlock.extraRecoverType,
-                repetitionBlock.extraRecoverDuration,
-                repetitionBlock.extraRecoverDistance,
-                repetitionBlock.extraRecoverDistanceUnit,
-                true
+          if (!readOnly) {
+            TextButton(
+              onClick = {
+                onRepetitionsClick(
+                  listOf(repetitionBlock.id),
+                  repetitionBlock.repetitions
+                )
+              }
+            ) {
+              RepeatElement (
+                repetitionBlock = repetitionBlock,
+                currentIndex = currentIndex.value,
+                readOnly = false
               )
             }
-          ) {
-            Icon(
-              Icons.Rounded.MoreTime,
-              contentDescription = stringResource(R.string.extra_recover),
-              modifier = Modifier.padding(end = 4.dp)
-            )
-            Text(
-              text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
-                secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
-              else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
-            )
+
+            TextButton(
+              onClick = {
+                onRecoverClick(
+                  listOf(repetitionBlock.id),
+                  repetitionBlock.recoverType,
+                  repetitionBlock.recoverDuration,
+                  repetitionBlock.recoverDistance,
+                  repetitionBlock.recoverDistanceUnit,
+                  false
+                )
+              }
+            ) {
+              RecoverElement(repetitionBlock = repetitionBlock)
+            }
+
+            if (!lastStep) {
+              TextButton(
+                onClick = {
+                  onRecoverClick(
+                    listOf(repetitionBlock.id),
+                    repetitionBlock.extraRecoverType,
+                    repetitionBlock.extraRecoverDuration,
+                    repetitionBlock.extraRecoverDistance,
+                    repetitionBlock.extraRecoverDistanceUnit,
+                    true
+                  )
+                }
+              ) {
+                ExtraRecoverElement(repetitionBlock = repetitionBlock)
+              }
+            }
+          }
+          else {
+            Row (
+              modifier = Modifier
+                .height(48.dp)
+                .padding(vertical = 4.dp),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+              RepeatElement (
+                repetitionBlock = repetitionBlock,
+                currentIndex = currentIndex.value,
+                readOnly = true
+              )
+
+              RecoverElement(repetitionBlock = repetitionBlock)
+
+              if (!lastStep) ExtraRecoverElement(repetitionBlock = repetitionBlock)
+            }
           }
         }
+
         if (fillTime || readOnly) {
           TextButton(onClick = { currentIndex.value = minOf(currentIndex.value + 1, repetitionBlock.repetitions - 1) }) {
             Icon(
               Icons.Rounded.ArrowRight,
               contentDescription = stringResource(R.string.forward),
-              modifier = Modifier.padding(end = 4.dp)
             )
           }
         }
@@ -362,7 +373,7 @@ fun RepetitionBlockCard(
             step
           )
         },
-        resultIndex = currentIndex.value,
+        resultIndex = resultIndex * repetitionBlock.repetitions + currentIndex.value,
       )
     } else {
       val state = rememberReorderableLazyListState(
@@ -487,6 +498,64 @@ fun RepetitionBlockCard(
         repetitionsBlockAllowed = level < 2
       )
     }
+  }
+}
+
+@Composable
+fun RecoverElement(
+  repetitionBlock: TrainingStep,
+) {
+  Row (
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      Icons.Rounded.Timer,
+      contentDescription = stringResource(R.string.recover),
+      modifier = Modifier.padding(end = 4.dp)
+    )
+    Text(
+      text = if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
+        secondsToHhMmSs(repetitionBlock.recoverDuration)
+      else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}"
+    )
+  }
+}
+
+@Composable
+fun RepeatElement(
+  repetitionBlock: TrainingStep,
+  currentIndex: Int,
+  readOnly: Boolean
+) {
+  Row (
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      Icons.Rounded.Repeat,
+      contentDescription = stringResource(R.string.repetitions),
+      modifier = Modifier.padding(end = 4.dp)
+    )
+    Text(text = (if (readOnly) "${currentIndex + 1}/" else "") + repetitionBlock.repetitions.toString())
+  }
+}
+
+@Composable
+fun ExtraRecoverElement(
+  repetitionBlock: TrainingStep,
+) {
+  Row (
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      Icons.Rounded.MoreTime,
+      contentDescription = stringResource(R.string.extra_recover),
+      modifier = Modifier.padding(end = 4.dp)
+    )
+    Text(
+      text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
+        secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
+      else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
+    )
   }
 }
 
@@ -717,7 +786,8 @@ fun UnmodifiableStepsList(
           readOnly = readOnly,
           lastStep = trainingStep.id == trainingSteps.last().id,
           fillTime = fillTime,
-          onTimeFillClick = { hierarchy, index, step -> onTimeFillClick(hierarchy, index, step) }
+          onTimeFillClick = { hierarchy, index, step -> onTimeFillClick(hierarchy, index, step) },
+          resultIndex = resultIndex
         )
       }
     }
