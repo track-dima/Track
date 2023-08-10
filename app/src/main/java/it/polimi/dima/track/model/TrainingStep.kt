@@ -56,33 +56,41 @@ data class TrainingStep(
       val durationTime = if (durationType == DurationType.TIME) {
         duration
       } else {
-        toMeters(distance, distanceUnit) * 5 * 60 / 1000 // 5 min/km
+        distanceToSeconds(distance, distanceUnit)
       }
       val recoverTime = if (type == Type.WARM_UP || type == Type.COOL_DOWN || lastInBlock)
         0
       else if (recoverType == DurationType.TIME)
         recoverDuration
       else
-        toMeters(recoverDistance, recoverDistanceUnit) * 5 * 60 / 1000
+        distanceToSeconds(recoverDistance, recoverDistanceUnit)
 
       durationTime + recoverTime
     } else {
       val recoverTime = if (recoverType == DurationType.TIME) {
         recoverDuration
       } else {
-        toMeters(recoverDistance, recoverDistanceUnit) * 5 * 60 / 1000
+        distanceToSeconds(recoverDistance, recoverDistanceUnit)
       }
-      stepsInRepetition.sumOf { it.calculateTotalTime(it.id == stepsInRepetition.last().id) } * repetitions + recoverTime * (repetitions - 1)
+      val extraRecoverTime = if (extraRecoverType == DurationType.TIME) {
+        extraRecoverDuration
+      } else {
+        distanceToSeconds(extraRecoverDistance, extraRecoverDistanceUnit)
+      }
+
+      stepsInRepetition.sumOf { it.calculateTotalTime(it.id == stepsInRepetition.last().id) } * repetitions + recoverTime * (repetitions - 1) + extraRecoverTime
     }
   }
 
-  private fun toMeters(distance: Int, distanceUnit: String): Int {
+  private fun distanceToSeconds(distance: Int, distanceUnit: String): Int {
     // Convert the distance to meters
-    return when (distanceUnit) {
+    val dist = when (distanceUnit) {
       "km" -> distance * 1000
       "mi" -> (distance * 1609.344).toInt()
       else -> distance
     }
+    // Convert the distance to seconds (5 min/km)
+    return dist * 5 * 60 / 1000
   }
 
   class DurationType {

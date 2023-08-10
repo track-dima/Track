@@ -76,4 +76,7 @@
     <string name="delete_training_confirmation">Are you sure you want to delete this training?</string>
     <string name="fill_training">Fill training</string>
     <string name="extra_recover">Extra recover</string>
+    <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="fill_result">Fill result</string>
 </resources>

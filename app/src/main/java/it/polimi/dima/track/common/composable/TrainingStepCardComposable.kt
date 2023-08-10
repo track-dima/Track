@@ -13,7 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.AvTimer
+import androidx.compose.material.icons.rounded.ArrowLeft
+import androidx.compose.material.icons.rounded.ArrowRight
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.DirectionsWalk
@@ -58,6 +59,7 @@ import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
+import it.polimi.dima.track.screens.edit_repetitions.removeLeadingZeros
 import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMmSs
 import org.burnoutcrew.reorderable.ItemPosition
 import org.burnoutcrew.reorderable.ReorderableItem
@@ -158,14 +160,23 @@ fun RepetitionsCard(
   showRecover: Boolean,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-  readOnly: Boolean = false
+  onTimeFillClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
+  readOnly: Boolean = false,
+  fillTime: Boolean = false,
+  resultIndex: Int = 0
 ) {
   Card(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
       .height(70.dp),
-    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
+    onClick = {
+      if (fillTime) onTimeFillClick(listOf(), trainingStep) else onEditClick(
+        listOf(
+          trainingStep.id
+        ), trainingStep
+      )
+    },
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.secondaryContainer,
     )
@@ -199,6 +210,24 @@ fun RepetitionsCard(
           }
         }
       }
+      if (readOnly || fillTime) {
+        Column(
+          modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(end = 16.dp),
+          horizontalAlignment = Alignment.End,
+          verticalArrangement = Arrangement.Center
+        ) {
+          if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty()) {
+            Text(
+              // TODO tasto reset e non mostrare se 0
+              text = removeLeadingZeros(trainingStep.results[resultIndex]),
+              fontWeight = FontWeight.Bold
+            )
+          }
+        }
+      }
     }
   }
 }
@@ -213,8 +242,10 @@ fun RepetitionBlockCard(
   onRepetitionsClick: (List<String>, Int) -> Unit = { _, _ -> },
   onRecoverClick: (List<String>, String, Int, Int, String, Boolean) -> Unit = { _, _, _, _, _, _ -> },
   onMove: (List<String>, ItemPosition, ItemPosition) -> Unit = { _, _, _ -> },
+  onTimeFillClick: (List<String>, Int, TrainingStep) -> Unit = { _, _, _ -> },
   readOnly: Boolean = false,
   lastStep: Boolean = false,
+  fillTime: Boolean = false,
   level: Int = 0
 ) {
   val tree = repetitionBlock.calculateTree()
@@ -225,6 +256,8 @@ fun RepetitionBlockCard(
       .fillMaxWidth()
       .height(78.dp * (tree.first) + (if (readOnly) 70.dp else 156.dp) * (tree.second))
   ) {
+    val currentIndex = rememberSaveable { mutableStateOf(0) }
+
     StepCardHeader(
       stepType = TrainingStep.Type.REPETITION_BLOCK,
       onDeleteClick = { onDeleteClick(listOf(), repetitionBlock) },
@@ -234,6 +267,15 @@ fun RepetitionBlockCard(
         modifier = if (readOnly) Modifier.fillMaxWidth() else Modifier,
         horizontalArrangement = if (readOnly) Arrangement.Center else Arrangement.Start
       ) {
+        if (fillTime || readOnly) {
+          TextButton(onClick = { currentIndex.value = maxOf(currentIndex.value - 1 , 0) }) {
+            Icon(
+              Icons.Rounded.ArrowLeft,
+              contentDescription = stringResource(R.string.back),
+              modifier = Modifier.padding(end = 4.dp)
+            )
+          }
+        }
         TextButton(
           onClick = {
             onRepetitionsClick(
@@ -247,7 +289,7 @@ fun RepetitionBlockCard(
             contentDescription = stringResource(R.string.repetitions),
             modifier = Modifier.padding(end = 4.dp)
           )
-          Text(text = repetitionBlock.repetitions.toString())
+          Text(text = (if (fillTime || readOnly) "${currentIndex.value + 1}/" else "") + repetitionBlock.repetitions.toString())
         }
         TextButton(
           onClick = {
@@ -297,11 +339,31 @@ fun RepetitionBlockCard(
             )
           }
         }
+        if (fillTime || readOnly) {
+          TextButton(onClick = { currentIndex.value = minOf(currentIndex.value + 1, repetitionBlock.repetitions - 1) }) {
+            Icon(
+              Icons.Rounded.ArrowRight,
+              contentDescription = stringResource(R.string.forward),
+              modifier = Modifier.padding(end = 4.dp)
+            )
+          }
+        }
       }
     }
 
     if (readOnly) {
-      ReadOnlyStepsList(trainingSteps = repetitionBlock.stepsInRepetition)
+      UnmodifiableStepsList(
+        trainingSteps = repetitionBlock.stepsInRepetition,
+        fillTime = fillTime,
+        onTimeFillClick = { descendants, index, step ->
+          onTimeFillClick(
+            listOf(repetitionBlock.id) + descendants,
+            index,
+            step
+          )
+        },
+        resultIndex = currentIndex.value,
+      )
     } else {
       val state = rememberReorderableLazyListState(
         onMove = { from, to -> onMove(listOf(repetitionBlock.id), from, to) }
@@ -405,11 +467,7 @@ fun RepetitionBlockCard(
                   )
                 },
                 onMove = { descendants, from, to ->
-                  onMove(
-                    listOf(repetitionBlock.id) + descendants,
-                    from,
-                    to
-                  )
+                  onMove(listOf(repetitionBlock.id) + descendants, from, to)
                 },
                 lastStep = trainingStep.id == repetitionBlock.stepsInRepetition.last().id,
                 level = level + 1
@@ -623,8 +681,12 @@ fun DeleteDialog(
 }
 
 @Composable
-fun ReadOnlyStepsList(
-  trainingSteps: List<TrainingStep>
+fun UnmodifiableStepsList(
+  trainingSteps: List<TrainingStep>,
+  readOnly: Boolean = true,
+  fillTime: Boolean = false,
+  resultIndex: Int = 0,
+  onTimeFillClick: (List<String>, Int, TrainingStep) -> Unit = { _, _, _ -> }
 ) {
   LazyColumn(
     userScrollEnabled = false
@@ -633,24 +695,29 @@ fun ReadOnlyStepsList(
       when (trainingStep.type) {
         TrainingStep.Type.WARM_UP -> WarmUpCard(
           trainingStep = trainingStep,
-          readOnly = true
+          readOnly = readOnly
         )
 
         TrainingStep.Type.COOL_DOWN -> CoolDownCard(
           trainingStep = trainingStep,
-          readOnly = true
+          readOnly = readOnly
         )
 
         TrainingStep.Type.REPETITION -> RepetitionsCard(
           trainingStep = trainingStep,
           showRecover = trainingStep.id != trainingSteps.last().id,
-          readOnly = true
+          readOnly = readOnly,
+          fillTime = fillTime,
+          resultIndex = resultIndex,
+          onTimeFillClick = { hierarchy, step -> onTimeFillClick(hierarchy, resultIndex, step) }
         )
 
         TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
           repetitionBlock = trainingStep,
-          readOnly = true,
-          lastStep = trainingStep.id == trainingSteps.last().id
+          readOnly = readOnly,
+          lastStep = trainingStep.id == trainingSteps.last().id,
+          fillTime = fillTime,
+          onTimeFillClick = { hierarchy, index, step -> onTimeFillClick(hierarchy, index, step) }
         )
       }
     }
@@ -711,8 +778,10 @@ fun TrainingStepsListBox(
           .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically
       ) {
-        ReadOnlyStepsList(trainingSteps = training.trainingSteps)
+        UnmodifiableStepsList(trainingSteps = training.trainingSteps)
       }
     }
   }
 }
+
+

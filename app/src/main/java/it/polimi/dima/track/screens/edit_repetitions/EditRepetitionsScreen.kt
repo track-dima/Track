@@ -322,29 +322,67 @@ fun EditRepetitionsScreen(
 
 @Composable
 fun TimeSelectionDialog(
+  title: String = "Duration time (h:m:s)",
   onDismissRequest: () -> Unit,
-  onConfirm: () -> Unit,
+  onConfirm: (Boolean) -> Unit,
   durationSelection: Int,
+  centsSelectable: Boolean = false,
+  centsSelection: Int = 0,
   hourPickerState: PickerState,
   minutePickerState: PickerState,
-  secondPickerState: PickerState
+  secondPickerState: PickerState,
+  centsPickerState: PickerState = PickerState()
 ) {
+  val displayCents = rememberSaveable { mutableStateOf(centsSelection != 0) }
+
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = {
-      Text(text = "Duration time (h:m:s)")
+      Text(text = title)
     },
     text = {
-      TimeSelectionDialogContent(
-        durationSelection,
-        hourPickerState,
-        minutePickerState,
-        secondPickerState
-      )
+      Surface(modifier = Modifier.height(if (centsSelectable) 220.dp else 160.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+          if (centsSelectable) {
+            SegmentedControl(
+              items = listOf("HH:MM:SS", "MM:SS.CC"),
+              defaultSelectedItemIndex = if (centsSelection == 0) 0 else 1,
+              cornerRadius = 50,
+              color = MaterialTheme.colorScheme.primary,
+              onItemSelection = { displayCents.value = it == 1 }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+          }
+
+          if (displayCents.value) {
+            TimeSelectionDialogContent(
+              durationSelection = durationSelection,
+              centsSelection = centsSelection,
+              minutePickerState = minutePickerState,
+              secondPickerState = secondPickerState,
+              centsPickerState = centsPickerState,
+              centsSelectable = true
+            )
+          } else {
+            TimeSelectionDialogContent(
+              durationSelection = durationSelection,
+              hourPickerState = hourPickerState,
+              minutePickerState = minutePickerState,
+              secondPickerState = secondPickerState,
+              centsSelectable = false
+            )
+          }
+        }
+      }
     },
     confirmButton = {
       TextButton(
-        onClick = onConfirm
+        onClick = { onConfirm(displayCents.value) }
       ) {
         Text("Confirm")
       }
@@ -362,9 +400,12 @@ fun TimeSelectionDialog(
 @Composable
 fun TimeSelectionDialogContent(
   durationSelection: Int,
-  hourPickerState: PickerState,
+  centsSelection: Int = 0,
+  hourPickerState: PickerState = PickerState(),
   minutePickerState: PickerState,
-  secondPickerState: PickerState
+  secondPickerState: PickerState,
+  centsPickerState: PickerState = PickerState(),
+  centsSelectable: Boolean = false
 ) {
   Surface(modifier = Modifier.height(160.dp)) {
     Column(
@@ -374,15 +415,17 @@ fun TimeSelectionDialogContent(
     ) {
 
       Row(modifier = Modifier.fillMaxWidth()) {
-        NumberPicker(
-          state = hourPickerState,
-          items = remember { (0..23).map { it.toString() } },
-          modifier = Modifier.weight(1f),
-          visibleItemsCount = 3,
-          startIndex = durationSelection / 3600,
-          textModifier = Modifier.padding(8.dp),
-          textStyle = TextStyle(fontSize = 24.sp)
-        )
+        if (!centsSelectable) {
+          NumberPicker(
+            state = hourPickerState,
+            items = remember { (0..23).map { it.toString() } },
+            modifier = Modifier.weight(1f),
+            visibleItemsCount = 3,
+            startIndex = durationSelection / 3600,
+            textModifier = Modifier.padding(8.dp),
+            textStyle = TextStyle(fontSize = 24.sp)
+          )
+        }
         NumberPicker(
           state = minutePickerState,
           items = remember { (0..59).map { it.toString().padStart(2, '0') } },
@@ -401,6 +444,24 @@ fun TimeSelectionDialogContent(
           textModifier = Modifier.padding(8.dp),
           textStyle = TextStyle(fontSize = 24.sp)
         )
+        if (centsSelectable) {
+          Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxHeight()
+          ) {
+            Text(text = ".", fontSize = 24.sp)
+          }
+          NumberPicker(
+            state = centsPickerState,
+            items = remember { (0..99).map { it.toString().padStart(2, '0') } },
+            visibleItemsCount = 3,
+            modifier = Modifier.weight(1f),
+            startIndex = centsSelection,
+            textModifier = Modifier.padding(8.dp),
+            textStyle = TextStyle(fontSize = 24.sp)
+          )
+        }
       }
     }
   }
@@ -597,7 +658,8 @@ fun RecoverSelectionDialog(
               durationSelection = currentRecoverDuration,
               hourPickerState = durationHourPickerState,
               minutePickerState = durationMinutePickerState,
-              secondPickerState = durationSecondPickerState
+              secondPickerState = durationSecondPickerState,
+              centsSelectable = false
             )
           } else {
             DistanceSelectionDialogContent(
@@ -839,13 +901,7 @@ fun secondsToHhMmSs(seconds: Int): String {
   val minutes = (seconds % 3600) / 60
   val remainingSeconds = seconds % 60
 
-  return if (hours > 0) {
-    String.format("%d:%02d:%02d", hours, minutes, remainingSeconds)
-  } else {
-    if (minutes < 10) {
-      String.format("%d:%02d", minutes, remainingSeconds)
-    } else String.format("%02d:%02d", minutes, remainingSeconds)
-  }
+  return removeLeadingZeros(String.format("%d:%02d:%02d", hours, minutes, remainingSeconds))
 }
 
 fun secondsToHhMm(seconds: Int): String {
@@ -853,6 +909,25 @@ fun secondsToHhMm(seconds: Int): String {
   val minutes = (seconds % 3600) / 60
 
   return String.format("%d:%02d", hours, minutes)
+}
+
+fun removeLeadingZeros(time: String): String {
+  val split = time.split(":")
+  return if (split.size == 3) {
+    // e.g. 00:12:34
+    if (split[0].toInt() > 0)
+      time
+    else "${split[1].toInt()}" + ":${split[2]}"
+  }
+  else {
+    // e.g. 00:12.34
+    if (split[0].toInt() > 0)
+      "${split[0].toInt()}" + ":${split[1]}"
+    else {
+      val split2 = split[1].split(".")
+      "${split2[0].toInt()}" + ".${split2[1]}"
+    }
+  }
 }
 
 

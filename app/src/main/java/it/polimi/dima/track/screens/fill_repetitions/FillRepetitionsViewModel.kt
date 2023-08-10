@@ -30,6 +30,50 @@ class FillRepetitionsViewModel @Inject constructor(
     }
   }
 
+  fun onTimeFillClick(hierarchy: List<String>, index: Int, trainingStepId: String, result: String) {
+    trainingSteps.value =
+      onTimeFillClickHelper(hierarchy, trainingSteps.value.toMutableList(), index, trainingStepId, result)
+  }
+
+  private fun onTimeFillClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: MutableList<TrainingStep>,
+    index: Int,
+    trainingStepId: String,
+    result: String
+  ): List<TrainingStep> {
+    return if (hierarchy.isEmpty()) {
+      trainingSteps.apply {
+        val trainingIndex = indexOfFirst { it.id == trainingStepId }
+        val trainingStep = get(trainingIndex)
+        val results = trainingStep.results.toMutableList()
+        if (results.size > index) {
+          results[index] = result
+        } else {
+          results.addAll(List(index - results.size) { "" })
+          results.add(result)
+        }
+        set(trainingIndex, trainingStep.copy(results = results))
+      }
+    } else {
+      trainingSteps.map {
+        if (it.id == hierarchy.first()) {
+          it.copy(
+            stepsInRepetition = onTimeFillClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition.toMutableList(),
+              index,
+              trainingStepId,
+              result
+            )
+          )
+        } else {
+          it
+        }
+      }
+    }
+  }
+
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
       training.value = training.value.copy(trainingSteps = trainingSteps.value)
