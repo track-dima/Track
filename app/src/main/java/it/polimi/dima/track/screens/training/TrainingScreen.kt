@@ -91,7 +91,7 @@ fun TrainingScreen(
     ) {
       TrainingToolbarActions(
         training = training,
-        onFavoriteClick = { viewModel.onFavoriteClick() },
+        onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
         onEditPressed = { onEditPressed(training) },
         options = options,
         onDuplicateTrainingClick = { viewModel.onDuplicateTrainingClick(training, popUpScreen, onEditPressed) },
@@ -153,7 +153,7 @@ private fun TrainingToolbarActions(
       when (TrainingActionOption.getByTitle(action)) {
         TrainingActionOption.DeleteTask -> onDeleteTaskClick()
         TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick()
-        else -> {}
+        else -> Unit
       }
     },
     style = IconButtonStyle.FilledTonal,

@@ -30,8 +30,8 @@ class TrainingViewModel @Inject constructor(
     options.value = TrainingActionOption.getOptions(true)
   }
 
-  fun onFavoriteClick() {
-    training.value = training.value.copy(favorite = !training.value.favorite)
+  fun onFavoriteClick(favorite: Boolean) {
+    training.value = training.value.copy(favorite = favorite)
     launchCatching {
       storageService.update(training.value)
     }
