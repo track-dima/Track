@@ -28,10 +28,6 @@ class AgendaViewModel @Inject constructor(
     options.value = TrainingActionOption.getOptions(false)
   }
 
-  fun onTrainingCheckChange(training: Training) {
-    launchCatching { storageService.update(training.copy(completed = !training.completed)) }
-  }
-
   fun onAddClick(openScreen: (String) -> Unit) = openScreen(EDIT_TRAINING_SCREEN)
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
@@ -42,7 +38,7 @@ class AgendaViewModel @Inject constructor(
       TrainingActionOption.CopyTraining -> Unit
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
-      else -> {}
+      else -> Unit
     }
   }
 

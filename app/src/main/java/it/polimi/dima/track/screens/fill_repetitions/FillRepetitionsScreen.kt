@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -44,6 +46,7 @@ fun FillRepetitionsScreen(
     modifier = modifier
       .fillMaxWidth()
       .fillMaxHeight(),
+      /*.verticalScroll(rememberScrollState()), TODO crushes for potential infinite height */
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
