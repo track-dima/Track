@@ -40,9 +40,9 @@ import it.polimi.dima.track.common.composable.IconButtonStyle
 import it.polimi.dima.track.common.composable.NoTitleToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
 import it.polimi.dima.track.common.ext.contextMenu
+import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.model.Training
-import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMm
 
 @Composable
 fun TrainingScreen(
@@ -89,39 +89,13 @@ fun TrainingScreen(
         }
       }
     ) {
-      FilledTonalIconToggleButton(
-        modifier = Modifier.padding(4.dp, 0.dp),
-        checked = training.favorite,
-        onCheckedChange = { viewModel.onFavoriteClick() }) {
-        Icon(
-          if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-          contentDescription = stringResource(R.string.favorite)
-        )
-      }
-      FilledTonalIconButton(
-        modifier = Modifier.padding(4.dp, 0.dp),
-        onClick = { onEditPressed(training) }
-      ) {
-        Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_training))
-      }
-      DropdownContextMenu(
+      TrainingToolbarActions(
+        training = training,
+        onFavoriteClick = { viewModel.onFavoriteClick() },
+        onEditPressed = { onEditPressed(training) },
         options = options,
-        modifier = Modifier
-          .contextMenu()
-          .padding(4.dp, 0.dp, 8.dp, 0.dp),
-        onActionClick = { action ->
-          when (TrainingActionOption.getByTitle(action)) {
-            TrainingActionOption.DeleteTask -> openDeleteDialog.value = true
-            TrainingActionOption.DuplicateTraining -> viewModel.onDuplicateTrainingClick(
-              training,
-              popUpScreen,
-              onEditPressed
-            )
-
-            else -> {}
-          }
-        },
-        style = IconButtonStyle.FilledTonal,
+        onDuplicateTrainingClick = { viewModel.onDuplicateTrainingClick(training, popUpScreen, onEditPressed) },
+        onDeleteTaskClick = { openDeleteDialog.value = true }
       )
     }
 
@@ -131,78 +105,7 @@ fun TrainingScreen(
         .padding(16.dp),
       verticalArrangement = Arrangement.Center
     ) {
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(top = 16.dp),
-      ) {
-        Icon(
-          Icons.Rounded.DirectionsRun,
-          contentDescription = stringResource(R.string.run),
-          modifier = Modifier
-            .padding(end = 16.dp)
-            .align(Alignment.CenterVertically)
-        )
-        Text(
-          text = training.title,
-          style = MaterialTheme.typography.titleLarge
-        )
-      }
-
-
-      if (training.description.isNotEmpty()) {
-        Spacer(modifier = Modifier.spacer())
-        Row {
-          Icon(
-            Icons.Rounded.Notes,
-            contentDescription = stringResource(R.string.description),
-            modifier = Modifier
-              .padding(end = 16.dp)
-              .align(Alignment.CenterVertically)
-          )
-          Text(text = training.description)
-        }
-      }
-
-      if (training.dueDateString.isNotEmpty() || training.dueTimeString.isNotEmpty()) {
-        Spacer(modifier = Modifier.spacer())
-        Row {
-          Icon(
-            Icons.Rounded.CalendarToday,
-            contentDescription = stringResource(R.string.date),
-            modifier = Modifier
-              .padding(end = 16.dp)
-              .align(Alignment.CenterVertically)
-          )
-          Column {
-            Row {
-              Text(text = training.dueDateString)
-              if (training.dueDateString.isNotEmpty() && training.dueTimeString.isNotEmpty()) Text(
-                text = " ･ "
-              )
-              Text(text = training.dueTimeString)
-            }
-            Text(
-              text = "estimated ${secondsToHhMm(training.calculateTotalTime())}h",
-              style = MaterialTheme.typography.bodyMedium
-            )
-          }
-        }
-      }
-
-      if (training.type.isNotEmpty()) {
-        Spacer(modifier = Modifier.spacer())
-        Row {
-          Icon(
-            Icons.Rounded.Terrain,
-            contentDescription = stringResource(R.string.type),
-            modifier = Modifier
-              .padding(end = 16.dp)
-              .align(Alignment.CenterVertically)
-          )
-          Text(text = training.type)
-        }
-      }
+      TrainingInformation(training)
     }
 
     Spacer(modifier = Modifier.spacer())
@@ -215,4 +118,139 @@ fun TrainingScreen(
   }
 
   LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
+}
+
+@Composable
+private fun TrainingToolbarActions(
+  training: Training,
+  onFavoriteClick: (Boolean) -> Unit,
+  onEditPressed: () -> Unit,
+  options: List<String>,
+  onDeleteTaskClick: () -> Unit,
+  onDuplicateTrainingClick: () -> Unit
+) {
+  FilledTonalIconToggleButton(
+    modifier = Modifier.padding(horizontal = 4.dp),
+    checked = training.favorite,
+    onCheckedChange = onFavoriteClick) {
+    Icon(
+      if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+      contentDescription = stringResource(R.string.favorite)
+    )
+  }
+  FilledTonalIconButton(
+    modifier = Modifier.padding(horizontal = 4.dp),
+    onClick = onEditPressed
+  ) {
+    Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_training))
+  }
+  DropdownContextMenu(
+    options = options,
+    modifier = Modifier
+      .contextMenu()
+      .padding(start = 4.dp, end = 8.dp),
+    onActionClick = { action ->
+      when (TrainingActionOption.getByTitle(action)) {
+        TrainingActionOption.DeleteTask -> onDeleteTaskClick()
+        TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick()
+        else -> {}
+      }
+    },
+    style = IconButtonStyle.FilledTonal,
+  )
+}
+
+@Composable
+private fun TrainingInformation(training: Training) {
+  TrainingTitle(training)
+
+  if (training.description.isNotEmpty()) {
+    Spacer(modifier = Modifier.spacer())
+    TrainingDescription(training)
+  }
+
+  if (training.dueDateString.isNotEmpty() || training.dueTimeString.isNotEmpty()) {
+    Spacer(modifier = Modifier.spacer())
+    TrainingTime(training)
+  }
+
+  if (training.type.isNotEmpty()) {
+    Spacer(modifier = Modifier.spacer())
+    TrainingType(training)
+  }
+}
+
+@Composable
+private fun TrainingType(training: Training) {
+  Row {
+    Icon(
+      Icons.Rounded.Terrain,
+      contentDescription = stringResource(R.string.type),
+      modifier = Modifier
+        .padding(end = 16.dp)
+        .align(Alignment.CenterVertically)
+    )
+    Text(text = training.type)
+  }
+}
+
+@Composable
+private fun TrainingTime(training: Training) {
+  Row {
+    Icon(
+      Icons.Rounded.CalendarToday,
+      contentDescription = stringResource(R.string.date),
+      modifier = Modifier
+        .padding(end = 16.dp)
+        .align(Alignment.CenterVertically)
+    )
+    Column {
+      Row {
+        Text(text = training.dueDateString)
+        if (training.dueDateString.isNotEmpty() && training.dueTimeString.isNotEmpty()) Text(
+          text = " ･ "
+        )
+        Text(text = training.dueTimeString)
+      }
+      Text(
+        text = "estimated ${training.calculateTotalTime().secondsToHhMm()}h",
+        style = MaterialTheme.typography.bodyMedium
+      )
+    }
+  }
+}
+
+@Composable
+private fun TrainingDescription(training: Training) {
+  Row {
+    Icon(
+      Icons.Rounded.Notes,
+      contentDescription = stringResource(R.string.description),
+      modifier = Modifier
+        .padding(end = 16.dp)
+        .align(Alignment.CenterVertically)
+    )
+    Text(text = training.description)
+  }
+}
+
+@Composable
+private fun TrainingTitle(training: Training) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(top = 16.dp),
+  ) {
+    Icon(
+      Icons.Rounded.DirectionsRun,
+      contentDescription = stringResource(R.string.run),
+      modifier = Modifier
+        .padding(end = 16.dp)
+        .align(Alignment.CenterVertically)
+    )
+    Text(
+      text = training.title,
+      style = MaterialTheme.typography.titleLarge
+    )
+  }
 }

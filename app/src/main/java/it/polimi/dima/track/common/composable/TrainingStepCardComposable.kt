@@ -2,7 +2,6 @@ package it.polimi.dima.track.common.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,11 +57,11 @@ import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.fieldModifier
+import it.polimi.dima.track.common.ext.removeLeadingZeros
+import it.polimi.dima.track.common.ext.secondsToHhMmSs
+import it.polimi.dima.track.common.ext.timeIsZero
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
-import it.polimi.dima.track.screens.edit_repetitions.removeLeadingZeros
-import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMmSs
-import it.polimi.dima.track.screens.edit_repetitions.timeIsZero
 import org.burnoutcrew.reorderable.ItemPosition
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -102,7 +101,7 @@ fun WarmUpCard(
         Row {
           Text(
             text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-              secondsToHhMmSs(trainingStep.duration)
+              trainingStep.duration.secondsToHhMmSs()
             else "${trainingStep.distance} ${trainingStep.distanceUnit}",
             fontWeight = FontWeight.Bold
           )
@@ -145,7 +144,7 @@ fun CoolDownCard(
         Row {
           Text(
             text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-              secondsToHhMmSs(trainingStep.duration)
+              trainingStep.duration.secondsToHhMmSs()
             else "${trainingStep.distance} ${trainingStep.distanceUnit}",
             fontWeight = FontWeight.Bold
           )
@@ -195,7 +194,7 @@ fun RepetitionsCard(
         Column {
           Text(
             text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-              secondsToHhMmSs(trainingStep.duration)
+              trainingStep.duration.secondsToHhMmSs()
             else "${trainingStep.distance} ${trainingStep.distanceUnit}",
             fontWeight = FontWeight.Bold
           )
@@ -204,7 +203,7 @@ fun RepetitionsCard(
               Text(text = "Recover ")
               Text(
                 text = if (trainingStep.recoverType == TrainingStep.DurationType.TIME)
-                  secondsToHhMmSs(trainingStep.recoverDuration)
+                  trainingStep.recoverDuration.secondsToHhMmSs()
                 else "${trainingStep.recoverDistance} ${trainingStep.recoverDistanceUnit}",
                 fontWeight = FontWeight.Bold
               )
@@ -221,9 +220,9 @@ fun RepetitionsCard(
           horizontalAlignment = Alignment.End,
           verticalArrangement = Arrangement.Center
         ) {
-          if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty() && !timeIsZero(trainingStep.results[resultIndex])) {
+          if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty() && !trainingStep.results[resultIndex].timeIsZero()) {
             Text(
-              text = removeLeadingZeros(trainingStep.results[resultIndex]),
+              text = trainingStep.results[resultIndex].removeLeadingZeros(),
               fontWeight = FontWeight.Bold
             )
           }
@@ -265,13 +264,16 @@ fun RepetitionBlockCard(
       onDeleteClick = { onDeleteClick(listOf(), repetitionBlock) },
       readOnly = readOnly
     ) {
-      Row (
+      Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
       ) {
         if (fillTime || readOnly) {
-          TextButton(onClick = { currentIndex.value = maxOf(currentIndex.value - 1 , 0) }) {
+          TextButton(onClick = {
+            currentIndex.value =
+              if (currentIndex.value == 0) repetitionBlock.repetitions - 1 else currentIndex.value - 1
+          }) {
             Icon(
               Icons.Rounded.ArrowLeft,
               contentDescription = stringResource(R.string.back),
@@ -291,7 +293,7 @@ fun RepetitionBlockCard(
                 )
               }
             ) {
-              RepeatElement (
+              RepeatElement(
                 repetitionBlock = repetitionBlock,
                 currentIndex = currentIndex.value,
                 readOnly = false
@@ -329,16 +331,15 @@ fun RepetitionBlockCard(
                 ExtraRecoverElement(repetitionBlock = repetitionBlock)
               }
             }
-          }
-          else {
-            Row (
+          } else {
+            Row(
               modifier = Modifier
                 .height(48.dp)
                 .padding(vertical = 4.dp),
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-              RepeatElement (
+              RepeatElement(
                 repetitionBlock = repetitionBlock,
                 currentIndex = currentIndex.value,
                 readOnly = true
@@ -352,7 +353,10 @@ fun RepetitionBlockCard(
         }
 
         if (fillTime || readOnly) {
-          TextButton(onClick = { currentIndex.value = minOf(currentIndex.value + 1, repetitionBlock.repetitions - 1) }) {
+          TextButton(onClick = {
+            currentIndex.value =
+              if (currentIndex.value == repetitionBlock.repetitions - 1) 0 else currentIndex.value + 1
+          }) {
             Icon(
               Icons.Rounded.ArrowRight,
               contentDescription = stringResource(R.string.forward),
@@ -505,7 +509,7 @@ fun RepetitionBlockCard(
 fun RecoverElement(
   repetitionBlock: TrainingStep,
 ) {
-  Row (
+  Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
     Icon(
@@ -515,7 +519,7 @@ fun RecoverElement(
     )
     Text(
       text = if (repetitionBlock.recoverType == TrainingStep.DurationType.TIME)
-        secondsToHhMmSs(repetitionBlock.recoverDuration)
+        repetitionBlock.recoverDuration.secondsToHhMmSs()
       else "${repetitionBlock.recoverDistance} ${repetitionBlock.recoverDistanceUnit}"
     )
   }
@@ -527,7 +531,7 @@ fun RepeatElement(
   currentIndex: Int,
   readOnly: Boolean
 ) {
-  Row (
+  Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
     Icon(
@@ -543,7 +547,7 @@ fun RepeatElement(
 fun ExtraRecoverElement(
   repetitionBlock: TrainingStep,
 ) {
-  Row (
+  Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
     Icon(
@@ -553,7 +557,7 @@ fun ExtraRecoverElement(
     )
     Text(
       text = if (repetitionBlock.extraRecoverType == TrainingStep.DurationType.TIME)
-        secondsToHhMmSs(repetitionBlock.extraRecoverDuration)
+        repetitionBlock.extraRecoverDuration.secondsToHhMmSs()
       else "${repetitionBlock.extraRecoverDistance} ${repetitionBlock.extraRecoverDistanceUnit}"
     )
   }

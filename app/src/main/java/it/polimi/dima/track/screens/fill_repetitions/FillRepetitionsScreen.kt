@@ -20,10 +20,11 @@ import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.UnmodifiableStepsList
 import it.polimi.dima.track.common.composable.rememberPickerState
+import it.polimi.dima.track.common.ext.extractCents
 import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.screens.edit_repetitions.TimeSelectionDialog
-import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMmSs
 
 @Composable
 fun FillRepetitionsScreen(
@@ -84,9 +85,9 @@ fun FillRepetitionsScreen(
             else "${resultHourPickerState.selectedItem}:${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem}"
           )
         },
-        durationSelection = timeToSeconds(currentResult.value),
+        durationSelection = currentResult.value.timeToSeconds(),
         centsSelectable = true,
-        centsSelection = extractCents(currentResult.value),
+        centsSelection = currentResult.value.extractCents(),
         hourPickerState = resultHourPickerState,
         minutePickerState = resultMinutePickerState,
         secondPickerState = resultSecondPickerState,
@@ -106,21 +107,6 @@ fun FillRepetitionsScreen(
       },
     )
   }
-}
-
-fun timeToSeconds(result: String): Int {
-  if (result.isEmpty()) return 0
-  val split = result.split(":")
-  return if (split.size < 3) {
-    split[0].toInt() * 60 + split[1].split(".")[0].toInt()
-  } else split[0].toInt() * 3600 + split[1].toInt() * 60 + split[2].toInt()
-}
-
-fun extractCents(result: String): Int {
-  if (result.isEmpty()) return 0
-  val split = result.split(".")
-  if (split.size < 2) return 0
-  return split[1].toInt()
 }
 
 

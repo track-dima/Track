@@ -54,6 +54,8 @@ import it.polimi.dima.track.common.composable.SegmentedControl
 import it.polimi.dima.track.common.composable.WarmUpCard
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
+import it.polimi.dima.track.common.ext.removeLeadingZeros
+import it.polimi.dima.track.common.ext.secondsToHhMmSs
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
@@ -757,7 +759,7 @@ fun EditStepDialog(
         RegularCardEditor(
           R.string.duration,
           R.drawable.ic_clock,
-          secondsToHhMmSs(currentStep.value.duration),
+          currentStep.value.duration.secondsToHhMmSs(),
           Modifier.card()
         ) {
           openTimeDialog.value = true
@@ -831,10 +833,12 @@ fun EditStepDialog(
           options = TrainingStep.DurationType.getFullOptions(),
           selection = recoverTypeSelection,
           modifier = Modifier.card()
-        ) { newValue -> currentStep.value = currentStep.value.copy(
-          recoverType = newValue,
-          recover = newValue != TrainingStep.DurationType.NONE
-        ) }
+        ) { newValue ->
+          currentStep.value = currentStep.value.copy(
+            recoverType = newValue,
+            recover = newValue != TrainingStep.DurationType.NONE
+          )
+        }
 
         if (currentStep.value.recoverType == TrainingStep.DurationType.TIME) {
           val openTimeDialog = rememberSaveable { mutableStateOf(false) }
@@ -842,7 +846,7 @@ fun EditStepDialog(
           RegularCardEditor(
             R.string.recover_duration,
             R.drawable.ic_clock,
-            secondsToHhMmSs(currentStep.value.recoverDuration),
+            currentStep.value.recoverDuration.secondsToHhMmSs(),
             Modifier.card()
           ) {
             openTimeDialog.value = true
@@ -910,50 +914,6 @@ fun EditStepDialog(
   }
 }
 
-fun secondsToHhMmSs(seconds: Int): String {
-  val hours = seconds / 3600
-  val minutes = (seconds % 3600) / 60
-  val remainingSeconds = seconds % 60
 
-  return removeLeadingZeros(String.format("%d:%02d:%02d", hours, minutes, remainingSeconds))
-}
-
-fun secondsToHhMm(seconds: Int): String {
-  val hours = seconds / 3600
-  val minutes = (seconds % 3600) / 60
-
-  return String.format("%d:%02d", hours, minutes)
-}
-
-fun removeLeadingZeros(time: String): String {
-  val split = time.split(":")
-  return if (split.size == 3) {
-    // e.g. 00:12:34
-    if (split[0].toInt() > 0)
-      time
-    else "${split[1].toInt()}" + ":${split[2]}"
-  }
-  else {
-    // e.g. 00:12.34
-    if (split[0].toInt() > 0)
-      "${split[0].toInt()}" + ":${split[1]}"
-    else {
-      val split2 = split[1].split(".")
-      "${split2[0].toInt()}" + ".${split2[1]}"
-    }
-  }
-}
-
-fun timeIsZero(time: String): Boolean {
-  val split = time.split(":")
-  return if (split.size == 3) {
-    split[0].toInt() == 0 && split[1].toInt() == 0 && split[2].toInt() == 0
-  }
-  else {
-    // e.g. 00:12.34
-    val split2 = split[1].split(".")
-    split[0].toInt() == 0 && split2[0].toInt() == 0 && split2[1].toInt() == 0
-  }
-}
 
 

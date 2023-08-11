@@ -31,10 +31,10 @@ import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
+import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.Type
-import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMm
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import it.polimi.dima.track.ui.theme.DarkOrange
 import it.polimi.dima.track.ui.theme.DarkRed
@@ -95,7 +95,7 @@ fun TrainingCard(
               style = MaterialTheme.typography.titleSmall
             )
             Text(
-              text = "~${secondsToHhMm(training.calculateTotalTime())}h",
+              text = "~${training.calculateTotalTime().secondsToHhMm()}h",
               style = MaterialTheme.typography.titleSmall
             )
             if (training.type.isNotEmpty() && training.type != Type.None.name) {
