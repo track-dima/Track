@@ -12,6 +12,7 @@ data class Training(
   val dueTime: Map<String, Int>? = null,
   val dueTimeString: String = "",
   val description: String = "",
+  val notes: String = "",
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
   val transient: Boolean = false,

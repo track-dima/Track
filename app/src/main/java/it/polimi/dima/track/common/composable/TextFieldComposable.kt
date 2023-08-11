@@ -40,6 +40,22 @@ fun BasicField(
 }
 
 @Composable
+fun MultiLineField(
+  @StringRes text: Int,
+  value: String,
+  onNewValue: (String) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  OutlinedTextField(
+    singleLine = false,
+    modifier = modifier,
+    value = value,
+    onValueChange = { onNewValue(it) },
+    placeholder = { Text(stringResource(text)) }
+  )
+}
+
+@Composable
 fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
   OutlinedTextField(
     singleLine = true,

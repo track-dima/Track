@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Favorite
@@ -174,6 +175,11 @@ private fun TrainingInformation(training: Training) {
     TrainingTime(training)
   }
 
+  if (training.notes.isNotEmpty()) {
+    Spacer(modifier = Modifier.spacer())
+    TrainingNotes(training)
+  }
+
   if (training.type.isNotEmpty()) {
     Spacer(modifier = Modifier.spacer())
     TrainingType(training)
@@ -224,13 +230,26 @@ private fun TrainingTime(training: Training) {
 private fun TrainingDescription(training: Training) {
   Row {
     Icon(
-      Icons.Rounded.Notes,
+      Icons.Rounded.Description,
       contentDescription = stringResource(R.string.description),
       modifier = Modifier
         .padding(end = 16.dp)
         .align(Alignment.CenterVertically)
     )
     Text(text = training.description)
+  }
+}
+
+@Composable
+private fun TrainingNotes(training: Training) {
+  Row {
+    Icon(
+      Icons.Rounded.Notes,
+      contentDescription = stringResource(R.string.notes),
+      modifier = Modifier
+        .padding(end = 16.dp)
+    )
+    Text(text = training.notes)
   }
 }
 

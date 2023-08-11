@@ -26,6 +26,7 @@ import it.polimi.dima.track.common.composable.BasicField
 import it.polimi.dima.track.common.composable.CardSelector
 import it.polimi.dima.track.common.composable.DialogCancelButton
 import it.polimi.dima.track.common.composable.DialogConfirmButton
+import it.polimi.dima.track.common.composable.MultiLineField
 import it.polimi.dima.track.common.composable.RegularCardEditor
 import it.polimi.dima.track.common.composable.TimePickerDialog
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
@@ -80,6 +81,8 @@ fun EditTrainingScreen(
       viewModel::onDescriptionChange,
       fieldModifier
     )
+    MultiLineField(R.string.notes, training.notes, viewModel::onNotesChange, fieldModifier)
+
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)

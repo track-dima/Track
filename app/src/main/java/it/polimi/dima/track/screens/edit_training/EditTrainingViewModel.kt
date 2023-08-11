@@ -36,6 +36,10 @@ class EditTrainingViewModel @Inject constructor(
     training.value = training.value.copy(description = newValue)
   }
 
+  fun onNotesChange(newValue: String) {
+    training.value = training.value.copy(notes = newValue)
+  }
+
   fun onDateChange(newValue: Long) {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone(UTC))
     calendar.timeInMillis = newValue
