@@ -3,6 +3,12 @@ package it.polimi.dima.track.screens.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -25,7 +31,10 @@ fun SettingsScreen(
   val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
 
   Column(
-    modifier = modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
+    modifier = modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+      .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     BasicToolbar(R.string.settings)
@@ -33,11 +42,16 @@ fun SettingsScreen(
     Spacer(modifier = Modifier.spacer())
 
     if (uiState.isAnonymousAccount) {
-      RegularCardEditor(R.string.sign_in, R.drawable.ic_sign_in, "", Modifier.card()) {
+      RegularCardEditor(R.string.sign_in, Icons.Filled.Person, "", Modifier.card()) {
         viewModel.onLoginClick(openScreen)
       }
 
-      RegularCardEditor(R.string.create_account, R.drawable.ic_create_account, "", Modifier.card()) {
+      RegularCardEditor(
+        R.string.create_account,
+        Icons.Filled.PersonAdd,
+        "",
+        Modifier.card()
+      ) {
         viewModel.onSignUpClick(openScreen)
       }
     } else {
@@ -51,7 +65,7 @@ fun SettingsScreen(
 private fun SignOutCard(signOut: () -> Unit) {
   var showWarningDialog by remember { mutableStateOf(false) }
 
-  RegularCardEditor(R.string.sign_out, R.drawable.ic_exit, "", Modifier.card()) {
+  RegularCardEditor(R.string.sign_out, Icons.Filled.ExitToApp, "", Modifier.card()) {
     showWarningDialog = true
   }
 
@@ -77,7 +91,7 @@ private fun DeleteMyAccountCard(deleteMyAccount: () -> Unit) {
 
   DangerousCardEditor(
     R.string.delete_my_account,
-    R.drawable.ic_delete_my_account,
+    Icons.Rounded.Delete,
     "",
     Modifier.card()
   ) {

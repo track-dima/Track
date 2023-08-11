@@ -25,11 +25,11 @@ fun SplashScreen(
 ) {
   Column(
     modifier =
-      modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
-        .background(color = MaterialTheme.colorScheme.background)
-        .verticalScroll(rememberScrollState()),
+    modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+      .background(color = MaterialTheme.colorScheme.background)
+      .verticalScroll(rememberScrollState()),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DatePicker
@@ -109,14 +111,14 @@ private fun CardEditors(
   val openTimeDialog = rememberSaveable { mutableStateOf(false) }
   RegularCardEditor(
     R.string.date,
-    R.drawable.ic_calendar,
+    Icons.Filled.CalendarMonth,
     training.dueDateString,
     Modifier.card()
   ) {
     openDateDialog.value = true
   }
 
-  RegularCardEditor(R.string.time, R.drawable.ic_clock, training.dueTimeString, Modifier.card()) {
+  RegularCardEditor(R.string.time, Icons.Filled.AccessTime, training.dueTimeString, Modifier.card()) {
     showTimePicker(activity, training, onTimeChange)
     // openTimeDialog.value = true
   }

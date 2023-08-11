@@ -16,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -44,6 +46,8 @@ import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.CardSelector
 import it.polimi.dima.track.common.composable.CoolDownCard
+import it.polimi.dima.track.common.composable.DialogCancelButton
+import it.polimi.dima.track.common.composable.DialogConfirmButton
 import it.polimi.dima.track.common.composable.FullScreenDialog
 import it.polimi.dima.track.common.composable.NumberPicker
 import it.polimi.dima.track.common.composable.PickerState
@@ -383,31 +387,23 @@ fun TimeSelectionDialog(
       }
     },
     confirmButton = {
-      TextButton(
-        onClick = { onConfirm(displayCents.value) }
-      ) {
-        Text(stringResource(id = R.string.confirm))
+      DialogConfirmButton(text = R.string.confirm) {
+        onConfirm(displayCents.value)
       }
     },
     dismissButton = {
       if (centsSelectable) {
-        TextButton(
-          onClick = {
-            hourPickerState.selectedItem = "0"
-            minutePickerState.selectedItem = "00"
-            secondPickerState.selectedItem = "00"
-            centsPickerState.selectedItem = "00"
-            onConfirm(displayCents.value)
-          }
-        ) {
-          Text(stringResource(id = R.string.clear))
+        DialogCancelButton(text = R.string.clear) {
+          hourPickerState.selectedItem = "0"
+          minutePickerState.selectedItem = "00"
+          secondPickerState.selectedItem = "00"
+          centsPickerState.selectedItem = "00"
+          onConfirm(displayCents.value)
         }
       }
 
-      TextButton(
-        onClick = onDismissRequest
-      ) {
-        Text(stringResource(id = R.string.dismiss))
+      DialogCancelButton(text = R.string.dismiss) {
+        onDismissRequest()
       }
     },
   )
@@ -508,17 +504,13 @@ fun DistanceSelectionDialog(
       )
     },
     confirmButton = {
-      TextButton(
-        onClick = onConfirm
-      ) {
-        Text("Confirm")
+      DialogConfirmButton(text = R.string.confirm) {
+        onConfirm()
       }
     },
     dismissButton = {
-      TextButton(
-        onClick = onDismissRequest
-      ) {
-        Text("Dismiss")
+      DialogCancelButton(text = R.string.dismiss) {
+        onDismissRequest()
       }
     }
   )
@@ -610,17 +602,13 @@ fun RepetitionsSelectionDialog(
       }
     },
     confirmButton = {
-      TextButton(
-        onClick = onConfirm
-      ) {
-        Text("Confirm")
+      DialogConfirmButton(text = R.string.confirm) {
+        onConfirm()
       }
     },
     dismissButton = {
-      TextButton(
-        onClick = onDismissRequest
-      ) {
-        Text("Dismiss")
+      DialogCancelButton(text = R.string.dismiss) {
+        onDismissRequest()
       }
     }
   )
@@ -690,30 +678,24 @@ fun RecoverSelectionDialog(
       }
     },
     confirmButton = {
-      TextButton(
-        onClick = {
-          onConfirm(
-            recoverType.value,
-            if (recoverType.value == TrainingStep.DurationType.TIME)
-              durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
-            else currentRecoverDuration,
-            if (recoverType.value == TrainingStep.DurationType.DISTANCE)
-              distanceMostSignificantDigitPickerState.selectedItem.toInt() * 100 + distanceLeastSignificantDigitsPickerState.selectedItem.toInt()
-            else currentRecoverDistance,
-            if (recoverType.value == TrainingStep.DurationType.DISTANCE)
-              distanceMeasurementPickerState.selectedItem
-            else currentRecoverDistanceUnit
-          )
-        }
-      ) {
-        Text("Confirm")
+      DialogConfirmButton(text = R.string.confirm) {
+        onConfirm(
+          recoverType.value,
+          if (recoverType.value == TrainingStep.DurationType.TIME)
+            durationHourPickerState.selectedItem.toInt() * 3600 + durationMinutePickerState.selectedItem.toInt() * 60 + durationSecondPickerState.selectedItem.toInt()
+          else currentRecoverDuration,
+          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+            distanceMostSignificantDigitPickerState.selectedItem.toInt() * 100 + distanceLeastSignificantDigitsPickerState.selectedItem.toInt()
+          else currentRecoverDistance,
+          if (recoverType.value == TrainingStep.DurationType.DISTANCE)
+            distanceMeasurementPickerState.selectedItem
+          else currentRecoverDistanceUnit
+        )
       }
     },
     dismissButton = {
-      TextButton(
-        onClick = onDismissRequest
-      ) {
-        Text("Dismiss")
+      DialogCancelButton(text = R.string.dismiss) {
+        onDismissRequest()
       }
     }
   )
@@ -758,7 +740,7 @@ fun EditStepDialog(
 
         RegularCardEditor(
           R.string.duration,
-          R.drawable.ic_clock,
+          Icons.Filled.Timer,
           currentStep.value.duration.secondsToHhMmSs(),
           Modifier.card()
         ) {
@@ -791,7 +773,7 @@ fun EditStepDialog(
         // TODO change icon
         RegularCardEditor(
           R.string.distance,
-          R.drawable.ic_clock,
+          Icons.Filled.Straighten,
           "${currentStep.value.distance} ${currentStep.value.distanceUnit}",
           Modifier.card()
         ) {
@@ -845,7 +827,7 @@ fun EditStepDialog(
 
           RegularCardEditor(
             R.string.recover_duration,
-            R.drawable.ic_clock,
+            Icons.Filled.Timer,
             currentStep.value.recoverDuration.secondsToHhMmSs(),
             Modifier.card()
           ) {
@@ -878,7 +860,7 @@ fun EditStepDialog(
           // TODO change icon
           RegularCardEditor(
             R.string.distance,
-            R.drawable.ic_clock,
+            Icons.Filled.Straighten,
             "${currentStep.value.recoverDistance} ${currentStep.value.recoverDistanceUnit}",
             Modifier.card()
           ) {

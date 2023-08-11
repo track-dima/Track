@@ -737,17 +737,13 @@ fun DeleteDialog(
     title = { Text(text = title) },
     text = { Text(text = text) },
     confirmButton = {
-      TextButton(
-        onClick = onDeleteClick
-      ) {
-        Text(text = stringResource(R.string.delete))
+      DialogConfirmButton(text = R.string.delete) {
+        onDeleteClick()
       }
     },
     dismissButton = {
-      TextButton(
-        onClick = onDismissRequest
-      ) {
-        Text(text = stringResource(R.string.cancel))
+      DialogCancelButton(text = R.string.cancel) {
+        onDismissRequest()
       }
     }
   )

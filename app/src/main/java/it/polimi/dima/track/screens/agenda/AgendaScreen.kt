@@ -92,7 +92,6 @@ fun AgendaScreen(
           TrainingCard(
             training = trainingItem,
             options = options,
-            onCheckChange = { viewModel.onTrainingCheckChange(trainingItem) },
             onClick = { onTrainingPressed(trainingItem) },
             onActionClick = { action ->
               when (TrainingActionOption.getByTitle(action)) {

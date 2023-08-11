@@ -9,8 +9,6 @@ import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.screens.TrackViewModel
-import org.burnoutcrew.reorderable.ItemPosition
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel

@@ -73,8 +73,8 @@ fun FullScreenDialog(
                 .padding(0.dp, 0.dp, 8.dp, 0.dp),
             horizontalArrangement = Arrangement.End
           ) {
-            TextButton(onClick = onConfirm) {
-              Text(text = stringResource(R.string.save))
+            DialogConfirmButton (R.string.save){
+              onConfirm()
             }
           }
         }

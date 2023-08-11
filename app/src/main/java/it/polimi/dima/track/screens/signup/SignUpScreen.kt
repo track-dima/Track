@@ -25,7 +25,10 @@ fun SignUpScreen(
   BasicToolbar(R.string.create_account)
 
   Column(
-    modifier = modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
+    modifier = modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+      .verticalScroll(rememberScrollState()),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
@@ -34,6 +37,7 @@ fun SignUpScreen(
     RepeatPasswordField(uiState.repeatPassword, viewModel::onRepeatPasswordChange, fieldModifier)
 
     BasicButton(R.string.create_account, Modifier.basicButton()) {
+      // TODO close keyboard
       viewModel.onSignUpClick(openAndPopUp)
     }
   }
