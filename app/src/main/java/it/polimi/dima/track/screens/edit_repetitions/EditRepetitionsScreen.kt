@@ -384,16 +384,30 @@ fun TimeSelectionDialog(
       TextButton(
         onClick = { onConfirm(displayCents.value) }
       ) {
-        Text("Confirm")
+        Text(stringResource(id = R.string.confirm))
       }
     },
     dismissButton = {
+      if (centsSelectable) {
+        TextButton(
+          onClick = {
+            hourPickerState.selectedItem = "0"
+            minutePickerState.selectedItem = "00"
+            secondPickerState.selectedItem = "00"
+            centsPickerState.selectedItem = "00"
+            onConfirm(displayCents.value)
+          }
+        ) {
+          Text(stringResource(id = R.string.clear))
+        }
+      }
+
       TextButton(
         onClick = onDismissRequest
       ) {
-        Text("Dismiss")
+        Text(stringResource(id = R.string.dismiss))
       }
-    }
+    },
   )
 }
 
@@ -927,6 +941,18 @@ fun removeLeadingZeros(time: String): String {
       val split2 = split[1].split(".")
       "${split2[0].toInt()}" + ".${split2[1]}"
     }
+  }
+}
+
+fun timeIsZero(time: String): Boolean {
+  val split = time.split(":")
+  return if (split.size == 3) {
+    split[0].toInt() == 0 && split[1].toInt() == 0 && split[2].toInt() == 0
+  }
+  else {
+    // e.g. 00:12.34
+    val split2 = split[1].split(".")
+    split[0].toInt() == 0 && split2[0].toInt() == 0 && split2[1].toInt() == 0
   }
 }
 

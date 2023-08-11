@@ -62,6 +62,7 @@ import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.screens.edit_repetitions.removeLeadingZeros
 import it.polimi.dima.track.screens.edit_repetitions.secondsToHhMmSs
+import it.polimi.dima.track.screens.edit_repetitions.timeIsZero
 import org.burnoutcrew.reorderable.ItemPosition
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -220,9 +221,8 @@ fun RepetitionsCard(
           horizontalAlignment = Alignment.End,
           verticalArrangement = Arrangement.Center
         ) {
-          if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty()) {
+          if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty() && !timeIsZero(trainingStep.results[resultIndex])) {
             Text(
-              // TODO tasto reset e non mostrare se 0
               text = removeLeadingZeros(trainingStep.results[resultIndex]),
               fontWeight = FontWeight.Bold
             )
