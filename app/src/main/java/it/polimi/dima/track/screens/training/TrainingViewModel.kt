@@ -3,6 +3,7 @@ package it.polimi.dima.track.screens.training
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
@@ -50,7 +51,9 @@ class TrainingViewModel @Inject constructor(
     editTraining: (Training) -> Unit
   ) {
     launchCatching {
-      val newId = storageService.duplicate(training.copy(transient = true))
+      val newId = storageService.duplicate(
+        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+      )
       popUpScreen()
       editTraining(Training(id = newId))
     }

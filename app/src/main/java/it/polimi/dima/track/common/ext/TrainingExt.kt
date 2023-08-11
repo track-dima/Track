@@ -1,6 +1,7 @@
 package it.polimi.dima.track.common.ext
 
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import java.util.Calendar
 import java.util.TimeZone
@@ -37,4 +38,11 @@ fun Training.getDueDateAndTime(): String {
   }
 
   return stringBuilder.toString()
+}
+
+fun emptyResults(trainingSteps: List<TrainingStep>): List<TrainingStep> {
+  return trainingSteps.map {
+    if (it.stepsInRepetition.isEmpty()) it.copy(results = listOf())
+    else it.copy(stepsInRepetition = emptyResults(it.stepsInRepetition))
+  }
 }

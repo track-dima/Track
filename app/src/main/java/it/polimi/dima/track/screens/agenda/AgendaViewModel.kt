@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.TRAINING_ID
+import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
@@ -52,7 +53,9 @@ class AgendaViewModel @Inject constructor(
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
-      val newId = storageService.duplicate(training.copy(transient = true))
+      val newId = storageService.duplicate(
+        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+      )
       openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
     }
   }
