@@ -14,3 +14,7 @@ fun Int.secondsToHhMm(): String {
 
   return String.format("%d:%02d", hours, minutes)
 }
+
+fun Int.toClockPattern(): String {
+  return if (this < 10) "0$this" else "$this"
+}

@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.idFromParameter
+import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
@@ -80,10 +81,6 @@ class EditTrainingViewModel @Inject constructor(
       }
     }
     popUpScreen()
-  }
-
-  private fun Int.toClockPattern(): String {
-    return if (this < 10) "0$this" else "$this"
   }
 
   companion object {
