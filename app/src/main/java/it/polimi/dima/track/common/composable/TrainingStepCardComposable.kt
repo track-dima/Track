@@ -583,90 +583,105 @@ fun StepCardHeader(
       verticalAlignment = Alignment.CenterVertically
     ) {
       if (!readOnly) {
-        Icon(
-          Icons.Rounded.DragIndicator,
-          contentDescription = stringResource(R.string.move_step),
-        )
+        StepCardHeaderDragIndicator()
       }
 
-      when (
-        stepType
-      ) {
-        TrainingStep.Type.WARM_UP -> {
-          Icon(
-            Icons.Rounded.DirectionsWalk,
-            contentDescription = stringResource(R.string.warm_up),
-            modifier = Modifier
-              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-              .drawBehind {
-                drawCircle(
-                  color = Color.Green.copy(alpha = 0.4f),
-                  radius = 16.dp.toPx()
-                )
-              },
-            tint = Color.White
-          )
-        }
-
-        TrainingStep.Type.COOL_DOWN -> {
-          Icon(
-            Icons.Rounded.DirectionsWalk,
-            contentDescription = stringResource(R.string.cool_down),
-            modifier = Modifier
-              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-              .drawBehind {
-                drawCircle(
-                  color = Color.Blue.copy(alpha = 0.4f),
-                  radius = 16.dp.toPx()
-                )
-              },
-            tint = Color.White
-          )
-        }
-
-        TrainingStep.Type.REPETITION -> {
-          Icon(
-            Icons.Rounded.DirectionsRun,
-            contentDescription = stringResource(R.string.repetition),
-            modifier = Modifier
-              .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
-              .drawBehind {
-                drawCircle(
-                  color = Color.Red.copy(alpha = 0.4f),
-                  radius = 16.dp.toPx()
-                )
-              },
-            tint = Color.White
-          )
-        }
-      }
+      StepCardHeaderIcon(stepType, readOnly)
 
       content()
     }
 
     if (!readOnly) {
-      val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
-
-      IconButton(
-        modifier = Modifier.padding(8.dp),
-        onClick = { openDeleteDialog.value = true }
-      ) {
-        Icon(
-          Icons.Rounded.Delete,
-          contentDescription = stringResource(R.string.delete_repetition)
-        )
-      }
-
-      if (openDeleteDialog.value) {
-        DeleteDialog(
-          onDeleteClick = {
-            openDeleteDialog.value = false
-            onDeleteClick()
-          },
-          onDismissRequest = { openDeleteDialog.value = false }
-        )
-      }
+      StepCardHeaderDelete(onDeleteClick)
     }
+  }
+}
+
+@Composable
+private fun StepCardHeaderDragIndicator() {
+  Icon(
+    Icons.Rounded.DragIndicator,
+    contentDescription = stringResource(R.string.move_step),
+  )
+}
+
+@Composable
+private fun StepCardHeaderIcon(stepType: String, readOnly: Boolean) {
+  when (
+    stepType
+  ) {
+    TrainingStep.Type.WARM_UP -> {
+      Icon(
+        Icons.Rounded.DirectionsWalk,
+        contentDescription = stringResource(R.string.warm_up),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Green.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+
+    TrainingStep.Type.COOL_DOWN -> {
+      Icon(
+        Icons.Rounded.DirectionsWalk,
+        contentDescription = stringResource(R.string.cool_down),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Blue.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+
+    TrainingStep.Type.REPETITION -> {
+      Icon(
+        Icons.Rounded.DirectionsRun,
+        contentDescription = stringResource(R.string.repetition),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Red.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+  }
+}
+
+@Composable
+private fun StepCardHeaderDelete(onDeleteClick: () -> Unit) {
+  val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
+
+  IconButton(
+    modifier = Modifier.padding(8.dp),
+    onClick = { openDeleteDialog.value = true }
+  ) {
+    Icon(
+      Icons.Rounded.Delete,
+      contentDescription = stringResource(R.string.delete_repetition)
+    )
+  }
+
+  if (openDeleteDialog.value) {
+    DeleteDialog(
+      onDeleteClick = {
+        openDeleteDialog.value = false
+        onDeleteClick()
+      },
+      onDismissRequest = { openDeleteDialog.value = false }
+    )
   }
 }
 
@@ -727,30 +742,6 @@ fun AddButtons(
 }
 
 @Composable
-fun DeleteDialog(
-  title: String = stringResource(R.string.delete_repetition),
-  text: String = stringResource(R.string.delete_repetition_confirmation),
-  onDeleteClick: () -> Unit,
-  onDismissRequest: () -> Unit
-) {
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(text = title) },
-    text = { Text(text = text) },
-    confirmButton = {
-      DialogConfirmButton(text = R.string.delete) {
-        onDeleteClick()
-      }
-    },
-    dismissButton = {
-      DialogCancelButton(text = R.string.cancel) {
-        onDismissRequest()
-      }
-    }
-  )
-}
-
-@Composable
 fun UnmodifiableStepsList(
   trainingSteps: List<TrainingStep>,
   readOnly: Boolean = true,
@@ -800,7 +791,8 @@ fun UnmodifiableStepsList(
 fun TrainingStepsListBox(
   training: Training,
   filling: Boolean = false,
-  openScreen: (String) -> Unit
+  onFillSteps: () -> Unit = {},
+  onEditSteps: () -> Unit = {}
 ) {
   val tree = training.calculateTree()
 
@@ -822,10 +814,9 @@ fun TrainingStepsListBox(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             onClick = {
               if (filling) {
-                openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+                onFillSteps()
               } else {
-                // TODO save training
-                openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}")
+                onEditSteps()
               }
             },
           ) {

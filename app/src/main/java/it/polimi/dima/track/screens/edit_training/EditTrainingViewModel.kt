@@ -2,7 +2,9 @@ package it.polimi.dima.track.screens.edit_training
 
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
@@ -68,13 +70,31 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTraining = training.value.copy(transient = false)
-      if (editedTraining.id.isBlank()) {
-        storageService.save(editedTraining)
-      } else {
-        storageService.update(editedTraining)
-      }
+      training.value = training.value.copy(transient = false)
+      saveTraining()
       popUpScreen()
+    }
+  }
+
+  fun onEditSteps(openScreen: (String) -> Unit) {
+    launchCatching {
+      if (training.value.id.isEmpty()) {
+        training.value = training.value.copy(transient = true)
+        val id = saveTraining()
+        training.value = training.value.copy(id = id)
+      }
+      // TODO quando torno alla schermata di modifica principale training è quello di prima, non aggiornato con i nuovi training steps
+      openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.value.id}}")
+    }
+  }
+
+  private suspend fun saveTraining(): String {
+    val editedTraining = training.value
+    return if (editedTraining.id.isBlank()) {
+      storageService.save(editedTraining)
+    } else {
+      storageService.update(editedTraining)
+      editedTraining.id
     }
   }
 

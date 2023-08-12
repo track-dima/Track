@@ -83,3 +83,27 @@ fun FullScreenDialog(
     }
   }
 }
+
+@Composable
+fun DeleteDialog(
+  title: String = stringResource(R.string.delete_repetition),
+  text: String = stringResource(R.string.delete_repetition_confirmation),
+  onDeleteClick: () -> Unit,
+  onDismissRequest: () -> Unit
+) {
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = { Text(text = title) },
+    text = { Text(text = text) },
+    confirmButton = {
+      DialogConfirmButton(text = R.string.delete) {
+        onDeleteClick()
+      }
+    },
+    dismissButton = {
+      DialogCancelButton(text = R.string.cancel) {
+        onDismissRequest()
+      }
+    }
+  )
+}

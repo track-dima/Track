@@ -93,7 +93,7 @@ fun EditTrainingScreen(
     TrainingStepsListBox(
       training = training,
       filling = false,
-      openScreen = openScreen
+      onEditSteps = { viewModel.onEditSteps(openScreen) }
     )
   }
 }
@@ -118,7 +118,12 @@ private fun CardEditors(
     openDateDialog.value = true
   }
 
-  RegularCardEditor(R.string.time, Icons.Filled.AccessTime, training.dueTimeString, Modifier.card()) {
+  RegularCardEditor(
+    R.string.time,
+    Icons.Filled.AccessTime,
+    training.dueTimeString,
+    Modifier.card()
+  ) {
     openTimeDialog.value = true
   }
 
@@ -221,7 +226,11 @@ private fun EmbeddedTimePicker(
     }
   }
 
-  val timePickerState = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute, is24Hour = true)
+  val timePickerState = rememberTimePickerState(
+    initialHour = initialHour,
+    initialMinute = initialMinute,
+    is24Hour = true
+  )
   TimePickerDialog(
     onDismissRequest = {
       onClose()

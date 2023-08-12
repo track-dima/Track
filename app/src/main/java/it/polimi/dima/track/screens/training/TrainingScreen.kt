@@ -34,7 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
+import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.composable.IconButtonStyle
@@ -115,7 +117,7 @@ fun TrainingScreen(
     TrainingStepsListBox(
       training = training,
       filling = true,
-      openScreen = openScreen
+      onFillSteps = { openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}") }
     )
   }
 
