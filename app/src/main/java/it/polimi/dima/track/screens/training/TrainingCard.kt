@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.DropdownContextMenu
+import it.polimi.dima.track.common.ext.calculateRepetitions
+import it.polimi.dima.track.common.ext.calculateTotalTime
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.getDueDateAndTime
 import it.polimi.dima.track.common.ext.isScheduled

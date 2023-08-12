@@ -18,3 +18,14 @@ fun Int.secondsToHhMm(): String {
 fun Int.toClockPattern(): String {
   return if (this < 10) "0$this" else "$this"
 }
+
+fun Int.distanceToSeconds(distanceUnit: String): Int {
+  // Convert the distance to meters
+  val dist = when (distanceUnit) {
+    "km" -> this * 1000
+    "mi" -> (this * 1609.344).toInt()
+    else -> this
+  }
+  // Convert the distance to seconds (5 min/km)
+  return dist * 5 * 60 / 1000
+}

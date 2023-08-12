@@ -40,6 +40,7 @@ import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.composable.IconButtonStyle
 import it.polimi.dima.track.common.composable.NoTitleToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
+import it.polimi.dima.track.common.ext.calculateTotalTime
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.spacer

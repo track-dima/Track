@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -20,13 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.UnmodifiableStepsList
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.extractCents
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.common.ext.toolbarActions
-import it.polimi.dima.track.screens.edit_repetitions.TimeSelectionDialog
 
 @Composable
 fun FillRepetitionsScreen(

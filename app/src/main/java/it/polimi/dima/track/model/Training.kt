@@ -21,21 +21,4 @@ data class Training(
   val personalBest: Boolean = false,
   val url: String = "",
   val completed: Boolean = false
-) {
-  fun calculateRepetitions(): Int {
-    return trainingSteps.sumOf { it.calculateRepetitions() }
-  }
-
-  fun calculateTree(): Pair<Int, Int> {
-    if (trainingSteps.isEmpty()) {
-      return Pair(0, 0)
-    }
-    return trainingSteps.map { it.calculateTree() }.reduce { acc, pair ->
-      Pair(acc.first + pair.first, acc.second + pair.second)
-    }
-  }
-
-  fun calculateTotalTime(): Int {
-    return trainingSteps.sumOf { it.calculateTotalTime(it.id == trainingSteps.last().id) }
-  }
-}
+)

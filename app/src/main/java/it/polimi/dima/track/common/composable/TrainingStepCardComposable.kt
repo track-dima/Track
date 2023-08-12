@@ -56,6 +56,7 @@ import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_ID
+import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.removeLeadingZeros
 import it.polimi.dima.track.common.ext.secondsToHhMmSs

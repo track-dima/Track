@@ -40,6 +40,23 @@ fun Training.getDueDateAndTime(): String {
   return stringBuilder.toString()
 }
 
+fun Training.calculateRepetitions(): Int {
+  return trainingSteps.sumOf { it.calculateRepetitions() }
+}
+
+fun Training.calculateTree(): Pair<Int, Int> {
+  if (trainingSteps.isEmpty()) {
+    return Pair(0, 0)
+  }
+  return trainingSteps.map { it.calculateTree() }.reduce { acc, pair ->
+    Pair(acc.first + pair.first, acc.second + pair.second)
+  }
+}
+
+fun Training.calculateTotalTime(): Int {
+  return trainingSteps.sumOf { it.calculateTotalTime(it.id == trainingSteps.last().id) }
+}
+
 fun emptyResults(trainingSteps: List<TrainingStep>): List<TrainingStep> {
   return trainingSteps.map {
     if (it.stepsInRepetition.isEmpty()) it.copy(results = listOf())
