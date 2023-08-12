@@ -108,18 +108,21 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onDeleteClick(hierarchy: List<String>, trainingStep: TrainingStep) {
+  fun onDeleteClick(hierarchy: List<String>, stepId: String) {
     trainingSteps.value =
-      onDeleteClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+      onDeleteClickHelper(hierarchy, trainingSteps.value.toMutableList(), stepId)
   }
 
   private fun onDeleteClickHelper(
     hierarchy: List<String>,
     trainingSteps: MutableList<TrainingStep>,
-    trainingStep: TrainingStep
+    stepId: String
   ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
-      trainingSteps.remove(trainingStep)
+      trainingSteps.apply {
+        val index = indexOfFirst { it.id == stepId }
+        removeAt(index)
+      }
       trainingSteps
     } else {
       trainingSteps.map {
@@ -128,7 +131,7 @@ class EditRepetitionsViewModel @Inject constructor(
             stepsInRepetition = onDeleteClickHelper(
               hierarchy.drop(1),
               it.stepsInRepetition.toMutableList(),
-              trainingStep
+              stepId
             )
           )
         } else {
@@ -138,19 +141,20 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
+  fun onEditClick(hierarchy: List<String>, stepId: String) {
     trainingSteps.value =
-      onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+      onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), stepId)
   }
 
   private fun onEditClickHelper(
     hierarchy: List<String>,
     trainingSteps: MutableList<TrainingStep>,
-    trainingStep: TrainingStep
+    stepId: String
   ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
       trainingSteps.apply {
-        val index = indexOfFirst { it.id == trainingStep.id }
+        val index = indexOfFirst { it.id == stepId }
+        val trainingStep = get(index)
         set(index, trainingStep)
       }
     } else {
@@ -160,7 +164,7 @@ class EditRepetitionsViewModel @Inject constructor(
             stepsInRepetition = onEditClickHelper(
               hierarchy.drop(1),
               it.stepsInRepetition.toMutableList(),
-              trainingStep
+              stepId
             )
           )
         } else {
