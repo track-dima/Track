@@ -181,6 +181,81 @@ fun TimeSelectionDialogContent(
 }
 
 @Composable
+fun PaceSelectionDialog(
+  title: String = "Pace (m:s)",
+  onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  paceSelection: Int,
+  paceUnitSelection: String,
+  minutePickerState: PickerState,
+  secondPickerState: PickerState,
+  paceUnitPickerState: PickerState
+) {
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = title)
+    },
+    text = {
+      Surface(modifier = Modifier.height(160.dp)) {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+          modifier = Modifier.fillMaxSize()
+        ) {
+          Row(modifier = Modifier.fillMaxWidth()) {
+            NumberPicker(
+              state = minutePickerState,
+              items = remember { (0..59).map { it.toString().padStart(2, '0') } },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(1f),
+              startIndex = paceSelection / 60 % 60,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = secondPickerState,
+              items = remember { (0..59).map { it.toString().padStart(2, '0') } },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(1f),
+              startIndex = paceSelection % 60,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+            NumberPicker(
+              state = paceUnitPickerState,
+              items = remember { listOf("min/km", "min/mi") },
+              visibleItemsCount = 3,
+              modifier = Modifier.weight(2f),
+              startIndex = if (paceUnitSelection == "min/km") 0 else 1,
+              textModifier = Modifier.padding(8.dp),
+              textStyle = TextStyle(fontSize = 24.sp)
+            )
+          }
+        }
+      }
+    },
+    confirmButton = {
+      DialogConfirmButton(text = R.string.confirm) {
+        onConfirm()
+      }
+    },
+    dismissButton = {
+      DialogCancelButton(text = R.string.clear) {
+        minutePickerState.selectedItem = "00"
+        secondPickerState.selectedItem = "00"
+        paceUnitPickerState.selectedItem = "min/km"
+        onConfirm()
+      }
+
+      DialogCancelButton(text = R.string.dismiss) {
+        onDismissRequest()
+      }
+    },
+  )
+}
+
+@Composable
 fun DistanceSelectionDialog(
   onDismissRequest: () -> Unit,
   onConfirm: () -> Unit,

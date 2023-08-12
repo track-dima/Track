@@ -24,7 +24,6 @@ import androidx.compose.material.icons.rounded.InsertChartOutlined
 import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Timer
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,10 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
-import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
-import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.removeLeadingZeros
@@ -174,9 +170,8 @@ fun RepetitionsCard(
       .height(70.dp),
     onClick = {
       if (fillTime) onTimeFillClick(listOf(), trainingStep) else onEditClick(
-        listOf(
-          trainingStep.id
-        ), trainingStep
+        listOf(trainingStep.id),
+        trainingStep
       )
     },
     colors = CardDefaults.cardColors(

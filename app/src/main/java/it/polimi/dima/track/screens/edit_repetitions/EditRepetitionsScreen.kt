@@ -167,7 +167,7 @@ fun EditRepetitionsScreen(
         },
         onConfirm = {
           openEditDialog.value = false
-          viewModel.onEditClick(currentEditHierarchy.value, currentStep.value.id)
+          viewModel.onEditClick(currentEditHierarchy.value, currentStep.value)
         },
         currentStep = currentStep
       )
@@ -476,7 +476,7 @@ private fun EditStepDurationSelection(
     options = TrainingStep.DurationType.getOptions(),
     selection = durationTypeSelection,
     modifier = Modifier.card()
-  ) { newValue -> currentStep.value = currentStep.value.copy(durationType = newValue) }
+  ) { newValue -> currentStep.value = currentStep.value.copy(durationType = newValue, results = listOf()) }
 
   if (currentStep.value.durationType == TrainingStep.DurationType.TIME) {
     val openTimeDialog = rememberSaveable { mutableStateOf(false) }

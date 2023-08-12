@@ -141,20 +141,19 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onEditClick(hierarchy: List<String>, stepId: String) {
+  fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
     trainingSteps.value =
-      onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), stepId)
+      onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
   }
 
   private fun onEditClickHelper(
     hierarchy: List<String>,
     trainingSteps: MutableList<TrainingStep>,
-    stepId: String
+    trainingStep: TrainingStep
   ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
       trainingSteps.apply {
-        val index = indexOfFirst { it.id == stepId }
-        val trainingStep = get(index)
+        val index = indexOfFirst { it.id == trainingStep.id }
         set(index, trainingStep)
       }
     } else {
@@ -164,7 +163,7 @@ class EditRepetitionsViewModel @Inject constructor(
             stepsInRepetition = onEditClickHelper(
               hierarchy.drop(1),
               it.stepsInRepetition.toMutableList(),
-              stepId
+              trainingStep
             )
           )
         } else {

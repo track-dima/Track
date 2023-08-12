@@ -18,13 +18,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.PaceSelectionDialog
 import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.UnmodifiableStepsList
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.extractCents
+import it.polimi.dima.track.common.ext.extractPaceUnit
+import it.polimi.dima.track.common.ext.paceToSeconds
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.common.ext.toolbarActions
+import it.polimi.dima.track.model.TrainingStep
 
 @Composable
 fun FillRepetitionsScreen(
@@ -66,34 +70,57 @@ fun FillRepetitionsScreen(
     val currentResultIndex = rememberSaveable { mutableStateOf(0) }
     val currentTrainingStep = rememberSaveable { mutableStateOf("") }
     val currentResult = rememberSaveable { mutableStateOf("") }
+    val currentDurationType = rememberSaveable { mutableStateOf("") }
 
     val resultHourPickerState = rememberPickerState()
     val resultMinutePickerState = rememberPickerState()
     val resultSecondPickerState = rememberPickerState()
     val resultCentsPickerState = rememberPickerState()
+    val resultPaceUnitPickerState = rememberPickerState()
 
     if (openResultDialog.value) {
-      TimeSelectionDialog(
-        title = stringResource(id = R.string.fill_result),
-        onDismissRequest = { openResultDialog.value = false },
-        onConfirm = { cents ->
-          openResultDialog.value = false
-          viewModel.onTimeFillClick(
-            hierarchy = currentHierarchy.value,
-            index = currentResultIndex.value,
-            trainingStepId = currentTrainingStep.value,
-            result = if (cents) "${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem}.${resultCentsPickerState.selectedItem}"
-            else "${resultHourPickerState.selectedItem}:${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem}"
-          )
-        },
-        durationSelection = currentResult.value.timeToSeconds(),
-        centsSelectable = true,
-        centsSelection = currentResult.value.extractCents(),
-        hourPickerState = resultHourPickerState,
-        minutePickerState = resultMinutePickerState,
-        secondPickerState = resultSecondPickerState,
-        centsPickerState = resultCentsPickerState
-      )
+      if (currentDurationType.value == TrainingStep.DurationType.DISTANCE) {
+        TimeSelectionDialog(
+          title = stringResource(id = R.string.fill_result),
+          onDismissRequest = { openResultDialog.value = false },
+          onConfirm = { cents ->
+            openResultDialog.value = false
+            viewModel.onTimeFillClick(
+              hierarchy = currentHierarchy.value,
+              index = currentResultIndex.value,
+              trainingStepId = currentTrainingStep.value,
+              result = if (cents) "${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem}.${resultCentsPickerState.selectedItem}"
+              else "${resultHourPickerState.selectedItem}:${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem}"
+            )
+          },
+          durationSelection = currentResult.value.timeToSeconds(),
+          centsSelectable = true,
+          centsSelection = currentResult.value.extractCents(),
+          hourPickerState = resultHourPickerState,
+          minutePickerState = resultMinutePickerState,
+          secondPickerState = resultSecondPickerState,
+          centsPickerState = resultCentsPickerState
+        )
+      } else {
+        PaceSelectionDialog(
+          title = stringResource(id = R.string.fill_result),
+          onDismissRequest = { openResultDialog.value = false },
+          onConfirm = {
+            openResultDialog.value = false
+            viewModel.onTimeFillClick(
+              hierarchy = currentHierarchy.value,
+              index = currentResultIndex.value,
+              trainingStepId = currentTrainingStep.value,
+              result = "${resultMinutePickerState.selectedItem}:${resultSecondPickerState.selectedItem} ${resultPaceUnitPickerState.selectedItem}"
+            )
+          },
+          paceSelection = currentResult.value.paceToSeconds(),
+          paceUnitSelection = currentResult.value.extractPaceUnit(),
+          minutePickerState = resultMinutePickerState,
+          secondPickerState = resultSecondPickerState,
+          paceUnitPickerState = resultPaceUnitPickerState
+        )
+      }
     }
 
     UnmodifiableStepsList(
@@ -104,6 +131,7 @@ fun FillRepetitionsScreen(
         currentResultIndex.value = index
         currentTrainingStep.value = step.id
         currentResult.value = if (step.results.size > index) step.results[index] else ""
+        currentDurationType.value = step.durationType
         openResultDialog.value = true
       },
     )

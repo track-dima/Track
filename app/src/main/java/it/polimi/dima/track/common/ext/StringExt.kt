@@ -49,7 +49,8 @@ fun String.timeIsZero(): Boolean {
     split[0].toInt() == 0 && split[1].toInt() == 0 && split[2].toInt() == 0
   }
   else {
-    // e.g. 00:12.34
+    // e.g. 00:12.34, or 00:12 min/km
+    if (this.split(" ").size > 1) return split[0].toInt() == 0 && split[1].split(" ")[0].toInt() == 0
     val split2 = split[1].split(".")
     split[0].toInt() == 0 && split2[0].toInt() == 0 && split2[1].toInt() == 0
   }
@@ -68,4 +69,16 @@ fun String.extractCents(): Int {
   val split = this.split(".")
   if (split.size < 2) return 0
   return split[1].toInt()
+}
+
+fun String.paceToSeconds(): Int {
+  if (this.isEmpty()) return 0
+  val split = this.split(":")
+  return split[0].toInt() * 60 + split[1].split(" ")[0].toInt()
+}
+
+fun String.extractPaceUnit(): String {
+  if (this.isEmpty()) return "min/km"
+  val split = this.split(" ")
+  return split[1]
 }
