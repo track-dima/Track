@@ -1,6 +1,8 @@
 package it.polimi.dima.track.common.ext
 
 import android.util.Patterns
+import it.polimi.dima.track.model.TrainingStep
+import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
@@ -78,7 +80,7 @@ fun String.paceToSeconds(): Int {
 }
 
 fun String.extractPaceUnit(): String {
-  if (this.isEmpty()) return "min/km"
+  if (this.isEmpty()) return MIN_KM
   val split = this.split(" ")
   return split[1]
 }

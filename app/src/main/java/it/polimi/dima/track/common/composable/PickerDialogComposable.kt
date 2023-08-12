@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.polimi.dima.track.R
 import it.polimi.dima.track.model.TrainingStep
+import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 
 @Composable
 fun TimeSelectionDialog(
@@ -224,10 +225,10 @@ fun PaceSelectionDialog(
             )
             NumberPicker(
               state = paceUnitPickerState,
-              items = remember { listOf("min/km", "min/mi") },
+              items = remember { TrainingStep.PaceUnit.getOptions() },
               visibleItemsCount = 3,
               modifier = Modifier.weight(2f),
-              startIndex = if (paceUnitSelection == "min/km") 0 else 1,
+              startIndex = if (paceUnitSelection == MIN_KM) 0 else 1,
               textModifier = Modifier.padding(8.dp),
               textStyle = TextStyle(fontSize = 24.sp)
             )
@@ -244,7 +245,7 @@ fun PaceSelectionDialog(
       DialogCancelButton(text = R.string.clear) {
         minutePickerState.selectedItem = "00"
         secondPickerState.selectedItem = "00"
-        paceUnitPickerState.selectedItem = "min/km"
+        paceUnitPickerState.selectedItem = MIN_KM
         onConfirm()
       }
 

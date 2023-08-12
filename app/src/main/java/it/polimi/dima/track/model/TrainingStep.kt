@@ -60,4 +60,18 @@ data class TrainingStep(
       const val REPETITION_BLOCK = "Repetition block"
     }
   }
+
+  class PaceUnit {
+    companion object {
+      fun getOptions(): List<String> {
+        val options = mutableListOf<String>()
+        options.add(MIN_KM)
+        options.add(MIN_MI)
+        return options
+      }
+
+      const val MIN_KM = "min/km"
+      const val MIN_MI = "min/mi"
+    }
+  }
 }

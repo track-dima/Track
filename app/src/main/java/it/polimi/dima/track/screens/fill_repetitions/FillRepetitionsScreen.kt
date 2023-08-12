@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -15,6 +18,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
@@ -22,6 +27,7 @@ import it.polimi.dima.track.common.composable.PaceSelectionDialog
 import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.UnmodifiableStepsList
 import it.polimi.dima.track.common.composable.rememberPickerState
+import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.extractCents
 import it.polimi.dima.track.common.ext.extractPaceUnit
 import it.polimi.dima.track.common.ext.paceToSeconds
@@ -37,6 +43,7 @@ fun FillRepetitionsScreen(
   trainingId: String,
   viewModel: FillRepetitionsViewModel = hiltViewModel()
 ) {
+  val training by viewModel.training
   val trainingSteps by viewModel.trainingSteps
 
   LaunchedEffect(Unit) {
@@ -47,8 +54,8 @@ fun FillRepetitionsScreen(
   Column(
     modifier = modifier
       .fillMaxWidth()
-      .fillMaxHeight(),
-      /*.verticalScroll(rememberScrollState()), TODO crushes for potential infinite height */
+      .fillMaxHeight()
+      .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
@@ -123,18 +130,28 @@ fun FillRepetitionsScreen(
       }
     }
 
-    UnmodifiableStepsList(
-      trainingSteps = trainingSteps,
-      fillTime = true,
-      onTimeFillClick = { hierarchy, index, step ->
-        currentHierarchy.value = hierarchy
-        currentResultIndex.value = index
-        currentTrainingStep.value = step.id
-        currentResult.value = if (step.results.size > index) step.results[index] else ""
-        currentDurationType.value = step.durationType
-        openResultDialog.value = true
-      },
-    )
+    val tree = training.calculateTree()
+
+    Column (
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      UnmodifiableStepsList(
+        trainingSteps = trainingSteps,
+        fillTime = true,
+        onTimeFillClick = { hierarchy, index, step ->
+          currentHierarchy.value = hierarchy
+          currentResultIndex.value = index
+          currentTrainingStep.value = step.id
+          currentResult.value = if (step.results.size > index) step.results[index] else ""
+          currentDurationType.value = step.durationType
+          openResultDialog.value = true
+        },
+      )
+    }
+
   }
 }
 
