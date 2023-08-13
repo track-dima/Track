@@ -3,6 +3,7 @@ package it.polimi.dima.track.screens.training
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
@@ -30,32 +31,29 @@ class TrainingViewModel @Inject constructor(
     options.value = TrainingActionOption.getOptions(true)
   }
 
-  fun onFavoriteClick() {
-    training.value = training.value.copy(favorite = !training.value.favorite)
+  fun onFavoriteClick(favorite: Boolean) {
+    training.value = training.value.copy(favorite = favorite)
     launchCatching {
       storageService.update(training.value)
     }
   }
 
-  fun onTrainingActionClick(editTraining: (Training) -> Unit, popUpScreen: () -> Unit, training: Training, action: String) {
-    when (TrainingActionOption.getByTitle(action)) {
-      TrainingActionOption.DeleteTask -> onDeleteTaskClick(training, popUpScreen)
-      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, popUpScreen, editTraining)
-      else -> {}
-    }
-  }
-
-  private fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
+  fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
     launchCatching {
       storageService.delete(training.id)
       popUpScreen()
     }
   }
 
-  private fun onDuplicateTrainingClick(training: Training, popUpScreen: () -> Unit, editTraining: (Training) -> Unit) {
+  fun onDuplicateTrainingClick(
+    training: Training,
+    popUpScreen: () -> Unit,
+    editTraining: (Training) -> Unit
+  ) {
     launchCatching {
-      // TODO duplicate non dovrebbe salvare finché non si conferma la modifica
-      val newId = storageService.duplicate(training)
+      val newId = storageService.duplicate(
+        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+      )
       popUpScreen()
       editTraining(Training(id = newId))
     }

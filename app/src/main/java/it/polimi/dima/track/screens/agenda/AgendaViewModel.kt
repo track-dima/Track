@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.TRAINING_ID
+import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
@@ -28,10 +29,6 @@ class AgendaViewModel @Inject constructor(
     options.value = TrainingActionOption.getOptions(false)
   }
 
-  fun onTrainingCheckChange(training: Training) {
-    launchCatching { storageService.update(training.copy(completed = !training.completed)) }
-  }
-
   fun onAddClick(openScreen: (String) -> Unit) = openScreen(EDIT_TRAINING_SCREEN)
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
@@ -42,7 +39,7 @@ class AgendaViewModel @Inject constructor(
       TrainingActionOption.CopyTraining -> Unit
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
-      TrainingActionOption.DeleteTask -> onDeleteTaskClick(training)
+      else -> Unit
     }
   }
 
@@ -50,13 +47,15 @@ class AgendaViewModel @Inject constructor(
     launchCatching { storageService.update(training.copy(favorite = !training.favorite)) }
   }
 
-  private fun onDeleteTaskClick(training: Training) {
-    launchCatching { storageService.delete(training.id) }
+  fun onDeleteTaskClick(trainingId: String) {
+    launchCatching { storageService.delete(trainingId) }
   }
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
-      val newId = storageService.duplicate(training)
+      val newId = storageService.duplicate(
+        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+      )
       openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
     }
   }

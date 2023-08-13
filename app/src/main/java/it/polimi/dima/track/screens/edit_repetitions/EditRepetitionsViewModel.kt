@@ -45,13 +45,23 @@ class EditRepetitionsViewModel @Inject constructor(
     return trainingStep
   }
 
-  private fun onAddClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, trainingStep: TrainingStep) : List<TrainingStep> {
+  private fun onAddClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: List<TrainingStep>,
+    trainingStep: TrainingStep
+  ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
       trainingSteps + trainingStep
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onAddClickHelper(hierarchy.drop(1), it.stepsInRepetition, trainingStep))
+          it.copy(
+            stepsInRepetition = onAddClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition,
+              trainingStep
+            )
+          )
         } else {
           it
         }
@@ -63,14 +73,20 @@ class EditRepetitionsViewModel @Inject constructor(
     trainingSteps.value = onAddBlockClickHelper(hierarchy, trainingSteps.value, repetitions)
   }
 
-  private fun onAddBlockClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, repetitions: Int) : List<TrainingStep> {
+  private fun onAddBlockClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: List<TrainingStep>,
+    repetitions: Int
+  ): List<TrainingStep> {
     val repetitionBlock = TrainingStep(
       id = UUID.randomUUID().toString(),
       type = TrainingStep.Type.REPETITION_BLOCK,
       repetitions = repetitions,
       recover = true,
       recoverType = TrainingStep.DurationType.TIME,
-      recoverDuration = 300,
+      recoverDuration = 180,
+      extraRecoverType = TrainingStep.DurationType.TIME,
+      extraRecoverDuration = 300,
     )
 
     return if (hierarchy.isEmpty()) {
@@ -78,7 +94,13 @@ class EditRepetitionsViewModel @Inject constructor(
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onAddBlockClickHelper(hierarchy.drop(1), it.stepsInRepetition, repetitions))
+          it.copy(
+            stepsInRepetition = onAddBlockClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition,
+              repetitions
+            )
+          )
         } else {
           it
         }
@@ -86,18 +108,32 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onDeleteClick(hierarchy: List<String>, trainingStep: TrainingStep) {
-    trainingSteps.value = onDeleteClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+  fun onDeleteClick(hierarchy: List<String>, stepId: String) {
+    trainingSteps.value =
+      onDeleteClickHelper(hierarchy, trainingSteps.value.toMutableList(), stepId)
   }
 
-  private fun onDeleteClickHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, trainingStep: TrainingStep) : List<TrainingStep> {
+  private fun onDeleteClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: MutableList<TrainingStep>,
+    stepId: String
+  ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
-      trainingSteps.remove(trainingStep)
+      trainingSteps.apply {
+        val index = indexOfFirst { it.id == stepId }
+        removeAt(index)
+      }
       trainingSteps
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onDeleteClickHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), trainingStep))
+          it.copy(
+            stepsInRepetition = onDeleteClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition.toMutableList(),
+              stepId
+            )
+          )
         } else {
           it
         }
@@ -106,10 +142,15 @@ class EditRepetitionsViewModel @Inject constructor(
   }
 
   fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
-    trainingSteps.value = onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+    trainingSteps.value =
+      onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
   }
 
-  private fun onEditClickHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, trainingStep: TrainingStep) : List<TrainingStep> {
+  private fun onEditClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: MutableList<TrainingStep>,
+    trainingStep: TrainingStep
+  ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
       trainingSteps.apply {
         val index = indexOfFirst { it.id == trainingStep.id }
@@ -118,7 +159,13 @@ class EditRepetitionsViewModel @Inject constructor(
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onEditClickHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), trainingStep))
+          it.copy(
+            stepsInRepetition = onEditClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition.toMutableList(),
+              trainingStep
+            )
+          )
         } else {
           it
         }
@@ -130,7 +177,12 @@ class EditRepetitionsViewModel @Inject constructor(
     trainingSteps.value = moveStepHelper(hierarchy, trainingSteps.value.toMutableList(), from, to)
   }
 
-  private fun moveStepHelper(hierarchy: List<String>, trainingSteps: MutableList<TrainingStep>, from: ItemPosition, to: ItemPosition) : List<TrainingStep> {
+  private fun moveStepHelper(
+    hierarchy: List<String>,
+    trainingSteps: MutableList<TrainingStep>,
+    from: ItemPosition,
+    to: ItemPosition
+  ): List<TrainingStep> {
     return if (hierarchy.isEmpty()) {
       trainingSteps.apply {
         add(to.index, removeAt(from.index))
@@ -138,7 +190,14 @@ class EditRepetitionsViewModel @Inject constructor(
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = moveStepHelper(hierarchy.drop(1), it.stepsInRepetition.toMutableList(), from, to))
+          it.copy(
+            stepsInRepetition = moveStepHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition.toMutableList(),
+              from,
+              to
+            )
+          )
         } else {
           it
         }
@@ -150,7 +209,11 @@ class EditRepetitionsViewModel @Inject constructor(
     trainingSteps.value = onEditRepetitionsClickHelper(hierarchy, trainingSteps.value, repetitions)
   }
 
-  private fun onEditRepetitionsClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, repetitions: Int) : List<TrainingStep> {
+  private fun onEditRepetitionsClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: List<TrainingStep>,
+    repetitions: Int
+  ): List<TrainingStep> {
     return if (hierarchy.size == 1) {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
@@ -162,7 +225,13 @@ class EditRepetitionsViewModel @Inject constructor(
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onEditRepetitionsClickHelper(hierarchy.drop(1), it.stepsInRepetition, repetitions))
+          it.copy(
+            stepsInRepetition = onEditRepetitionsClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition,
+              repetitions
+            )
+          )
         } else {
           it
         }
@@ -170,20 +239,53 @@ class EditRepetitionsViewModel @Inject constructor(
     }
   }
 
-  fun onEditRecoverClick(hierarchy: List<String>, recoverType: String, recoverDuration: Int, recoverDistance: Int, recoverDistanceUnit: String) {
-    trainingSteps.value = onEditRecoverClickHelper(hierarchy, trainingSteps.value, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit)
+  fun onEditRecoverClick(
+    hierarchy: List<String>,
+    recoverType: String,
+    recoverDuration: Int,
+    recoverDistance: Int,
+    recoverDistanceUnit: String,
+    extraRecover: Boolean,
+  ) {
+    trainingSteps.value = onEditRecoverClickHelper(
+      hierarchy,
+      trainingSteps.value,
+      recoverType,
+      recoverDuration,
+      recoverDistance,
+      recoverDistanceUnit,
+      extraRecover
+    )
   }
 
-  private fun onEditRecoverClickHelper(hierarchy: List<String>, trainingSteps: List<TrainingStep>, recoverType: String, recoverDuration: Int, recoverDistance: Int, recoverDistanceUnit: String) : List<TrainingStep> {
+  private fun onEditRecoverClickHelper(
+    hierarchy: List<String>,
+    trainingSteps: List<TrainingStep>,
+    recoverType: String,
+    recoverDuration: Int,
+    recoverDistance: Int,
+    recoverDistanceUnit: String,
+    extraRecover: Boolean,
+  ): List<TrainingStep> {
     return if (hierarchy.size == 1) {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(
-            recoverType = recoverType,
-            recoverDuration = recoverDuration,
-            recoverDistance = recoverDistance,
-            recoverDistanceUnit = recoverDistanceUnit,
-          )
+          if (extraRecover) {
+            it.copy(
+              extraRecoverType = recoverType,
+              extraRecoverDuration = recoverDuration,
+              extraRecoverDistance = recoverDistance,
+              extraRecoverDistanceUnit = recoverDistanceUnit,
+            )
+          }
+          else {
+            it.copy(
+              recoverType = recoverType,
+              recoverDuration = recoverDuration,
+              recoverDistance = recoverDistance,
+              recoverDistanceUnit = recoverDistanceUnit,
+            )
+          }
         } else {
           it
         }
@@ -191,7 +293,17 @@ class EditRepetitionsViewModel @Inject constructor(
     } else {
       trainingSteps.map {
         if (it.id == hierarchy.first()) {
-          it.copy(stepsInRepetition = onEditRecoverClickHelper(hierarchy.drop(1), it.stepsInRepetition, recoverType, recoverDuration, recoverDistance, recoverDistanceUnit))
+          it.copy(
+            stepsInRepetition = onEditRecoverClickHelper(
+              hierarchy.drop(1),
+              it.stepsInRepetition,
+              recoverType,
+              recoverDuration,
+              recoverDistance,
+              recoverDistanceUnit,
+              extraRecover
+            )
+          )
         } else {
           it
         }

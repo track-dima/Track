@@ -12,28 +12,13 @@ data class Training(
   val dueTime: Map<String, Int>? = null,
   val dueTimeString: String = "",
   val description: String = "",
+  val notes: String = "",
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
+  val transient: Boolean = false,
 
   // UNUSED
   val personalBest: Boolean = false,
   val url: String = "",
   val completed: Boolean = false
-) {
-  fun calculateRepetitions(): Int {
-    return trainingSteps.sumOf { it.calculateRepetitions() }
-  }
-
-  fun calculateTree(): Pair<Int, Int> {
-    if (trainingSteps.isEmpty()) {
-      return Pair(0, 0)
-    }
-    return trainingSteps.map { it.calculateTree() }.reduce { acc, pair ->
-      Pair(acc.first + pair.first, acc.second + pair.second)
-    }
-  }
-
-  fun calculateTotalTime(): Int {
-    return trainingSteps.sumOf { it.calculateTotalTime(it.id == trainingSteps.last().id) }
-  }
-}
+)

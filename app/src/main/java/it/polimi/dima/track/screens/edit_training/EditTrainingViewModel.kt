@@ -2,8 +2,11 @@ package it.polimi.dima.track.screens.edit_training
 
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.idFromParameter
+import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
@@ -35,6 +38,10 @@ class EditTrainingViewModel @Inject constructor(
     training.value = training.value.copy(description = newValue)
   }
 
+  fun onNotesChange(newValue: String) {
+    training.value = training.value.copy(notes = newValue)
+  }
+
   fun onDateChange(newValue: Long) {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone(UTC))
     calendar.timeInMillis = newValue
@@ -63,22 +70,41 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      val editedTraining = training.value
-      if (editedTraining.id.isBlank()) {
-        storageService.save(editedTraining)
-      } else {
-        storageService.update(editedTraining)
-      }
+      training.value = training.value.copy(transient = false)
+      saveTraining()
       popUpScreen()
     }
   }
 
-  fun onCancelClick(popUpScreen: () -> Unit) {
-    popUpScreen()
+  fun onEditSteps(openScreen: (String) -> Unit) {
+    launchCatching {
+      if (training.value.id.isEmpty()) {
+        training.value = training.value.copy(transient = true)
+        val id = saveTraining()
+        training.value = training.value.copy(id = id)
+      }
+      // TODO quando torno alla schermata di modifica principale training è quello di prima, non aggiornato con i nuovi training steps
+      openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.value.id}}")
+    }
   }
 
-  private fun Int.toClockPattern(): String {
-    return if (this < 10) "0$this" else "$this"
+  private suspend fun saveTraining(): String {
+    val editedTraining = training.value
+    return if (editedTraining.id.isBlank()) {
+      storageService.save(editedTraining)
+    } else {
+      storageService.update(editedTraining)
+      editedTraining.id
+    }
+  }
+
+  fun onCancelClick(popUpScreen: () -> Unit) {
+    if (training.value.transient) {
+      launchCatching {
+        storageService.delete(training.value.id)
+      }
+    }
+    popUpScreen()
   }
 
   companion object {
