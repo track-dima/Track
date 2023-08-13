@@ -43,13 +43,14 @@ import it.polimi.dima.track.ui.theme.DarkRed
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingCard(
+  modifier: Modifier = Modifier,
   training: Training,
   options: List<String>,
   onActionClick: (String) -> Unit,
   onClick: () -> Unit
 ) {
   Card(
-    modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+    modifier = modifier,
     onClick = onClick,
   ) {
     Row(
