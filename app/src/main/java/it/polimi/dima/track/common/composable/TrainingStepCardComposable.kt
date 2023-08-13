@@ -1,6 +1,7 @@
 package it.polimi.dima.track.common.composable
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -54,9 +55,12 @@ import androidx.compose.ui.unit.max
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.fieldModifier
+import it.polimi.dima.track.common.ext.paceToMeters
 import it.polimi.dima.track.common.ext.removeLeadingZeros
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
+import it.polimi.dima.track.common.ext.timeIsPace
 import it.polimi.dima.track.common.ext.timeIsZero
+import it.polimi.dima.track.common.ext.timeToPace
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import org.burnoutcrew.reorderable.ItemPosition
@@ -217,8 +221,19 @@ fun RepetitionsCard(
           verticalArrangement = Arrangement.Center
         ) {
           if (trainingStep.results.size > resultIndex && trainingStep.results[resultIndex].isNotEmpty() && !trainingStep.results[resultIndex].timeIsZero()) {
+            val result = trainingStep.results[resultIndex]
+            val showPace = rememberSaveable { mutableStateOf(result.timeIsPace()) }
             Text(
-              text = trainingStep.results[resultIndex].removeLeadingZeros(),
+              modifier = Modifier.clickable(
+                enabled = !fillTime,
+              ) { showPace.value = !showPace.value },
+              text = if (showPace.value) {
+                if (result.timeIsPace()) result
+                else result.timeToPace(trainingStep.distance, trainingStep.distanceUnit)
+              } else {
+                if (result.timeIsPace()) result.paceToMeters(trainingStep.duration)
+                else result.removeLeadingZeros()
+              },
               fontWeight = FontWeight.Bold
             )
           }

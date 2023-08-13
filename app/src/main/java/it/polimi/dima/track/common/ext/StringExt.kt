@@ -3,6 +3,7 @@ package it.polimi.dima.track.common.ext
 import android.util.Patterns
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
+import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_MI
 import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
@@ -42,6 +43,29 @@ fun String.removeLeadingZeros(): String {
       val split2 = split[1].split(".")
       "${split2[0].toInt()}" + ".${split2[1]}"
     }
+  }
+}
+
+fun String.timeIsPace(): Boolean {
+  val split = this.split(" ")
+  return split.size > 1 && (split[1] == MIN_KM || split[1] == MIN_MI)
+}
+
+fun String.paceToMeters(time: Int): String {
+  val split = this.split(" ")
+  return if (split[1] == MIN_KM) {
+    "${time * 1000 / this.paceToSeconds()} m"
+  } else {
+    "${time * 1609 / this.paceToSeconds()} m"  }
+}
+
+fun String.timeToPace(distance: Int, distanceUnit: String): String {
+  val time = this.timeToSeconds()
+  return when (distanceUnit) {
+    "m" ->  "${(time * 1000 / distance).secondsToHhMmSs()} min/km"
+    "km" -> "${(time / distance).secondsToHhMmSs()} min/km"
+    "mi" -> "${(time / distance).secondsToHhMmSs()} min/mi"
+    else -> ""
   }
 }
 
