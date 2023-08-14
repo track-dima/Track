@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.polimi.dima.track.R
@@ -90,8 +91,8 @@ fun TrainingCard(
 private fun TrainingCardContent(training: Training) {
   Text(text = training.getDueDateAndTime(), fontSize = 12.sp)
   Spacer(modifier = Modifier.smallSpacer())
-  Text(text = training.title, style = MaterialTheme.typography.titleLarge)
-  Text(text = training.description, style = MaterialTheme.typography.titleMedium)
+  Text(text = training.title, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+  Text(text = training.description, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
   Box(
     modifier = Modifier

@@ -24,7 +24,7 @@ class SearchViewModel @Inject constructor(
   private val storageService: StorageService,
 ) : TrackViewModel(logService) {
 
-  val searchText: MutableStateFlow < String > = MutableStateFlow("")
+  val searchText: MutableStateFlow<String> = MutableStateFlow("")
 
   @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
   val matchingTrainings: Flow<List<Training>> = searchText
@@ -40,10 +40,6 @@ class SearchViewModel @Inject constructor(
 
   fun onSearchTextChanged(changedSearchText: String) {
     searchText.value = changedSearchText
-    if (changedSearchText.isEmpty()) {
-      // matchedUsers.value = arrayListOf()
-      return
-    }
   }
 
   fun onClearClick() {

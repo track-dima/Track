@@ -1,6 +1,11 @@
 package it.polimi.dima.track.screens.agenda
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -36,6 +41,7 @@ import it.polimi.dima.track.screens.training.TrainingActionOption
 import it.polimi.dima.track.screens.training.TrainingCard
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AgendaScreen(
@@ -114,21 +120,29 @@ fun AgendaScreen(
       }
 
       Spacer(modifier = Modifier.smallSpacer())
-
-      AgendaTrainings(
-        trainings = sortedTrainings,
-        options = options,
-        onTrainingPressed = onTrainingPressed,
-        onActionClick = { action, trainingItem ->
-          when (TrainingActionOption.getByTitle(action)) {
-            TrainingActionOption.DeleteTask -> {
-              currentTraining.value = trainingItem.id
-              openDeleteDialog.value = true
-            }
-            else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
-          }
+      AnimatedContent(
+        targetState = sortedTrainings,
+        label = "Agenda trainings",
+        transitionSpec = {
+          fadeIn() with fadeOut()
         }
-      )
+      ) { trainings ->
+        AgendaTrainings(
+          trainings = trainings,
+          options = options,
+          onTrainingPressed = onTrainingPressed,
+          onActionClick = { action, trainingItem ->
+            when (TrainingActionOption.getByTitle(action)) {
+              TrainingActionOption.DeleteTask -> {
+                currentTraining.value = trainingItem.id
+                openDeleteDialog.value = true
+              }
+
+              else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
+            }
+          }
+        )
+      }
     }
   }
 

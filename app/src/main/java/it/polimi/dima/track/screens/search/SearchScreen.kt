@@ -1,8 +1,13 @@
 package it.polimi.dima.track.screens.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +47,7 @@ import it.polimi.dima.track.common.utils.NavigationType
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.screens.agenda.AgendaTrainings
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchScreen(
   popUpScreen: () -> Unit,
@@ -49,7 +55,7 @@ fun SearchScreen(
   viewModel: SearchViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
-  val searchText by viewModel.searchText.collectAsStateWithLifecycle()
+  val searchText by viewModel.searchText.collectAsStateWithLifecycle("")
   val matchingTrainings by viewModel.matchingTrainings.collectAsStateWithLifecycle(emptyList())
 
   SearchBarUI(
@@ -70,6 +76,7 @@ fun SearchScreen(
 
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchBarUI(
   searchText: String,
@@ -94,13 +101,23 @@ fun SearchBarUI(
         onNavigateBack
       )
 
-      if (matchesFound) {
-        results()
-      } else {
-        if (searchText.isNotEmpty()) {
-          NoSearchResults()
+      AnimatedContent(
+        targetState = matchesFound,
+        transitionSpec = {
+          if (targetState) {
+            slideInVertically { height -> height } + fadeIn() with fadeOut()
+          } else {
+            fadeIn() with fadeOut()
+          }
+      }, label = "Search results"
+      ) {
+        if (it) {
+          results()
+        } else {
+          if (searchText.isNotEmpty()) {
+            NoSearchResults(searchText)
+          }
         }
-
       }
     }
 
@@ -178,11 +195,13 @@ fun SearchBar(
 }
 
 @Composable
-fun NoSearchResults() {
+fun NoSearchResults(
+  searchText: String = ""
+) {
   Column(
     modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
     horizontalAlignment = CenterHorizontally
   ) {
-    Text("No trainings found")
+    Text("No results for \"$searchText\"")
   }
 }
