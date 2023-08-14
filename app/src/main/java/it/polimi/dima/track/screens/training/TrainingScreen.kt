@@ -128,7 +128,7 @@ fun TrainingScreen(
     TrainingStepsListBox(
       training = training,
       filling = true,
-      onFillSteps = { openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID={${training.id}}") }
+      onFillSteps = { openScreen("$FILL_REPETITIONS_SCREEN?$TRAINING_ID=${training.id}") }
     )
   }
 

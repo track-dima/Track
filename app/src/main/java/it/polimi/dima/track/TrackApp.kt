@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import it.polimi.dima.track.common.snackbar.SnackBarManager
 import it.polimi.dima.track.common.utils.NavigationContentPosition
@@ -214,7 +215,7 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
   composable(AGENDA_SCREEN) {
     AgendaScreen(
       openScreen = { route -> appState.navigate(route) },
-      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID={${training.id}}") },
+      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") },
       navigationType = navigationType
     )
   }
@@ -223,7 +224,7 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
     SearchScreen(
       popUpScreen = { appState.popUp() },
       navigationType = navigationType
-    ) { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID={${training.id}}") }
+    ) { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
   }
 
   composable(PROFILE_SCREEN) {
@@ -263,13 +264,14 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
 
   composable(
     route = "$TRAINING_SCREEN$TRAINING_ID_ARG",
-    arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID }),
+    deepLinks = listOf(navDeepLink { uriPattern = "https://track.com/training/{trainingId}" })
   ) {
     TrainingScreen(
       popUpScreen = { appState.popUp() },
       openScreen = { route -> appState.navigate(route) },
       trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID,
-      onEditPressed = { training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}") }
+      onEditPressed = { training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
     )
   }
 }

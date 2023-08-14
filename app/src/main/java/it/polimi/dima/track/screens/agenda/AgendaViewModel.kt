@@ -58,10 +58,10 @@ class AgendaViewModel @Inject constructor(
 
   fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String, context: Context) {
     when (TrainingActionOption.getByTitle(action)) {
-      TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
+      TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${training.id}")
       TrainingActionOption.CopyTraining -> copyToClipboard(
         context = context,
-        text = training.parseTraining(),
+        text = "https://track.com/training/${training.id}",
         label = "Training",
       )
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
@@ -83,7 +83,7 @@ class AgendaViewModel @Inject constructor(
       val newId = storageService.duplicate(
         training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
       )
-      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${newId}}")
+      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${newId}")
     }
   }
 }

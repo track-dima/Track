@@ -6,7 +6,6 @@ import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.calculateSearchTokens
-import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
@@ -26,7 +25,7 @@ class EditTrainingViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId.idFromParameter()) ?: Training()
+        training.value = storageService.getTraining(trainingId) ?: Training()
       }
     }
   }
@@ -85,7 +84,7 @@ class EditTrainingViewModel @Inject constructor(
         training.value = training.value.copy(id = id)
       }
       // TODO quando torno alla schermata di modifica principale training è quello di prima, non aggiornato con i nuovi training steps
-      openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID={${training.value.id}}")
+      openScreen("$EDIT_REPETITIONS_SCREEN?$TRAINING_ID=${training.value.id}")
     }
   }
 

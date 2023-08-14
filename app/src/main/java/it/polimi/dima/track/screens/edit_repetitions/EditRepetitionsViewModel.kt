@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.calculateSearchTokens
-import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
@@ -26,7 +25,7 @@ class EditRepetitionsViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId.idFromParameter()) ?: Training()
+        training.value = storageService.getTraining(trainingId) ?: Training()
         trainingSteps.value = training.value.trainingSteps
       }
     }
