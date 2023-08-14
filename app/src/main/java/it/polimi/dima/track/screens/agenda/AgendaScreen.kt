@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
+import it.polimi.dima.track.SEARCH_SCREEN
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.ext.getDay
@@ -93,6 +95,13 @@ fun AgendaScreen(
         endActionDescription = R.string.settings,
         endAction = { viewModel.onSettingsClick(openScreen) }
       ) {
+        IconButton(onClick = { openScreen(SEARCH_SCREEN) }) {
+          Icon(
+            Icons.Default.Search,
+            contentDescription = stringResource(R.string.search_trainings)
+          )
+        }
+
         IconToggleButton(
           checked = viewModel.isFavoriteFilterActive,
           onCheckedChange = { viewModel.onFavoriteToggle(it) }
@@ -106,7 +115,7 @@ fun AgendaScreen(
 
       Spacer(modifier = Modifier.smallSpacer())
 
-      AgendaScreenContent(
+      AgendaTrainings(
         trainings = sortedTrainings,
         options = options,
         onTrainingPressed = onTrainingPressed,
@@ -127,11 +136,12 @@ fun AgendaScreen(
 }
 
 @Composable
-private fun AgendaScreenContent(
+fun AgendaTrainings(
   trainings: List<Training>,
-  options: List<String>,
+  options: List<String> = listOf(),
   onTrainingPressed: (Training) -> Unit,
-  onActionClick: (String, Training) -> Unit
+  onActionClick: (String, Training) -> Unit = { _, _ -> },
+  showActions: Boolean = true
 ) {
   LazyColumn {
     val groupedTrainings = trainings.groupBy {
@@ -178,6 +188,7 @@ private fun AgendaScreenContent(
                   options = options,
                   onClick = { onTrainingPressed(trainingItem) },
                   onActionClick = { onActionClick(it, trainingItem) },
+                  showActions = showActions
                 )
               }
             }

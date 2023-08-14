@@ -45,8 +45,9 @@ import it.polimi.dima.track.ui.theme.DarkRed
 fun TrainingCard(
   modifier: Modifier = Modifier,
   training: Training,
-  options: List<String>,
-  onActionClick: (String) -> Unit,
+  options: List<String> = listOf(),
+  showActions: Boolean = true,
+  onActionClick: (String) -> Unit = {},
   onClick: () -> Unit
 ) {
   Card(
@@ -64,7 +65,7 @@ fun TrainingCard(
       }
 
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {
-        DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+        if (showActions) DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
         if (training.isScheduled()) {
           Box(
             modifier = Modifier

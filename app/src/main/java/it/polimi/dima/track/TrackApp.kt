@@ -48,6 +48,7 @@ import it.polimi.dima.track.screens.edit_repetitions.EditRepetitionsScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
 import it.polimi.dima.track.screens.fill_repetitions.FillRepetitionsScreen
 import it.polimi.dima.track.screens.login.LoginScreen
+import it.polimi.dima.track.screens.search.SearchScreen
 import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
 import it.polimi.dima.track.screens.splash.SplashScreen
@@ -217,6 +218,14 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
       navigationType = navigationType
     )
   }
+
+  composable(SEARCH_SCREEN) {
+    SearchScreen(
+      popUpScreen = { appState.popUp() },
+      navigationType = navigationType
+    ) { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID={${training.id}}") }
+  }
+
   composable(PROFILE_SCREEN) {
     // ProfileScreen(openScreen = { route -> appState.navigate(route) })
   }
