@@ -442,7 +442,7 @@ private fun EditStepRecoverSelection(
 
     val distanceSelection = currentStep.value.recoverDistance
     val distanceUnitSelection = currentStep.value.recoverDistanceUnit
-    val mostSignificantDigitPickerState = rememberPickerState()
+    val mostSignificantDigitsPickerState = rememberPickerState()
     val leastSignificantDigitsPickerState = rememberPickerState()
     val measurementPickerState = rememberPickerState()
 
@@ -452,13 +452,13 @@ private fun EditStepRecoverSelection(
         onConfirm = {
           openDistanceDialog.value = false
           currentStep.value = currentStep.value.copy(
-            recoverDistance = mostSignificantDigitPickerState.selectedItem.toInt() * 100 + leastSignificantDigitsPickerState.selectedItem.toInt(),
+            recoverDistance = mostSignificantDigitsPickerState.selectedItem.toInt() * 100 + leastSignificantDigitsPickerState.selectedItem.toInt(),
             recoverDistanceUnit = measurementPickerState.selectedItem
           )
         },
         distanceSelection = distanceSelection,
         distanceUnitSelection = distanceUnitSelection,
-        mostSignificantDigitPickerState = mostSignificantDigitPickerState,
+        mostSignificantDigitsPickerState = mostSignificantDigitsPickerState,
         leastSignificantDigitsPickerState = leastSignificantDigitsPickerState,
         measurementPickerState = measurementPickerState
       )
@@ -540,7 +540,7 @@ private fun EditStepDurationSelection(
         },
         distanceSelection = distanceSelection,
         distanceUnitSelection = distanceUnitSelection,
-        mostSignificantDigitPickerState = mostSignificantDigitPickerState,
+        mostSignificantDigitsPickerState = mostSignificantDigitPickerState,
         leastSignificantDigitsPickerState = leastSignificantDigitsPickerState,
         measurementPickerState = measurementPickerState
       )

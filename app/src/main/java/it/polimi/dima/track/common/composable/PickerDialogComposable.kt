@@ -262,7 +262,7 @@ fun DistanceSelectionDialog(
   onConfirm: () -> Unit,
   distanceSelection: Int,
   distanceUnitSelection: String,
-  mostSignificantDigitPickerState: PickerState,
+  mostSignificantDigitsPickerState: PickerState,
   leastSignificantDigitsPickerState: PickerState,
   measurementPickerState: PickerState
 ) {
@@ -275,7 +275,7 @@ fun DistanceSelectionDialog(
       DistanceSelectionDialogContent(
         distanceSelection,
         distanceUnitSelection,
-        mostSignificantDigitPickerState,
+        mostSignificantDigitsPickerState,
         leastSignificantDigitsPickerState,
         measurementPickerState
       )
@@ -297,7 +297,7 @@ fun DistanceSelectionDialog(
 fun DistanceSelectionDialogContent(
   distanceSelection: Int,
   distanceUnitSelection: String,
-  mostSignificantDigitPickerState: PickerState,
+  mostSignificantDigitsPickerState: PickerState,
   leastSignificantDigitsPickerState: PickerState,
   measurementPickerState: PickerState
 ) {
@@ -310,8 +310,8 @@ fun DistanceSelectionDialogContent(
 
       Row(modifier = Modifier.fillMaxWidth()) {
         NumberPicker(
-          state = mostSignificantDigitPickerState,
-          items = remember { (0..9).map { it.toString() } },
+          state = mostSignificantDigitsPickerState,
+          items = remember { (0..99).map { it.toString() } },
           modifier = Modifier.weight(1f),
           visibleItemsCount = 3,
           startIndex = distanceSelection / 100,
@@ -498,7 +498,7 @@ private fun RecoverSelectionDialogContent(
         DistanceSelectionDialogContent(
           distanceSelection = currentRecoverDistance,
           distanceUnitSelection = currentRecoverDistanceUnit,
-          mostSignificantDigitPickerState = distanceMostSignificantDigitPickerState,
+          mostSignificantDigitsPickerState = distanceMostSignificantDigitPickerState,
           leastSignificantDigitsPickerState = distanceLeastSignificantDigitsPickerState,
           measurementPickerState = distanceMeasurementPickerState
         )
