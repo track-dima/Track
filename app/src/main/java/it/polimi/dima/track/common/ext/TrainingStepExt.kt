@@ -38,12 +38,13 @@ fun TrainingStep.calculateTotalTime(lastInBlock: Boolean): Int {
     } else {
       distance.distanceToSeconds(distanceUnit)
     }
-    val recoverTime = if (type == TrainingStep.Type.WARM_UP || type == TrainingStep.Type.COOL_DOWN || lastInBlock)
-      0
-    else if (recoverType == TrainingStep.DurationType.TIME)
-      recoverDuration
-    else
-      recoverDistance.distanceToSeconds(recoverDistanceUnit)
+    val recoverTime =
+      if (type == TrainingStep.Type.WARM_UP || type == TrainingStep.Type.COOL_DOWN || lastInBlock)
+        0
+      else if (recoverType == TrainingStep.DurationType.TIME)
+        recoverDuration
+      else
+        recoverDistance.distanceToSeconds(recoverDistanceUnit)
 
     durationTime + recoverTime
   } else {
@@ -61,3 +62,61 @@ fun TrainingStep.calculateTotalTime(lastInBlock: Boolean): Int {
     stepsInRepetition.sumOf { it.calculateTotalTime(it.id == stepsInRepetition.last().id) } * repetitions + recoverTime * (repetitions - 1) + extraRecoverTime
   }
 }
+
+fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): String {
+  return when (this.type) {
+    TrainingStep.Type.WARM_UP -> "Warm up"
+    TrainingStep.Type.COOL_DOWN -> "Cool down"
+
+    TrainingStep.Type.REPETITION -> {
+      val duration = getDurationString()
+      if (lastStep || !this.recover) duration
+      else {
+        val recover = getRecoverString()
+        "$duration with $recover recovery"
+      }
+    }
+
+    TrainingStep.Type.REPETITION_BLOCK -> {
+      val tabs = "\t" + "\t".repeat(level * 3)
+      val recover = getRecoverString()
+      val extraRecover = getExtraRecoverString()
+      "$repetitions sets of:\n" +
+          stepsInRepetition.joinToString(
+            prefix = "$tabs$dot ",
+            separator = "\n$tabs$dot "
+          ) {
+            it.parseToString(
+              level = level + 1,
+              dot = dot,
+              lastStep = stepsInRepetition.last().id == it.id
+            )
+          } +
+          " with $recover recovery" +
+          "\n$tabs$dot $extraRecover recovery after the sets"
+    }
+
+    else -> ""
+  }
+}
+
+private fun TrainingStep.getExtraRecoverString() =
+  if (extraRecoverType == TrainingStep.DurationType.TIME) {
+    extraRecoverDuration.formatTimeRecover()
+  } else {
+    extraRecoverDistance.toString() + extraRecoverDistanceUnit
+  }
+
+private fun TrainingStep.getRecoverString() =
+  if (recoverType == TrainingStep.DurationType.TIME) {
+    recoverDuration.formatTimeRecover()
+  } else {
+    recoverDistance.toString() + recoverDistanceUnit
+  }
+
+private fun TrainingStep.getDurationString() =
+  if (durationType == TrainingStep.DurationType.TIME) {
+    duration.secondsToHhMmSs()
+  } else {
+    distance.toString() + distanceUnit
+  }

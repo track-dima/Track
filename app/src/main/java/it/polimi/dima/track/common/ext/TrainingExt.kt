@@ -57,6 +57,31 @@ fun Training.calculateTotalTime(): Int {
   return trainingSteps.sumOf { it.calculateTotalTime(it.id == trainingSteps.last().id) }
 }
 
+fun Training.parseTrainingSteps(): String {
+  val dot = "•"
+  return trainingSteps.joinToString(prefix = "$dot ", separator = "\n$dot ") {
+    it.parseToString(
+      level = 1,
+      dot = "◦",
+      lastStep = trainingSteps.last().id == it.id
+    )
+  }
+}
+
+fun Training.parseTraining(): String {
+  val stringBuilder = StringBuilder(title)
+
+  if (hasDueDate() || hasDueTime()) {
+    stringBuilder.append("\n")
+    stringBuilder.append(getDueDateAndTime())
+  }
+
+  stringBuilder.append("\n\n")
+  stringBuilder.append(parseTrainingSteps())
+
+  return stringBuilder.toString()
+}
+
 fun emptyResults(trainingSteps: List<TrainingStep>): List<TrainingStep> {
   return trainingSteps.map {
     if (it.stepsInRepetition.isEmpty()) it.copy(results = listOf())

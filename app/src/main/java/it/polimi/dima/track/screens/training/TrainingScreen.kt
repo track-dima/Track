@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,8 +45,12 @@ import it.polimi.dima.track.common.composable.NoTitleToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
 import it.polimi.dima.track.common.ext.calculateTotalTime
 import it.polimi.dima.track.common.ext.contextMenu
+import it.polimi.dima.track.common.ext.hasDueDate
+import it.polimi.dima.track.common.ext.hasDueTime
+import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.model.Training
 
 @Composable
@@ -98,7 +103,13 @@ fun TrainingScreen(
         onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
         onEditPressed = { onEditPressed(training) },
         options = options,
-        onDuplicateTrainingClick = { viewModel.onDuplicateTrainingClick(training, popUpScreen, onEditPressed) },
+        onDuplicateTrainingClick = {
+          viewModel.onDuplicateTrainingClick(
+            training,
+            popUpScreen,
+            onEditPressed
+          )
+        },
         onDeleteTaskClick = { openDeleteDialog.value = true }
       )
     }
@@ -133,10 +144,13 @@ private fun TrainingToolbarActions(
   onDeleteTaskClick: () -> Unit,
   onDuplicateTrainingClick: () -> Unit
 ) {
+  val context = LocalContext.current
+
   FilledTonalIconToggleButton(
     modifier = Modifier.padding(horizontal = 4.dp),
     checked = training.favorite,
-    onCheckedChange = onFavoriteClick) {
+    onCheckedChange = onFavoriteClick
+  ) {
     Icon(
       if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
       contentDescription = stringResource(R.string.favorite)
@@ -157,6 +171,12 @@ private fun TrainingToolbarActions(
       when (TrainingActionOption.getByTitle(action)) {
         TrainingActionOption.DeleteTask -> onDeleteTaskClick()
         TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick()
+        TrainingActionOption.CopyTraining -> copyToClipboard(
+          context = context,
+          text = training.parseTraining(),
+          label = "Training",
+        )
+
         else -> Unit
       }
     },
@@ -173,7 +193,7 @@ private fun TrainingInformation(training: Training) {
     TrainingDescription(training)
   }
 
-  if (training.dueDateString.isNotEmpty() || training.dueTimeString.isNotEmpty()) {
+  if (training.hasDueDate() || training.hasDueTime()) {
     Spacer(modifier = Modifier.spacer())
     TrainingTime(training)
   }
@@ -216,7 +236,7 @@ private fun TrainingTime(training: Training) {
     Column {
       Row {
         Text(text = training.dueDateString)
-        if (training.dueDateString.isNotEmpty() && training.dueTimeString.isNotEmpty()) Text(
+        if (training.hasDueDate() && training.hasDueTime()) Text(
           text = " ･ "
         )
         Text(text = training.dueTimeString)

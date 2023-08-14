@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.idFromParameter
+import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
@@ -144,6 +145,7 @@ class EditRepetitionsViewModel @Inject constructor(
   fun onEditClick(hierarchy: List<String>, trainingStep: TrainingStep) {
     trainingSteps.value =
       onEditClickHelper(hierarchy, trainingSteps.value.toMutableList(), trainingStep)
+    training.value = training.value.copy(parsedTraining = training.value.parseTraining())
   }
 
   private fun onEditClickHelper(

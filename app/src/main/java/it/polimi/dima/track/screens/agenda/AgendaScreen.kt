@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +41,7 @@ fun AgendaScreen(
   viewModel: AgendaViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
+  val context = LocalContext.current
   val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
   val currentTraining = rememberSaveable { mutableStateOf("") }
 
@@ -102,7 +104,7 @@ fun AgendaScreen(
               currentTraining.value = trainingItem.id
               openDeleteDialog.value = true
             }
-            else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action)
+            else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
           }
         }
       )

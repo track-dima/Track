@@ -1,11 +1,14 @@
 package it.polimi.dima.track.screens.agenda
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.emptyResults
+import it.polimi.dima.track.common.ext.parseTraining
+import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
@@ -21,7 +24,6 @@ class AgendaViewModel @Inject constructor(
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
   val options = mutableStateOf<List<String>>(listOf())
-
   val trainings = storageService.trainings
 
   fun loadTaskOptions() {
@@ -33,10 +35,14 @@ class AgendaViewModel @Inject constructor(
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
-  fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String) {
+  fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String, context: Context) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID={${training.id}}")
-      TrainingActionOption.CopyTraining -> Unit
+      TrainingActionOption.CopyTraining -> copyToClipboard(
+        context = context,
+        text = training.parseTraining(),
+        label = "Training",
+      )
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
       else -> Unit
