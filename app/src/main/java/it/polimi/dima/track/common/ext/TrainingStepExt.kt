@@ -100,6 +100,20 @@ fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): Stri
   }
 }
 
+fun TrainingStep.calculateSearchTokens(): List<String> {
+  val tokens = mutableSetOf<String>()
+
+  return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
+    tokens.toList()
+  } else if (stepsInRepetition.isEmpty()) {
+    tokens.add(getDurationString())
+    tokens.toList()
+  } else {
+    tokens.addAll(stepsInRepetition.flatMap { it.calculateSearchTokens() })
+    tokens.toList()
+  }
+}
+
 private fun TrainingStep.getExtraRecoverString() =
   if (extraRecoverType == TrainingStep.DurationType.TIME) {
     extraRecoverDuration.formatTimeRecover()

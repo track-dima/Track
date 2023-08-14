@@ -15,6 +15,9 @@ import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import it.polimi.dima.track.screens.training.TrainingActionOption
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,11 +27,29 @@ class AgendaViewModel @Inject constructor(
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
   val options = mutableStateOf<List<String>>(listOf())
-  val trainings = storageService.trainings
+  private val trainings = storageService.trainings
+
+  private val favoriteSelected = MutableStateFlow(false)
+  val isFavoriteFilterActive: Boolean get() = favoriteSelected.value
+
+  val filteredTrainings: Flow<List<Training>> = combine(
+    favoriteSelected,
+    trainings
+  ) { filtered, trainingsList ->
+    if (filtered) {
+      trainingsList.filter { training -> training.favorite }
+    } else {
+      trainingsList
+    }
+  }
 
   fun loadTaskOptions() {
     // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
     options.value = TrainingActionOption.getOptions(false)
+  }
+
+  fun onFavoriteToggle(showFavorites: Boolean) {
+    favoriteSelected.value = showFavorites
   }
 
   fun onAddClick(openScreen: (String) -> Unit) = openScreen(EDIT_TRAINING_SCREEN)

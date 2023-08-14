@@ -31,6 +31,17 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
         currentCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
       }
 
+  override suspend fun getFavoriteTrainings(): List<Training> =
+    currentCollection(auth.currentUserId).whereEqualTo("favorite", true).get().await()
+      .toObjects()
+
+  override suspend fun searchTrainings(query: String): List<Training> =
+    currentCollection(auth.currentUserId)
+      .whereArrayContainsAny("searchable", query.split(" ").map { it.lowercase() })
+      .get()
+      .await()
+      .toObjects()
+
   override suspend fun getTraining(trainingId: String): Training? =
     currentCollection(auth.currentUserId).document(trainingId).get().await().toObject()
 

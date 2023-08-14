@@ -4,6 +4,7 @@ import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import java.util.Calendar
+import java.util.Locale
 import java.util.TimeZone
 
 
@@ -80,6 +81,34 @@ fun Training.parseTraining(): String {
   stringBuilder.append(parseTrainingSteps())
 
   return stringBuilder.toString()
+}
+
+fun Training.calculateSearchTokens(): List<String> {
+  val tokens = mutableSetOf<String>()
+
+  if (title.isNotBlank()) {
+    title.lowercase().split(" ").forEach {
+      tokens.add(it)
+    }
+  }
+
+  if (description.isNotBlank()) {
+    description.lowercase().split(" ").forEach {
+      tokens.add(it)
+    }
+  }
+
+  if (notes.isNotBlank()) {
+    notes.lowercase().split(" ").forEach {
+      tokens.add(it)
+    }
+  }
+
+  trainingSteps.forEach {
+    tokens.addAll(it.calculateSearchTokens())
+  }
+
+  return tokens.toList()
 }
 
 fun emptyResults(trainingSteps: List<TrainingStep>): List<TrainingStep> {

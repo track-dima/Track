@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_ID
+import it.polimi.dima.track.common.ext.calculateSearchTokens
 import it.polimi.dima.track.common.ext.idFromParameter
 import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
@@ -89,7 +90,7 @@ class EditTrainingViewModel @Inject constructor(
   }
 
   private suspend fun saveTraining(): String {
-    val editedTraining = training.value
+    val editedTraining = training.value.copy(searchable = training.value.calculateSearchTokens())
     return if (editedTraining.id.isBlank()) {
       storageService.save(editedTraining)
     } else {

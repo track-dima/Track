@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -73,7 +75,7 @@ fun AgendaScreen(
       }
     }
   ) {
-    val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
+    val trainings = viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
 
     // TODO is this sorting efficient?
     val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
@@ -90,7 +92,17 @@ fun AgendaScreen(
         endActionIcon = Icons.Default.Settings,
         endActionDescription = R.string.settings,
         endAction = { viewModel.onSettingsClick(openScreen) }
-      )
+      ) {
+        IconToggleButton(
+          checked = viewModel.isFavoriteFilterActive,
+          onCheckedChange = { viewModel.onFavoriteToggle(it) }
+        ) {
+          Icon(
+            if (viewModel.isFavoriteFilterActive) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+            contentDescription = stringResource(R.string.favorite)
+          )
+        }
+      }
 
       Spacer(modifier = Modifier.smallSpacer())
 
