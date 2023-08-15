@@ -9,6 +9,7 @@ import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.utils.copyToClipboard
+import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
@@ -56,14 +57,25 @@ class AgendaViewModel @Inject constructor(
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
-  fun onTrainingActionClick(openScreen: (String) -> Unit, training: Training, action: String, context: Context) {
+  fun onTrainingActionClick(
+    openScreen: (String) -> Unit,
+    training: Training,
+    action: String,
+    context: Context
+  ) {
     when (TrainingActionOption.getByTitle(action)) {
       TrainingActionOption.EditTraining -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${training.id}")
+      TrainingActionOption.Share -> sendIntent(
+        context = context,
+        text = "https://track.com/training/${training.id}"
+      )
+
       TrainingActionOption.CopyTraining -> copyToClipboard(
         context = context,
-        text = "https://track.com/training/${training.id}",
+        text = training.parseTraining(),
         label = "Training",
       )
+
       TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
       else -> Unit
@@ -81,7 +93,11 @@ class AgendaViewModel @Inject constructor(
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
       val newId = storageService.duplicate(
-        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+        training.copy(
+          transient = true,
+          favorite = false,
+          trainingSteps = emptyResults(training.trainingSteps)
+        )
       )
       openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${newId}")
     }

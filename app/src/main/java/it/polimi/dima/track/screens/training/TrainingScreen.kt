@@ -51,6 +51,7 @@ import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.utils.copyToClipboard
+import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
 
 @Composable
@@ -171,6 +172,10 @@ private fun TrainingToolbarActions(
       when (TrainingActionOption.getByTitle(action)) {
         TrainingActionOption.DeleteTask -> onDeleteTaskClick()
         TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick()
+        TrainingActionOption.Share -> sendIntent(
+          context = context,
+          text = "https://track.com/training/${training.id}"
+        )
         TrainingActionOption.CopyTraining -> copyToClipboard(
           context = context,
           text = training.parseTraining(),

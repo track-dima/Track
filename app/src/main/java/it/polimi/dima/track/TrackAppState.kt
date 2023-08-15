@@ -33,6 +33,12 @@ class TrackAppState constructor(
     navController.popBackStack()
   }
 
+  fun popUpOrNavigate(route: String) {
+    val popped = navController.popBackStack()
+    if (!popped)
+      navController.navigate(route) { launchSingleTop = true }
+  }
+
   fun navigate(route: String) {
     navController.navigate(route) { launchSingleTop = true }
   }
