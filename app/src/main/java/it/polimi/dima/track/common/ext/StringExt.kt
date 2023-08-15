@@ -23,10 +23,6 @@ fun String.passwordMatches(repeated: String): Boolean {
   return this == repeated
 }
 
-fun String.idFromParameter(): String {
-  return this.substring(1, this.length - 1)
-}
-
 fun String.removeLeadingZeros(): String {
   val split = this.split(":")
   return if (split.size == 3) {
@@ -82,6 +78,12 @@ fun String.timeIsZero(): Boolean {
   }
 }
 
+/**
+ * Converts a string representing a time to seconds.
+ * For example, "00:12:34" is converted to 754 seconds, "00:12.34" is converted to 12 seconds.
+ *
+ * @return the time in seconds
+ */
 fun String.timeToSeconds(): Int {
   if (this.isEmpty()) return 0
   val split = this.split(":")
@@ -90,6 +92,11 @@ fun String.timeToSeconds(): Int {
   } else split[0].toInt() * 3600 + split[1].toInt() * 60 + split[2].toInt()
 }
 
+/**
+ * Extracts the cents from a string representing a time.
+ *
+ * @return the cents
+ */
 fun String.extractCents(): Int {
   if (this.isEmpty()) return 0
   val split = this.split(".")

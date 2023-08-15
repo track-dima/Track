@@ -3,7 +3,8 @@ package it.polimi.dima.track.screens.edit_repetitions
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
-import it.polimi.dima.track.common.ext.idFromParameter
+import it.polimi.dima.track.common.ext.calculateSearchTokens
+import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
@@ -24,7 +25,7 @@ class EditRepetitionsViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId.idFromParameter()) ?: Training()
+        training.value = storageService.getTraining(trainingId) ?: Training()
         trainingSteps.value = training.value.trainingSteps
       }
     }
@@ -277,8 +278,7 @@ class EditRepetitionsViewModel @Inject constructor(
               extraRecoverDistance = recoverDistance,
               extraRecoverDistanceUnit = recoverDistanceUnit,
             )
-          }
-          else {
+          } else {
             it.copy(
               recoverType = recoverType,
               recoverDuration = recoverDuration,
@@ -313,7 +313,10 @@ class EditRepetitionsViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      training.value = training.value.copy(trainingSteps = trainingSteps.value)
+      training.value = training.value.copy(
+        trainingSteps = trainingSteps.value,
+        searchable = training.value.calculateSearchTokens()
+      )
       val editedTraining = training.value
       if (editedTraining.id.isBlank()) {
         storageService.save(editedTraining)

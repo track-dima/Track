@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.polimi.dima.track.R
@@ -45,8 +46,9 @@ import it.polimi.dima.track.ui.theme.DarkRed
 fun TrainingCard(
   modifier: Modifier = Modifier,
   training: Training,
-  options: List<String>,
-  onActionClick: (String) -> Unit,
+  options: List<String> = listOf(),
+  showActions: Boolean = true,
+  onActionClick: (String) -> Unit = {},
   onClick: () -> Unit
 ) {
   Card(
@@ -64,7 +66,7 @@ fun TrainingCard(
       }
 
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {
-        DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+        if (showActions) DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
         if (training.isScheduled()) {
           Box(
             modifier = Modifier
@@ -89,8 +91,8 @@ fun TrainingCard(
 private fun TrainingCardContent(training: Training) {
   Text(text = training.getDueDateAndTime(), fontSize = 12.sp)
   Spacer(modifier = Modifier.smallSpacer())
-  Text(text = training.title, style = MaterialTheme.typography.titleLarge)
-  Text(text = training.description, style = MaterialTheme.typography.titleMedium)
+  Text(text = training.title, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+  Text(text = training.description, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
   Box(
     modifier = Modifier

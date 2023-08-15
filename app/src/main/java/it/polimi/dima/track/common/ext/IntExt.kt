@@ -29,3 +29,11 @@ fun Int.distanceToSeconds(distanceUnit: String): Int {
   // Convert the distance to seconds (5 min/km)
   return dist * 5 * 60 / 1000
 }
+
+fun Int.formatTimeRecover(): String {
+  if (this < 60) return "$this''"
+  if (this % 60 == 0) return "${this / 60}'"
+  val minutes = this / 60
+  val seconds = this % 60
+  return String.format("%d:%02d''", minutes, seconds)
+}

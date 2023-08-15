@@ -1,6 +1,7 @@
 package it.polimi.dima.track.model.service.impl
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
@@ -29,6 +30,13 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
       auth.currentUser.flatMapLatest { user ->
         currentCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
       }
+
+  override suspend fun searchTrainings(query: String): List<Training> =
+    currentCollection(auth.currentUserId)
+      .whereArrayContainsAny("searchable", query.split(" ").map { it.lowercase() })
+      .get()
+      .await()
+      .toObjects()
 
   override suspend fun getTraining(trainingId: String): Training? =
     currentCollection(auth.currentUserId).document(trainingId).get().await().toObject()

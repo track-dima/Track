@@ -1,22 +1,32 @@
 package it.polimi.dima.track.screens.agenda
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
+import it.polimi.dima.track.SEARCH_SCREEN
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.ext.getDay
@@ -31,6 +41,7 @@ import it.polimi.dima.track.screens.training.TrainingActionOption
 import it.polimi.dima.track.screens.training.TrainingCard
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AgendaScreen(
@@ -40,6 +51,7 @@ fun AgendaScreen(
   viewModel: AgendaViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
+  val context = LocalContext.current
   val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
   val currentTraining = rememberSaveable { mutableStateOf("") }
 
@@ -71,7 +83,7 @@ fun AgendaScreen(
       }
     }
   ) {
-    val trainings = viewModel.trainings.collectAsStateWithLifecycle(emptyList())
+    val trainings = viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
 
     // TODO is this sorting efficient?
     val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
@@ -88,24 +100,49 @@ fun AgendaScreen(
         endActionIcon = Icons.Default.Settings,
         endActionDescription = R.string.settings,
         endAction = { viewModel.onSettingsClick(openScreen) }
-      )
+      ) {
+        IconButton(onClick = { openScreen(SEARCH_SCREEN) }) {
+          Icon(
+            Icons.Default.Search,
+            contentDescription = stringResource(R.string.search_trainings)
+          )
+        }
+
+        IconToggleButton(
+          checked = viewModel.isFavoriteFilterActive,
+          onCheckedChange = { viewModel.onFavoriteToggle(it) }
+        ) {
+          Icon(
+            if (viewModel.isFavoriteFilterActive) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+            contentDescription = stringResource(R.string.favorite)
+          )
+        }
+      }
 
       Spacer(modifier = Modifier.smallSpacer())
-
-      AgendaScreenContent(
-        trainings = sortedTrainings,
-        options = options,
-        onTrainingPressed = onTrainingPressed,
-        onActionClick = { action, trainingItem ->
-          when (TrainingActionOption.getByTitle(action)) {
-            TrainingActionOption.DeleteTask -> {
-              currentTraining.value = trainingItem.id
-              openDeleteDialog.value = true
-            }
-            else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action)
-          }
+      AnimatedContent(
+        targetState = sortedTrainings,
+        label = "Agenda trainings",
+        transitionSpec = {
+          fadeIn() with fadeOut()
         }
-      )
+      ) { trainings ->
+        AgendaTrainings(
+          trainings = trainings,
+          options = options,
+          onTrainingPressed = onTrainingPressed,
+          onActionClick = { action, trainingItem ->
+            when (TrainingActionOption.getByTitle(action)) {
+              TrainingActionOption.DeleteTask -> {
+                currentTraining.value = trainingItem.id
+                openDeleteDialog.value = true
+              }
+
+              else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
+            }
+          }
+        )
+      }
     }
   }
 
@@ -113,11 +150,12 @@ fun AgendaScreen(
 }
 
 @Composable
-private fun AgendaScreenContent(
+fun AgendaTrainings(
   trainings: List<Training>,
-  options: List<String>,
+  options: List<String> = listOf(),
   onTrainingPressed: (Training) -> Unit,
-  onActionClick: (String, Training) -> Unit
+  onActionClick: (String, Training) -> Unit = { _, _ -> },
+  showActions: Boolean = true
 ) {
   LazyColumn {
     val groupedTrainings = trainings.groupBy {
@@ -164,6 +202,7 @@ private fun AgendaScreenContent(
                   options = options,
                   onClick = { onTrainingPressed(trainingItem) },
                   onActionClick = { onActionClick(it, trainingItem) },
+                  showActions = showActions
                 )
               }
             }

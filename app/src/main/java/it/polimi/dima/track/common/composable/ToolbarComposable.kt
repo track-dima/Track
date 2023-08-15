@@ -1,7 +1,9 @@
 package it.polimi.dima.track.common.composable
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
@@ -12,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +49,8 @@ fun ActionToolbar(
   startAction: (() -> Unit)? = null,
   endActionIcon: ImageVector,
   @StringRes endActionDescription: Int,
-  endAction: () -> Unit
+  endAction: () -> Unit,
+  otherActions: @Composable RowScope.() -> Unit = {}
 ) {
   val hasStartAction =
     startActionIcon != null && startAction != null && startActionDescription != null
@@ -81,11 +85,16 @@ fun ActionToolbar(
     },
     actions = {
       Box(modifier) {
-        IconButton(onClick = endAction) {
-          Icon(
-            imageVector = endActionIcon,
-            contentDescription = stringResource(endActionDescription)
-          )
+        Row (
+        ) {
+          otherActions()
+
+          IconButton(onClick = endAction) {
+            Icon(
+              imageVector = endActionIcon,
+              contentDescription = stringResource(endActionDescription)
+            )
+          }
         }
       }
     }
