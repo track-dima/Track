@@ -362,7 +362,14 @@ private fun EditStepDialogContent(currentStep: MutableState<TrainingStep>) {
     options = TrainingStep.Type.getOptions(),
     selection = typeSelection,
     modifier = Modifier.card()
-  ) { newValue -> currentStep.value = currentStep.value.copy(type = newValue) }
+  ) { newValue ->
+    currentStep.value = currentStep.value.copy(type = newValue)
+    when (newValue) {
+      TrainingStep.Type.WARM_UP -> currentStep.value = currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 600)
+      TrainingStep.Type.COOL_DOWN -> currentStep.value = currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 300)
+      else -> Unit
+    }
+  }
 
   Divider(
     modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
@@ -476,7 +483,9 @@ private fun EditStepDurationSelection(
     options = TrainingStep.DurationType.getOptions(),
     selection = durationTypeSelection,
     modifier = Modifier.card()
-  ) { newValue -> currentStep.value = currentStep.value.copy(durationType = newValue, results = listOf()) }
+  ) { newValue ->
+    currentStep.value = currentStep.value.copy(durationType = newValue, results = listOf())
+  }
 
   if (currentStep.value.durationType == TrainingStep.DurationType.TIME) {
     val openTimeDialog = rememberSaveable { mutableStateOf(false) }

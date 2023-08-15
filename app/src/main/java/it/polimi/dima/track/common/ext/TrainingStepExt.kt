@@ -33,35 +33,41 @@ fun TrainingStep.calculateTotalTime(lastInBlock: Boolean): Int {
   return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
     0
   } else if (stepsInRepetition.isEmpty()) {
-    val durationTime = if (durationType == TrainingStep.DurationType.TIME) {
-      duration
-    } else {
-      distance.distanceToSeconds(distanceUnit)
-    }
+    val durationTime = getDurationSeconds()
     val recoverTime =
-      if (type == TrainingStep.Type.WARM_UP || type == TrainingStep.Type.COOL_DOWN || lastInBlock)
+      if (type !in arrayOf(TrainingStep.Type.REPETITION, TrainingStep.Type.REPETITION_BLOCK) || lastInBlock)
         0
-      else if (recoverType == TrainingStep.DurationType.TIME)
-        recoverDuration
-      else
-        recoverDistance.distanceToSeconds(recoverDistanceUnit)
+      else getRecoverSeconds()
 
     durationTime + recoverTime
   } else {
-    val recoverTime = if (recoverType == TrainingStep.DurationType.TIME) {
-      recoverDuration
-    } else {
-      recoverDistance.distanceToSeconds(recoverDistanceUnit)
-    }
-    val extraRecoverTime = if (extraRecoverType == TrainingStep.DurationType.TIME) {
-      extraRecoverDuration
-    } else {
-      extraRecoverDistance.distanceToSeconds(extraRecoverDistanceUnit)
-    }
+    val recoverTime = getRecoverSeconds()
+    val extraRecoverTime = getExtraRecoverSeconds()
 
     stepsInRepetition.sumOf { it.calculateTotalTime(it.id == stepsInRepetition.last().id) } * repetitions + recoverTime * (repetitions - 1) + extraRecoverTime
   }
 }
+
+private fun TrainingStep.getDurationSeconds() =
+  if (durationType == TrainingStep.DurationType.TIME) {
+    duration
+  } else {
+    distance.distanceToSeconds(distanceUnit)
+  }
+
+private fun TrainingStep.getExtraRecoverSeconds() =
+  if (extraRecoverType == TrainingStep.DurationType.TIME) {
+    extraRecoverDuration
+  } else {
+    extraRecoverDistance.distanceToSeconds(extraRecoverDistanceUnit)
+  }
+
+private fun TrainingStep.getRecoverSeconds() =
+  if (recoverType == TrainingStep.DurationType.TIME) {
+    recoverDuration
+  } else {
+    recoverDistance.distanceToSeconds(recoverDistanceUnit)
+  }
 
 fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): String {
   return when (this.type) {
