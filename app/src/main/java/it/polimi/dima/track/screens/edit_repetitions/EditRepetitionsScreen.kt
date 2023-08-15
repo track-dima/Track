@@ -40,7 +40,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.CardSelector
-import it.polimi.dima.track.common.composable.CoolDownCard
 import it.polimi.dima.track.common.composable.DistanceSelectionDialog
 import it.polimi.dima.track.common.composable.FullScreenDialog
 import it.polimi.dima.track.common.composable.RecoverSelectionDialog
@@ -48,8 +47,9 @@ import it.polimi.dima.track.common.composable.RegularCardEditor
 import it.polimi.dima.track.common.composable.RepetitionBlockCard
 import it.polimi.dima.track.common.composable.RepetitionsCard
 import it.polimi.dima.track.common.composable.RepetitionsSelectionDialog
+import it.polimi.dima.track.common.composable.SimpleExerciseCard
 import it.polimi.dima.track.common.composable.TimeSelectionDialog
-import it.polimi.dima.track.common.composable.WarmUpCard
+import it.polimi.dima.track.common.composable.WarmAndCoolCard
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
@@ -207,7 +207,10 @@ fun EditRepetitionsScreen(
           ReorderableItem(state, key = trainingStep.id) {
 
             when (trainingStep.type) {
-              TrainingStep.Type.WARM_UP -> WarmUpCard(
+              TrainingStep.Type.EXERCISES,
+              TrainingStep.Type.STRENGTH,
+              TrainingStep.Type.HURDLES -> SimpleExerciseCard(
+                trainingStep.type,
                 trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   viewModel.onDeleteClick(
@@ -222,7 +225,9 @@ fun EditRepetitionsScreen(
                 }
               )
 
-              TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+              TrainingStep.Type.WARM_UP,
+              TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
+                trainingStep.type,
                 trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   viewModel.onDeleteClick(
@@ -234,7 +239,6 @@ fun EditRepetitionsScreen(
                   openEditDialog.value = true
                   currentStep.value = trainingStep
                   currentEditHierarchy.value = listOf()
-                  deleteOnDismissEdit.value = false
                 }
               )
 
@@ -365,8 +369,17 @@ private fun EditStepDialogContent(currentStep: MutableState<TrainingStep>) {
   ) { newValue ->
     currentStep.value = currentStep.value.copy(type = newValue)
     when (newValue) {
-      TrainingStep.Type.WARM_UP -> currentStep.value = currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 600)
-      TrainingStep.Type.COOL_DOWN -> currentStep.value = currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 300)
+      TrainingStep.Type.WARM_UP -> currentStep.value =
+        currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 600)
+
+      TrainingStep.Type.COOL_DOWN -> currentStep.value =
+        currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 300)
+
+      TrainingStep.Type.EXERCISES,
+      TrainingStep.Type.STRENGTH,
+      TrainingStep.Type.HURDLES -> currentStep.value =
+        currentStep.value.copy(durationType = TrainingStep.DurationType.TIME, duration = 1200)
+
       else -> Unit
     }
   }

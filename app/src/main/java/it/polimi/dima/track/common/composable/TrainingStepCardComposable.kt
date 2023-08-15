@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AirlineStops
 import androidx.compose.material.icons.rounded.ArrowLeft
 import androidx.compose.material.icons.rounded.ArrowRight
 import androidx.compose.material.icons.rounded.Delete
@@ -21,9 +22,11 @@ import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.DirectionsWalk
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.FitnessCenter
 import androidx.compose.material.icons.rounded.InsertChartOutlined
 import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.Repeat
+import androidx.compose.material.icons.rounded.SportsGymnastics
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -71,7 +74,8 @@ import org.burnoutcrew.reorderable.reorderable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarmUpCard(
+fun WarmAndCoolCard(
+  type: String,
   trainingStep: TrainingStep,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
@@ -89,7 +93,7 @@ fun WarmUpCard(
   ) {
     StepCardHeader(
       modifier = Modifier.fillMaxHeight(),
-      stepType = TrainingStep.Type.WARM_UP,
+      stepType = type,
       onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
       readOnly = readOnly
     ) {
@@ -97,7 +101,7 @@ fun WarmUpCard(
         modifier = Modifier.padding(8.dp, 0.dp)
       ) {
         Row {
-          Text(text = stringResource(id = R.string.warm_up))
+          Text(text = type)
         }
         Row {
           Text(
@@ -114,7 +118,8 @@ fun WarmUpCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoolDownCard(
+fun SimpleExerciseCard(
+  type: String,
   trainingStep: TrainingStep,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
@@ -127,12 +132,12 @@ fun CoolDownCard(
       .height(70.dp),
     onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
     colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.secondaryContainer,
+      containerColor = MaterialTheme.colorScheme.secondaryContainer
     )
   ) {
     StepCardHeader(
       modifier = Modifier.fillMaxHeight(),
-      stepType = TrainingStep.Type.COOL_DOWN,
+      stepType = type,
       onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
       readOnly = readOnly
     ) {
@@ -140,13 +145,11 @@ fun CoolDownCard(
         modifier = Modifier.padding(8.dp, 0.dp)
       ) {
         Row {
-          Text(text = stringResource(id = R.string.cool_down))
+          Text(text = type)
         }
         Row {
           Text(
-            text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-              trainingStep.duration.secondsToHhMmSs()
-            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
+            text = trainingStep.duration.secondsToHhMmSs(),
             fontWeight = FontWeight.Bold
           )
         }
@@ -404,7 +407,10 @@ fun RepetitionBlockCard(
         items(repetitionBlock.stepsInRepetition, { it.id }) { trainingStep ->
           ReorderableItem(state, key = trainingStep.id) {
             when (trainingStep.type) {
-              TrainingStep.Type.WARM_UP -> WarmUpCard(
+              TrainingStep.Type.EXERCISES,
+              TrainingStep.Type.STRENGTH,
+              TrainingStep.Type.HURDLES -> SimpleExerciseCard(
+                trainingStep.type,
                 trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   onDeleteClick(
@@ -420,7 +426,9 @@ fun RepetitionBlockCard(
                 }
               )
 
-              TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+              TrainingStep.Type.WARM_UP,
+              TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
+                trainingStep.type,
                 trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   onDeleteClick(
@@ -620,6 +628,54 @@ private fun StepCardHeaderIcon(stepType: String, readOnly: Boolean) {
   when (
     stepType
   ) {
+    TrainingStep.Type.STRENGTH -> {
+      Icon(
+        Icons.Rounded.FitnessCenter,
+        contentDescription = stringResource(R.string.strength),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Gray.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+
+    TrainingStep.Type.EXERCISES -> {
+      Icon(
+        Icons.Rounded.SportsGymnastics,
+        contentDescription = stringResource(R.string.exercises),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Yellow.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+
+    TrainingStep.Type.HURDLES -> {
+      Icon(
+        Icons.Rounded.AirlineStops,
+        contentDescription = stringResource(R.string.hurdles),
+        modifier = Modifier
+          .padding(start = if (readOnly) 16.dp else 8.dp, end = 8.dp)
+          .drawBehind {
+            drawCircle(
+              color = Color.Cyan.copy(alpha = 0.4f),
+              radius = 16.dp.toPx()
+            )
+          },
+        tint = Color.White
+      )
+    }
+
     TrainingStep.Type.WARM_UP -> {
       Icon(
         Icons.Rounded.DirectionsWalk,
@@ -764,12 +820,17 @@ fun UnmodifiableStepsList(
   ) {
     items(trainingSteps, { it.id }) { trainingStep ->
       when (trainingStep.type) {
-        TrainingStep.Type.WARM_UP -> WarmUpCard(
+        TrainingStep.Type.EXERCISES,
+        TrainingStep.Type.STRENGTH,
+        TrainingStep.Type.HURDLES -> SimpleExerciseCard(
+          type = trainingStep.type,
           trainingStep = trainingStep,
           readOnly = readOnly
         )
 
-        TrainingStep.Type.COOL_DOWN -> CoolDownCard(
+        TrainingStep.Type.WARM_UP,
+        TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
+          type = trainingStep.type,
           trainingStep = trainingStep,
           readOnly = readOnly
         )

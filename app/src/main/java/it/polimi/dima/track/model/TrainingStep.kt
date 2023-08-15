@@ -51,6 +51,9 @@ data class TrainingStep(
         options.add(WARM_UP)
         options.add(COOL_DOWN)
         options.add(REPETITION)
+        options.add(EXERCISES)
+        options.add(HURDLES)
+        options.add(STRENGTH)
         return options
       }
 
@@ -58,6 +61,9 @@ data class TrainingStep(
       const val COOL_DOWN = "Cool down"
       const val REPETITION = "Repetition"
       const val REPETITION_BLOCK = "Repetition block"
+      const val EXERCISES = "Exercises"
+      const val HURDLES = "Hurdles"
+      const val STRENGTH = "Strength"
     }
   }
 

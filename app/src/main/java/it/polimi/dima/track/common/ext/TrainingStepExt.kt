@@ -73,6 +73,9 @@ fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): Stri
   return when (this.type) {
     TrainingStep.Type.WARM_UP -> "Warm up"
     TrainingStep.Type.COOL_DOWN -> "Cool down"
+    TrainingStep.Type.EXERCISES -> "Exercises"
+    TrainingStep.Type.STRENGTH -> "Strength exercises"
+    TrainingStep.Type.HURDLES -> "Hurdles exercises"
 
     TrainingStep.Type.REPETITION -> {
       val duration = getDurationString()

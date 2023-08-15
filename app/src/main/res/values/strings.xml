@@ -84,4 +84,7 @@
     <string name="ok">OK</string>
     <string name="notes">Notes</string>
     <string name="search_trainings">Search trainings</string>
+    <string name="exercises">Exercises</string>
+    <string name="hurdles">Hurdles</string>
+    <string name="strength">Strength</string>
 </resources>
