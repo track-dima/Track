@@ -74,52 +74,9 @@ import org.burnoutcrew.reorderable.reorderable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarmAndCoolCard(
-  type: String,
-  trainingStep: TrainingStep,
-  onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-  onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
-  readOnly: Boolean = false
-) {
-  Card(
-    modifier = Modifier
-      .fieldModifier()
-      .fillMaxWidth()
-      .height(70.dp),
-    onClick = { onEditClick(listOf(trainingStep.id), trainingStep) },
-    colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.secondaryContainer
-    )
-  ) {
-    StepCardHeader(
-      modifier = Modifier.fillMaxHeight(),
-      stepType = type,
-      onDeleteClick = { onDeleteClick(listOf(trainingStep.id), trainingStep) },
-      readOnly = readOnly
-    ) {
-      Column(
-        modifier = Modifier.padding(8.dp, 0.dp)
-      ) {
-        Row {
-          Text(text = type)
-        }
-        Row {
-          Text(
-            text = if (trainingStep.durationType == TrainingStep.DurationType.TIME)
-              trainingStep.duration.secondsToHhMmSs()
-            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
-            fontWeight = FontWeight.Bold
-          )
-        }
-      }
-    }
-  }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun SimpleExerciseCard(
   type: String,
+  onlyDuration: Boolean = false,
   trainingStep: TrainingStep,
   onDeleteClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
   onEditClick: (List<String>, TrainingStep) -> Unit = { _, _ -> },
@@ -149,7 +106,9 @@ fun SimpleExerciseCard(
         }
         Row {
           Text(
-            text = trainingStep.duration.secondsToHhMmSs(),
+            text = if (onlyDuration || trainingStep.durationType == TrainingStep.DurationType.TIME)
+              trainingStep.duration.secondsToHhMmSs()
+            else "${trainingStep.distance} ${trainingStep.distanceUnit}",
             fontWeight = FontWeight.Bold
           )
         }
@@ -410,8 +369,9 @@ fun RepetitionBlockCard(
               TrainingStep.Type.EXERCISES,
               TrainingStep.Type.STRENGTH,
               TrainingStep.Type.HURDLES -> SimpleExerciseCard(
-                trainingStep.type,
-                trainingStep,
+                type = trainingStep.type,
+                onlyDuration = true,
+                trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   onDeleteClick(
                     listOf(repetitionBlock.id),
@@ -427,9 +387,10 @@ fun RepetitionBlockCard(
               )
 
               TrainingStep.Type.WARM_UP,
-              TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
-                trainingStep.type,
-                trainingStep,
+              TrainingStep.Type.COOL_DOWN -> SimpleExerciseCard(
+                type = trainingStep.type,
+                onlyDuration = false,
+                trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   onDeleteClick(
                     listOf(repetitionBlock.id),
@@ -824,12 +785,13 @@ fun UnmodifiableStepsList(
         TrainingStep.Type.STRENGTH,
         TrainingStep.Type.HURDLES -> SimpleExerciseCard(
           type = trainingStep.type,
+          onlyDuration = true,
           trainingStep = trainingStep,
           readOnly = readOnly
         )
 
         TrainingStep.Type.WARM_UP,
-        TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
+        TrainingStep.Type.COOL_DOWN -> SimpleExerciseCard(
           type = trainingStep.type,
           trainingStep = trainingStep,
           readOnly = readOnly

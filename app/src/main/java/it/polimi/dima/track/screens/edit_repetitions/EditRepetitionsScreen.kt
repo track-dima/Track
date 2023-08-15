@@ -49,7 +49,6 @@ import it.polimi.dima.track.common.composable.RepetitionsCard
 import it.polimi.dima.track.common.composable.RepetitionsSelectionDialog
 import it.polimi.dima.track.common.composable.SimpleExerciseCard
 import it.polimi.dima.track.common.composable.TimeSelectionDialog
-import it.polimi.dima.track.common.composable.WarmAndCoolCard
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
@@ -210,8 +209,9 @@ fun EditRepetitionsScreen(
               TrainingStep.Type.EXERCISES,
               TrainingStep.Type.STRENGTH,
               TrainingStep.Type.HURDLES -> SimpleExerciseCard(
-                trainingStep.type,
-                trainingStep,
+                type = trainingStep.type,
+                onlyDuration = true,
+                trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   viewModel.onDeleteClick(
                     listOf(),
@@ -226,9 +226,10 @@ fun EditRepetitionsScreen(
               )
 
               TrainingStep.Type.WARM_UP,
-              TrainingStep.Type.COOL_DOWN -> WarmAndCoolCard(
-                trainingStep.type,
-                trainingStep,
+              TrainingStep.Type.COOL_DOWN -> SimpleExerciseCard(
+                type = trainingStep.type,
+                onlyDuration = false,
+                trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
                   viewModel.onDeleteClick(
                     listOf(),
