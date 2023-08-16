@@ -6,7 +6,8 @@ enum class TrainingActionOption(val title: String) {
   Share("Share"),
   ToggleFavourite("Toggle favourite"),
   DuplicateTraining("Duplicate training"),
-  DeleteTask("Delete training");
+  DeleteTask("Delete training"),
+  ShareOnCalendar("Share on calendar");
 
   companion object {
     fun getByTitle(title: String): TrainingActionOption {
@@ -18,7 +19,11 @@ enum class TrainingActionOption(val title: String) {
     fun getOptions(reduced: Boolean): List<String> {
       val options = mutableListOf<String>()
       values().forEach { trainingAction ->
-        if (!reduced || trainingAction !in listOf(ToggleFavourite, EditTraining)) {
+        if (reduced) {
+          if (trainingAction !in listOf(ToggleFavourite, EditTraining)) {
+            options.add(trainingAction.title)
+          }
+        } else if (trainingAction !in listOf(ShareOnCalendar)) {
           options.add(trainingAction.title)
         }
       }
