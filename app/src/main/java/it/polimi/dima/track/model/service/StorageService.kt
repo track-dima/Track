@@ -14,9 +14,11 @@ interface StorageService {
   suspend fun duplicateTraining(training: Training): String
   suspend fun deleteTraining(trainingId: String)
   suspend fun deleteAllForUser(userId: String)
+  suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean)
 
   suspend fun getPersonalBestFromDistance(distance: Int): PersonalBest?
   suspend fun getPersonalBestFromDuration(duration: Int): PersonalBest?
+  suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean
   suspend fun savePersonalBest(personalBest: PersonalBest): String
   suspend fun updatePersonalBest(personalBest: PersonalBest)
 

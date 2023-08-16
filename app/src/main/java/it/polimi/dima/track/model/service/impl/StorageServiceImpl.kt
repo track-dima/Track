@@ -58,6 +58,11 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
       currentTrainingCollection(auth.currentUserId).document(training.id).set(training).await()
     }
 
+  override suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean): Unit =
+    trace(UPDATE_PERSONAL_BEST_FLAG_TRACE) {
+      currentTrainingCollection(auth.currentUserId).document(trainingId).update("personalBest", flag).await()
+    }
+
   override suspend fun duplicateTraining(training: Training): String =
     trace(DUPLICATE_TRAINING_TRACE) {
       currentTrainingCollection(auth.currentUserId).add(training.copy(id = "")).await().id
@@ -92,6 +97,14 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
       .toObjects<PersonalBest>()
       .firstOrNull()
 
+  override suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("trainingId", trainingId)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .isNotEmpty()
+
   override suspend fun savePersonalBest(personalBest: PersonalBest): String =
     trace(SAVE_PERSONAL_BEST_TRACE) {
       currentPersonalBestCollection(auth.currentUserId).add(personalBest).await().id
@@ -116,6 +129,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     private const val DELETE_TRAINING_TRACE = "deleteTraining"
     private const val DUPLICATE_TRAINING_TRACE = "duplicateTraining"
     private const val UPDATE_TRAINING_TRACE = "updateTraining"
+    private const val UPDATE_PERSONAL_BEST_FLAG_TRACE = "updatePersonalBestFlag"
     private const val SAVE_PERSONAL_BEST_TRACE = "savePersonalBest"
     private const val UPDATE_PERSONAL_BEST_TRACE = "updatePersonalBest"
   }

@@ -116,14 +116,13 @@ class FillRepetitionsViewModel @Inject constructor(
         )
       } else if (bestForDistance.result.timeToSeconds() > result.timeToSeconds()) {
         hasNewPB = true
-        val oldTraining = bestForDistance.trainingId
         storageService.updatePersonalBest(
           bestForDistance.copy(
             result = result,
             trainingId = training.id
           )
         )
-        // TODO check if the old training still has a PB, otherwise remove the pb flag
+        updatePersonalBestFlag(bestForDistance.trainingId)
       }
     }
 
@@ -141,19 +140,24 @@ class FillRepetitionsViewModel @Inject constructor(
         )
       } else if (bestForTime.result.paceToSeconds() > result.paceToSeconds()) {
         hasNewPB = true
-        val oldTraining = bestForTime.trainingId
         storageService.updatePersonalBest(
           bestForTime.copy(
             result = result,
             trainingId = training.id
           )
         )
-        // TODO check if the old training still has a PB, otherwise remove the pb flag
+        updatePersonalBestFlag(bestForTime.trainingId)
       }
     }
 
     if (hasNewPB) {
       storageService.updateTraining(training.copy(personalBest = true))
+    }
+  }
+
+  private suspend fun updatePersonalBestFlag(oldTraining: String) {
+    if (!storageService.existsPersonalBestWithTrainingId(oldTraining)) {
+      storageService.updatePersonalBestFlag(oldTraining, false)
     }
   }
 
