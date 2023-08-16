@@ -91,9 +91,9 @@ class EditTrainingViewModel @Inject constructor(
   private suspend fun saveTraining(): String {
     val editedTraining = training.value.copy(searchable = training.value.calculateSearchTokens())
     return if (editedTraining.id.isBlank()) {
-      storageService.save(editedTraining)
+      storageService.saveTraining(editedTraining)
     } else {
-      storageService.update(editedTraining)
+      storageService.updateTraining(editedTraining)
       editedTraining.id
     }
   }
@@ -101,7 +101,7 @@ class EditTrainingViewModel @Inject constructor(
   fun onCancelClick(popUpScreen: () -> Unit) {
     if (training.value.transient) {
       launchCatching {
-        storageService.delete(training.value.id)
+        storageService.deleteTraining(training.value.id)
       }
     }
     popUpScreen()

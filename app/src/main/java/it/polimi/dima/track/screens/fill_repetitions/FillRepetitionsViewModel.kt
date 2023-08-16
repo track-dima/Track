@@ -3,6 +3,10 @@ package it.polimi.dima.track.screens.fill_repetitions
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.common.ext.getBestResults
+import it.polimi.dima.track.common.ext.paceToSeconds
+import it.polimi.dima.track.common.ext.timeToSeconds
+import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
@@ -29,7 +33,13 @@ class FillRepetitionsViewModel @Inject constructor(
 
   fun onTimeFillClick(hierarchy: List<String>, index: Int, trainingStepId: String, result: String) {
     trainingSteps.value =
-      onTimeFillClickHelper(hierarchy, trainingSteps.value.toMutableList(), index, trainingStepId, result)
+      onTimeFillClickHelper(
+        hierarchy,
+        trainingSteps.value.toMutableList(),
+        index,
+        trainingStepId,
+        result
+      )
   }
 
   private fun onTimeFillClickHelper(
@@ -75,13 +85,64 @@ class FillRepetitionsViewModel @Inject constructor(
     launchCatching {
       training.value = training.value.copy(trainingSteps = trainingSteps.value)
       val editedTraining = training.value
-      if (editedTraining.id.isBlank()) {
-        storageService.save(editedTraining)
+      val id = if (editedTraining.id.isBlank()) {
+        storageService.saveTraining(editedTraining)
       } else {
-        storageService.update(editedTraining)
+        storageService.updateTraining(editedTraining)
+        editedTraining.id
       }
+      updatePersonalBests(training.value.copy(id = id))
       popUpScreen()
     }
+  }
+
+  private suspend fun updatePersonalBests(training: Training) {
+    val bestInTraining = training.getBestResults()
+    val bestForDistances = bestInTraining.first
+    val bestForTimes = bestInTraining.second
+
+    bestForDistances.forEach { (distance, result) ->
+      val bestForDistance = storageService.getPersonalBestFromDistance(distance)
+      if (bestForDistance == null) {
+        storageService.savePersonalBest(
+          PersonalBest(
+            distance = distance,
+            type = TrainingStep.DurationType.DISTANCE,
+            result = result,
+            trainingId = training.id
+          )
+        )
+      } else if (bestForDistance.result.timeToSeconds() > result.timeToSeconds()) {
+        storageService.updatePersonalBest(
+          bestForDistance.copy(
+            result = result,
+            trainingId = training.id
+          )
+        )
+      }
+    }
+
+    bestForTimes.forEach { (duration, result) ->
+      val bestForTime = storageService.getPersonalBestFromDuration(duration)
+      if (bestForTime == null) {
+        storageService.savePersonalBest(
+          PersonalBest(
+            duration = duration,
+            type = TrainingStep.DurationType.TIME,
+            result = result,
+            trainingId = training.id
+          )
+        )
+      } else if (bestForTime.result.paceToSeconds() > result.paceToSeconds()) {
+        storageService.updatePersonalBest(
+          bestForTime.copy(
+            result = result,
+            trainingId = training.id
+          )
+        )
+      }
+    }
+
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {

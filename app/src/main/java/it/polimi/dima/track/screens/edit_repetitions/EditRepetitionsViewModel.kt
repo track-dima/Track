@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.calculateSearchTokens
-import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
@@ -319,9 +318,9 @@ class EditRepetitionsViewModel @Inject constructor(
       )
       val editedTraining = training.value
       if (editedTraining.id.isBlank()) {
-        storageService.save(editedTraining)
+        storageService.saveTraining(editedTraining)
       } else {
-        storageService.update(editedTraining)
+        storageService.updateTraining(editedTraining)
       }
       popUpScreen()
     }

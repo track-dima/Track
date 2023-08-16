@@ -1,11 +1,11 @@
 package it.polimi.dima.track.model.service.impl
 
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.StorageService
@@ -28,55 +28,95 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
   override val trainings: Flow<List<Training>>
     get() =
       auth.currentUser.flatMapLatest { user ->
-        currentCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
+        currentTrainingCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
+      }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  override val personalBests: Flow<List<PersonalBest>>
+    get() =
+      auth.currentUser.flatMapLatest { user ->
+        currentPersonalBestCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
       }
 
   override suspend fun searchTrainings(query: String): List<Training> =
-    currentCollection(auth.currentUserId)
+    currentTrainingCollection(auth.currentUserId)
       .whereArrayContainsAny("searchable", query.split(" ").map { it.lowercase() })
       .get()
       .await()
       .toObjects()
 
   override suspend fun getTraining(trainingId: String): Training? =
-    currentCollection(auth.currentUserId).document(trainingId).get().await().toObject()
+    currentTrainingCollection(auth.currentUserId).document(trainingId).get().await().toObject()
 
-  override suspend fun save(training: Training): String =
+  override suspend fun saveTraining(training: Training): String =
     trace(SAVE_TRAINING_TRACE) {
-      currentCollection(auth.currentUserId).add(training).await().id
+      currentTrainingCollection(auth.currentUserId).add(training).await().id
     }
 
-  override suspend fun update(training: Training): Unit =
+  override suspend fun updateTraining(training: Training): Unit =
     trace(UPDATE_TRAINING_TRACE) {
-      currentCollection(auth.currentUserId).document(training.id).set(training).await()
+      currentTrainingCollection(auth.currentUserId).document(training.id).set(training).await()
     }
 
-  override suspend fun duplicate(training: Training): String =
+  override suspend fun duplicateTraining(training: Training): String =
     trace(DUPLICATE_TRAINING_TRACE) {
-      currentCollection(auth.currentUserId).add(training.copy(id = "")).await().id
+      currentTrainingCollection(auth.currentUserId).add(training.copy(id = "")).await().id
     }
 
-  override suspend fun delete(trainingId: String): Unit =
+  override suspend fun deleteTraining(trainingId: String): Unit =
+    // NOT USED
     trace(DELETE_TRAINING_TRACE) {
-      currentCollection(auth.currentUserId).document(trainingId).delete().await()
+      currentTrainingCollection(auth.currentUserId).document(trainingId).delete().await()
     }
 
   // TODO: It's not recommended to delete on the client:
   // https://firebase.google.com/docs/firestore/manage-data/delete-data#kotlin+ktx_2
   override suspend fun deleteAllForUser(userId: String) {
-    val matchingTasks = currentCollection(userId).get().await()
+    val matchingTasks = currentTrainingCollection(userId).get().await()
     matchingTasks.map { it.reference.delete().asDeferred() }.awaitAll()
   }
 
-  private fun currentCollection(uid: String): CollectionReference =
+  override suspend fun getPersonalBestFromDistance(distance: Int): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("distance", distance)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .firstOrNull()
+
+  override suspend fun getPersonalBestFromDuration(duration: Int): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("duration", duration)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .firstOrNull()
+
+  override suspend fun savePersonalBest(personalBest: PersonalBest): String =
+    trace(SAVE_PERSONAL_BEST_TRACE) {
+      currentPersonalBestCollection(auth.currentUserId).add(personalBest).await().id
+    }
+
+  override suspend fun updatePersonalBest(personalBest: PersonalBest): Unit =
+    trace(UPDATE_PERSONAL_BEST_TRACE) {
+      currentPersonalBestCollection(auth.currentUserId).document(personalBest.id).set(personalBest).await()
+    }
+
+  private fun currentTrainingCollection(uid: String): CollectionReference =
     firestore.collection(USER_COLLECTION).document(uid).collection(TRAINING_COLLECTION)
+
+  private fun currentPersonalBestCollection(uid: String): CollectionReference =
+    firestore.collection(USER_COLLECTION).document(uid).collection(PERSONAL_BEST_COLLECTION)
 
   companion object {
     private const val USER_COLLECTION = "users"
     private const val TRAINING_COLLECTION = "trainings"
+    private const val PERSONAL_BEST_COLLECTION = "personalBests"
     private const val SAVE_TRAINING_TRACE = "saveTraining"
     private const val DELETE_TRAINING_TRACE = "deleteTraining"
     private const val DUPLICATE_TRAINING_TRACE = "duplicateTraining"
     private const val UPDATE_TRAINING_TRACE = "updateTraining"
+    private const val SAVE_PERSONAL_BEST_TRACE = "savePersonalBest"
+    private const val UPDATE_PERSONAL_BEST_TRACE = "updatePersonalBest"
   }
 }
