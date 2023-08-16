@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CalendarToday
@@ -264,7 +265,9 @@ private fun TrainingDescription(training: Training) {
         .padding(end = 16.dp)
         .align(Alignment.CenterVertically)
     )
-    Text(text = training.description)
+    SelectionContainer {
+      Text(text = training.description)
+    }
   }
 }
 
@@ -277,7 +280,9 @@ private fun TrainingNotes(training: Training) {
       modifier = Modifier
         .padding(end = 16.dp)
     )
-    Text(text = training.notes)
+    SelectionContainer {
+      Text(text = training.notes)
+    }
   }
 }
 
@@ -295,9 +300,11 @@ private fun TrainingTitle(training: Training) {
         .padding(end = 16.dp)
         .align(Alignment.CenterVertically)
     )
-    Text(
-      text = training.title,
-      style = MaterialTheme.typography.titleLarge
-    )
+    SelectionContainer {
+      Text(
+        text = training.title,
+        style = MaterialTheme.typography.titleLarge
+      )
+    }
   }
 }
