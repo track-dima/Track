@@ -19,12 +19,12 @@ fun TrainingStep.calculateTree(): Pair<Int, Int> {
 
 fun TrainingStep.calculateRepetitions(): Int {
   // Calculate the number of repetitions
-  return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
-    0
-  } else if (stepsInRepetition.isEmpty()) {
+  return if (type == TrainingStep.Type.REPETITION) {
     1
-  } else {
+  } else if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isNotEmpty()) {
     stepsInRepetition.sumOf { it.calculateRepetitions() } * repetitions
+  } else {
+    0
   }
 }
 

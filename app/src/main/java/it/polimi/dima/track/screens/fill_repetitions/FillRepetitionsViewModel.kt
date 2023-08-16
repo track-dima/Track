@@ -100,10 +100,12 @@ class FillRepetitionsViewModel @Inject constructor(
     val bestInTraining = training.getBestResults()
     val bestForDistances = bestInTraining.first
     val bestForTimes = bestInTraining.second
+    var hasNewPB = false
 
     bestForDistances.forEach { (distance, result) ->
       val bestForDistance = storageService.getPersonalBestFromDistance(distance)
       if (bestForDistance == null) {
+        hasNewPB = true
         storageService.savePersonalBest(
           PersonalBest(
             distance = distance,
@@ -113,18 +115,22 @@ class FillRepetitionsViewModel @Inject constructor(
           )
         )
       } else if (bestForDistance.result.timeToSeconds() > result.timeToSeconds()) {
+        hasNewPB = true
+        val oldTraining = bestForDistance.trainingId
         storageService.updatePersonalBest(
           bestForDistance.copy(
             result = result,
             trainingId = training.id
           )
         )
+        // TODO check if the old training still has a PB, otherwise remove the pb flag
       }
     }
 
     bestForTimes.forEach { (duration, result) ->
       val bestForTime = storageService.getPersonalBestFromDuration(duration)
       if (bestForTime == null) {
+        hasNewPB = true
         storageService.savePersonalBest(
           PersonalBest(
             duration = duration,
@@ -134,15 +140,21 @@ class FillRepetitionsViewModel @Inject constructor(
           )
         )
       } else if (bestForTime.result.paceToSeconds() > result.paceToSeconds()) {
+        hasNewPB = true
+        val oldTraining = bestForTime.trainingId
         storageService.updatePersonalBest(
           bestForTime.copy(
             result = result,
             trainingId = training.id
           )
         )
+        // TODO check if the old training still has a PB, otherwise remove the pb flag
       }
     }
 
+    if (hasNewPB) {
+      storageService.updateTraining(training.copy(personalBest = true))
+    }
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {
