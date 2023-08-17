@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import it.polimi.dima.track.R
-import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.bigSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +77,7 @@ fun FullScreenDialog(
             }
           }
         }
-        Spacer(modifier = Modifier.spacer())
+        Spacer(modifier = Modifier.bigSpacer())
         content()
       }
     }

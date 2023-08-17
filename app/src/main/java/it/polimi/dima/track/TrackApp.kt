@@ -54,6 +54,7 @@ import it.polimi.dima.track.screens.settings.SettingsScreen
 import it.polimi.dima.track.screens.signup.SignUpScreen
 import it.polimi.dima.track.screens.splash.SplashScreen
 import it.polimi.dima.track.screens.training.TrainingScreen
+import it.polimi.dima.track.screens.trainings.TrainingsScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -206,10 +207,10 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
   }
 
   composable(TRAININGS_SCREEN) {
-    /* TrainingsScreen(
-        openScreen = { route -> appState.navigate(route) },
-        navigationType = navigationType
-    )*/
+    TrainingsScreen(
+      openScreen = { route -> appState.navigate(route) },
+      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
+    )
   }
 
   composable(AGENDA_SCREEN) {

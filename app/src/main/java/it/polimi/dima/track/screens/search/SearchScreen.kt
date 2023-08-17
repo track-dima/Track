@@ -188,8 +188,6 @@ fun SearchBar(
           contentDescription = stringResource(id = R.string.back)
         )
       }
-    }, actions = {
-
     }
   )
 }

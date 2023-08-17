@@ -52,6 +52,7 @@ import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
@@ -190,8 +191,6 @@ fun EditRepetitionsScreen(
         endAction = { viewModel.onDoneClick(popUpScreen) }
       )
 
-      Spacer(modifier = Modifier.spacer())
-
       val state = rememberReorderableLazyListState(
         onMove = { from, to -> viewModel.moveStep(listOf(), from, to) }
       )
@@ -202,6 +201,7 @@ fun EditRepetitionsScreen(
           .detectReorderAfterLongPress(state)
           .weight(1f)
       ) {
+        item { Spacer(modifier = Modifier.spacer()) }
         items(trainingSteps, { it.id }) { trainingStep ->
           ReorderableItem(state, key = trainingStep.id) {
 

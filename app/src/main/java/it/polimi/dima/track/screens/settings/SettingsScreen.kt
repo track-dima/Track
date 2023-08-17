@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.PersonAddAlt1
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -19,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.*
 import it.polimi.dima.track.common.ext.card
-import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.bigSpacer
 
 @Composable
 fun SettingsScreen(
@@ -39,7 +38,7 @@ fun SettingsScreen(
   ) {
     BasicToolbar(R.string.settings)
 
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
 
     if (uiState.isAnonymousAccount) {
       RegularCardEditor(R.string.sign_in, Icons.Filled.Person, "", Modifier.card()) {

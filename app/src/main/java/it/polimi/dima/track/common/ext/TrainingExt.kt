@@ -16,6 +16,18 @@ fun Training?.hasDueTime(): Boolean {
   return (this?.dueTime != null && this.dueTimeString.isNotBlank())
 }
 
+fun Training?.getCompleteTime(): Long {
+  if (this == null) {
+    return 0
+  }
+
+  val calendar = Calendar.getInstance(TimeZone.getTimeZone(EditTrainingViewModel.UTC))
+  calendar.timeInMillis = this.dueDate?.time ?: 0
+  calendar.set(Calendar.HOUR_OF_DAY, this.dueTime?.get("hour") ?: 0)
+  calendar.set(Calendar.MINUTE, this.dueTime?.get("minute") ?: 0)
+  return calendar.timeInMillis
+}
+
 fun Training.isScheduled(): Boolean {
   if (!this.hasDueDate()) {
     return false

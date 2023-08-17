@@ -39,10 +39,16 @@ fun Modifier.toolbarActions(): Modifier {
   return this.wrapContentSize(Alignment.TopEnd)
 }
 
-fun Modifier.spacer(): Modifier {
+fun Modifier.bigSpacer(): Modifier {
   return this
     .fillMaxWidth()
     .height(24.dp)
+}
+
+fun Modifier.spacer(): Modifier {
+  return this
+    .fillMaxWidth()
+    .height(16.dp)
 }
 
 fun Modifier.smallSpacer(): Modifier {

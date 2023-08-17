@@ -3,6 +3,7 @@ package it.polimi.dima.track.screens.training
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
+import it.polimi.dima.track.TRAINING_SCREEN
 import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
@@ -27,7 +28,7 @@ class TrainingViewModel @Inject constructor(
   }
 
   fun loadTaskOptions() {
-    options.value = TrainingActionOption.getOptions(true)
+    options.value = TrainingActionOption.getOptions(TRAINING_SCREEN)
   }
 
   fun onFavoriteClick(favorite: Boolean) {

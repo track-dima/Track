@@ -34,7 +34,7 @@ import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
-import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.Type
@@ -56,8 +56,7 @@ fun EditTrainingScreen(
   Column(
     modifier = modifier
       .fillMaxWidth()
-      .fillMaxHeight()
-      .verticalScroll(rememberScrollState()),
+      .fillMaxHeight(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     ActionToolbar(
@@ -71,30 +70,37 @@ fun EditTrainingScreen(
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )
 
-    Spacer(modifier = Modifier.spacer())
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+        .verticalScroll(rememberScrollState())
+    ) {
+      Spacer(modifier = Modifier.bigSpacer())
 
-    val fieldModifier = Modifier.fieldModifier()
-    BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier)
-    BasicField(
-      R.string.description,
-      training.description,
-      viewModel::onDescriptionChange,
-      fieldModifier
-    )
-    MultiLineField(R.string.notes, training.notes, viewModel::onNotesChange, fieldModifier)
+      val fieldModifier = Modifier.fieldModifier()
+      BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier)
+      BasicField(
+        R.string.description,
+        training.description,
+        viewModel::onDescriptionChange,
+        fieldModifier
+      )
+      MultiLineField(R.string.notes, training.notes, viewModel::onNotesChange, fieldModifier)
 
 
-    Spacer(modifier = Modifier.spacer())
-    CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
-    CardSelectors(training, viewModel::onTypeChange, viewModel::onFavoriteToggle)
+      Spacer(modifier = Modifier.bigSpacer())
+      CardEditors(training, viewModel::onDateChange, viewModel::onTimeChange)
+      CardSelectors(training, viewModel::onTypeChange, viewModel::onFavoriteToggle)
 
-    Spacer(modifier = Modifier.spacer())
+      Spacer(modifier = Modifier.bigSpacer())
 
-    TrainingStepsListBox(
-      training = training,
-      filling = false,
-      onEditSteps = { viewModel.onEditSteps(openScreen) }
-    )
+      TrainingStepsListBox(
+        training = training,
+        filling = false,
+        onEditSteps = { viewModel.onEditSteps(openScreen) }
+      )
+    }
   }
 }
 

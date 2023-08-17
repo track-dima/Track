@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.R
+import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.utils.NavigationContentPosition
 
 @Composable
@@ -75,7 +76,7 @@ fun TrackNavigationRail(
                             modifier = Modifier.size(18.dp)
                         )
                     }
-                    Spacer(Modifier.height(8.dp)) // NavigationRailHeaderPadding
+                    Spacer(Modifier.smallSpacer()) // NavigationRailHeaderPadding
                     Spacer(Modifier.height(4.dp)) // NavigationRailVerticalPadding
                 }
 
@@ -159,7 +160,6 @@ fun TrackBottomNavigationBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermanentNavigationDrawerContent(
     selectedDestination: String,
