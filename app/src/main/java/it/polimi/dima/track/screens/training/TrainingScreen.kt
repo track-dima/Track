@@ -53,7 +53,7 @@ import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
-import it.polimi.dima.track.common.utils.shareOnCalendar
+import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.model.Training
 
 @Composable
@@ -183,7 +183,7 @@ private fun TrainingToolbarActions(
           text = training.parseTraining(),
           label = "Training",
         )
-        TrainingActionOption.ShareOnCalendar -> shareOnCalendar(
+        TrainingActionOption.AddToCalendar -> addToCalendar(
           context = context,
           training = training
         )
