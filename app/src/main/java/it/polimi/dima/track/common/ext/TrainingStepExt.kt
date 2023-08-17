@@ -19,12 +19,12 @@ fun TrainingStep.calculateTree(): Pair<Int, Int> {
 
 fun TrainingStep.calculateRepetitions(): Int {
   // Calculate the number of repetitions
-  return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
-    0
-  } else if (stepsInRepetition.isEmpty()) {
+  return if (type == TrainingStep.Type.REPETITION) {
     1
-  } else {
+  } else if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isNotEmpty()) {
     stepsInRepetition.sumOf { it.calculateRepetitions() } * repetitions
+  } else {
+    0
   }
 }
 
@@ -35,7 +35,11 @@ fun TrainingStep.calculateTotalTime(lastInBlock: Boolean): Int {
   } else if (stepsInRepetition.isEmpty()) {
     val durationTime = getDurationSeconds()
     val recoverTime =
-      if (type !in arrayOf(TrainingStep.Type.REPETITION, TrainingStep.Type.REPETITION_BLOCK) || lastInBlock)
+      if (type !in arrayOf(
+          TrainingStep.Type.REPETITION,
+          TrainingStep.Type.REPETITION_BLOCK
+        ) || lastInBlock
+      )
         0
       else getRecoverSeconds()
 
@@ -143,3 +147,76 @@ private fun TrainingStep.getDurationString() =
   } else {
     distance.toString() + distanceUnit
   }
+
+private fun TrainingStep.getDurationForResult(): Int =
+  if (durationType == TrainingStep.DurationType.TIME) {
+    duration
+  } else {
+    distance.distanceToMeters(distanceUnit)
+  }
+
+fun TrainingStep.getBestResults(): Pair<Map<Int, String>, Map<Int, String>> {
+  var bestResults = Pair(mutableMapOf<Int, String>(), mutableMapOf<Int, String>())
+
+  return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isNotEmpty()) {
+    stepsInRepetition.forEach {
+      bestResults = bestResults.copy(
+        first = updateBestTimeResults(bestResults.first, it.getBestResults().first),
+        second = updateBestPaceResults(bestResults.second, it.getBestResults().second)
+      )
+    }
+    bestResults
+  } else if (type == TrainingStep.Type.REPETITION) {
+    if (results.any { it.isNotBlank() && !it.timeIsZero() }) {
+      if (durationType == TrainingStep.DurationType.DISTANCE) {
+        bestResults.first[getDurationForResult()] = repetitionBestTimeResult()
+      } else {
+        bestResults.second[getDurationForResult()] = repetitionBestPaceResult()
+      }
+    }
+    bestResults
+  } else {
+    bestResults
+  }
+}
+
+
+fun updateBestTimeResults(
+  bestResults: MutableMap<Int, String>,
+  newBestResults: Map<Int, String>
+): MutableMap<Int, String> {
+  newBestResults.forEach { (key, result) ->
+    if (bestResults.containsKey(key)) {
+      if (result.timeToSeconds() < bestResults[key]!!.timeToSeconds()) {
+        bestResults[key] = result
+      }
+    } else {
+      bestResults[key] = result
+    }
+  }
+  return bestResults
+}
+
+fun updateBestPaceResults(
+  bestResults: MutableMap<Int, String>,
+  newBestResults: Map<Int, String>
+): MutableMap<Int, String> {
+  newBestResults.forEach { (key, result) ->
+    if (bestResults.containsKey(key)) {
+      if (result.paceToSeconds() < bestResults[key]!!.paceToSeconds()) {
+        bestResults[key] = result
+      }
+    } else {
+      bestResults[key] = result
+    }
+  }
+  return bestResults
+}
+
+private fun TrainingStep.repetitionBestTimeResult(): String {
+  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.timeToSeconds() }
+}
+
+private fun TrainingStep.repetitionBestPaceResult(): String {
+  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.paceToSeconds() }
+}

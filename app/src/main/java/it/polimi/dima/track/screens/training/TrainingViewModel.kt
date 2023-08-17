@@ -33,13 +33,13 @@ class TrainingViewModel @Inject constructor(
   fun onFavoriteClick(favorite: Boolean) {
     training.value = training.value.copy(favorite = favorite)
     launchCatching {
-      storageService.update(training.value)
+      storageService.updateTraining(training.value)
     }
   }
 
   fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
     launchCatching {
-      storageService.delete(training.id)
+      storageService.deleteTraining(training.id)
       popUpScreen()
     }
   }
@@ -50,7 +50,7 @@ class TrainingViewModel @Inject constructor(
     editTraining: (Training) -> Unit
   ) {
     launchCatching {
-      val newId = storageService.duplicate(
+      val newId = storageService.duplicateTraining(
         training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
       )
       popUpScreen()

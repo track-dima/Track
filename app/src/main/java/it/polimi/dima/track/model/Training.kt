@@ -24,6 +24,4 @@ data class Training(
 
   // UNUSED
   val personalBest: Boolean = false,
-  val url: String = "",
-  val completed: Boolean = false
 )

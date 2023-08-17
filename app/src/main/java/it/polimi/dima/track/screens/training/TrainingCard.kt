@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +42,7 @@ import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.Type
 import it.polimi.dima.track.ui.theme.DarkOrange
 import it.polimi.dima.track.ui.theme.DarkRed
+import it.polimi.dima.track.ui.theme.DarkYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,15 +114,24 @@ private fun TrainingCardBottomInformation(training: Training) {
     horizontalArrangement = Arrangement.spacedBy(16.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
+    val repetitions = training.calculateRepetitions()
+
     if (training.favorite) {
       Icon(
-        imageVector = Icons.Default.Favorite,
+        imageVector = Icons.Rounded.Favorite,
         tint = DarkRed,
         contentDescription = stringResource(id = R.string.favorite),
       )
     }
+    if (training.personalBest) {
+      Icon(
+        imageVector = Icons.Rounded.EmojiEvents,
+        tint = DarkYellow,
+        contentDescription = stringResource(id = R.string.personal_best),
+      )
+    }
     Text(
-      text = training.calculateRepetitions().toString() + " repetitions",
+      text = repetitions.toString() + " repetition" + if (repetitions > 1) "s" else "",
       style = MaterialTheme.typography.titleSmall
     )
     Text(

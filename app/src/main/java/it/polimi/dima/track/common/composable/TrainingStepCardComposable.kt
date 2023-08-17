@@ -238,7 +238,7 @@ fun RepetitionBlockCard(
       readOnly = readOnly
     ) {
       Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = if (readOnly) Modifier.fillMaxWidth() else Modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
       ) {

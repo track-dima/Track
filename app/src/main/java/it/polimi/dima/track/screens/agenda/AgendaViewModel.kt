@@ -83,16 +83,16 @@ class AgendaViewModel @Inject constructor(
   }
 
   private fun onFavouriteTrainingClick(training: Training) {
-    launchCatching { storageService.update(training.copy(favorite = !training.favorite)) }
+    launchCatching { storageService.updateTraining(training.copy(favorite = !training.favorite)) }
   }
 
   fun onDeleteTaskClick(trainingId: String) {
-    launchCatching { storageService.delete(trainingId) }
+    launchCatching { storageService.deleteTraining(trainingId) }
   }
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
-      val newId = storageService.duplicate(
+      val newId = storageService.duplicateTraining(
         training.copy(
           transient = true,
           favorite = false,

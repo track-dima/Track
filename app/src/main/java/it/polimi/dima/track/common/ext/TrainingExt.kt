@@ -111,6 +111,20 @@ fun Training.calculateSearchTokens(): List<String> {
   return tokens.toList()
 }
 
+fun Training.getBestResults(): Pair<Map<Int, String>, Map<Int, String>> {
+  var results = Pair(mutableMapOf<Int, String>(), mutableMapOf<Int, String>())
+
+  trainingSteps.forEach {
+    val bestResults = it.getBestResults()
+    results = results.copy(
+      first = updateBestTimeResults(results.first, bestResults.first),
+      second = updateBestPaceResults(results.second, bestResults.second)
+    )
+  }
+
+  return results
+}
+
 fun emptyResults(trainingSteps: List<TrainingStep>): List<TrainingStep> {
   return trainingSteps.map {
     if (it.stepsInRepetition.isEmpty()) it.copy(results = listOf())
