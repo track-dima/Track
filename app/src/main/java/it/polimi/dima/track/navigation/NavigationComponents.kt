@@ -86,12 +86,13 @@ fun TrackNavigationRail(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     TOP_LEVEL_DESTINATIONS.forEach { destination ->
+                        val selected = selectedDestination == destination.route
                         NavigationRailItem(
-                            selected = selectedDestination == destination.route,
+                            selected = selected,
                             onClick = { navigateToTopLevelDestination(destination) },
                             icon = {
                                 Icon(
-                                    imageVector = destination.selectedIcon,
+                                    imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
                                     contentDescription = stringResource(
                                         id = destination.iconTextId
                                     )
@@ -146,12 +147,13 @@ fun TrackBottomNavigationBar(
 ) {
     NavigationBar(modifier = Modifier.fillMaxWidth()) {
         TOP_LEVEL_DESTINATIONS.forEach { destination ->
+            val selected = selectedDestination == destination.route
             NavigationBarItem(
-                selected = selectedDestination == destination.route,
+                selected = selected,
                 onClick = { navigateToTopLevelDestination(destination) },
                 icon = {
                     Icon(
-                        imageVector = destination.selectedIcon,
+                        imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
                         contentDescription = stringResource(id = destination.iconTextId)
                     )
                 }
@@ -214,8 +216,9 @@ fun PermanentNavigationDrawerContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     TOP_LEVEL_DESTINATIONS.forEach { destination ->
+                        val selected = selectedDestination == destination.route
                         NavigationDrawerItem(
-                            selected = selectedDestination == destination.route,
+                            selected = selected,
                             label = {
                                 Text(
                                     text = stringResource(id = destination.iconTextId),
@@ -224,7 +227,7 @@ fun PermanentNavigationDrawerContent(
                             },
                             icon = {
                                 Icon(
-                                    imageVector = destination.selectedIcon,
+                                    imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
                                     contentDescription = stringResource(
                                         id = destination.iconTextId
                                     )

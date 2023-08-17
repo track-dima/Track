@@ -82,7 +82,7 @@ fun TrainingsScreen(
           Text(
             text = stringResource(id = R.string.next_scheduled_training),
             modifier = Modifier.padding(vertical = 8.dp),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodyLarge
           )
           TrainingCard(
             modifier = Modifier.padding(8.dp),
@@ -104,7 +104,7 @@ fun TrainingsScreen(
           Text(
             text = stringResource(id = R.string.last_training),
             modifier = Modifier.padding(vertical = 8.dp),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodyLarge
           )
           TrainingCard(
             modifier = Modifier.padding(8.dp),
