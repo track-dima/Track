@@ -282,8 +282,7 @@ private fun TrainingNotes(training: Training) {
     Icon(
       Icons.Rounded.Notes,
       contentDescription = stringResource(R.string.notes),
-      modifier = Modifier
-        .padding(end = 16.dp)
+      modifier = Modifier.padding(end = 16.dp)
     )
     SelectionContainer {
       Text(text = training.notes)
