@@ -90,4 +90,11 @@
     <string name="personal_best">Personal best</string>
     <string name="next_scheduled_training">Next scheduled training</string>
     <string name="last_training">Last training</string>
+    <string name="user_name">User name</string>
+    <string name="set_your_name">Set your name</string>
+    <string name="edit_name">Edit name</string>
+    <string name="user_information">User information</string>
+    <string name="user_specialty">User specialty</string>
+    <string name="set_your_specialty">Set your specialty</string>
+    <string name="edit_specialty">Edit specialty</string>
 </resources>

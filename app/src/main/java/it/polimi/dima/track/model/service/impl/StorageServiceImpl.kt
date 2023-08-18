@@ -7,17 +7,18 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.User
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.StorageService
 import it.polimi.dima.track.model.service.trace
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import javax.inject.Inject
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 class StorageServiceImpl
 @Inject
@@ -29,6 +30,14 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     get() =
       auth.currentUser.flatMapLatest { user ->
         currentTrainingCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
+      }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  override val user: Flow<User>
+    get() =
+      auth.currentUser.flatMapLatest { user ->
+        firestore.collection(USER_COLLECTION).document(user.id).snapshots()
+          .map { snapshot -> snapshot.toObject()!! }
       }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -60,7 +69,8 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
 
   override suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean): Unit =
     trace(UPDATE_PERSONAL_BEST_FLAG_TRACE) {
-      currentTrainingCollection(auth.currentUserId).document(trainingId).update("personalBest", flag).await()
+      currentTrainingCollection(auth.currentUserId).document(trainingId)
+        .update("personalBest", flag).await()
     }
 
   override suspend fun duplicateTraining(training: Training): String =
@@ -112,8 +122,23 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
 
   override suspend fun updatePersonalBest(personalBest: PersonalBest): Unit =
     trace(UPDATE_PERSONAL_BEST_TRACE) {
-      currentPersonalBestCollection(auth.currentUserId).document(personalBest.id).set(personalBest).await()
+      currentPersonalBestCollection(auth.currentUserId).document(personalBest.id).set(personalBest)
+        .await()
     }
+
+  override suspend fun updateUserName(newName: String) {
+    trace(UPDATE_USER_NAME_TRACE) {
+      firestore.collection(USER_COLLECTION).document(auth.currentUserId).update("name", newName)
+        .await()
+    }
+  }
+
+  override suspend fun updateUserSpecialty(newSpecialty: String) {
+    trace(UPDATE_USER_SPECIALTY_TRACE) {
+      firestore.collection(USER_COLLECTION).document(auth.currentUserId)
+        .update("specialty", newSpecialty).await()
+    }
+  }
 
   private fun currentTrainingCollection(uid: String): CollectionReference =
     firestore.collection(USER_COLLECTION).document(uid).collection(TRAINING_COLLECTION)
@@ -132,5 +157,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     private const val UPDATE_PERSONAL_BEST_FLAG_TRACE = "updatePersonalBestFlag"
     private const val SAVE_PERSONAL_BEST_TRACE = "savePersonalBest"
     private const val UPDATE_PERSONAL_BEST_TRACE = "updatePersonalBest"
+    private const val UPDATE_USER_NAME_TRACE = "updateUserName"
+    private const val UPDATE_USER_SPECIALTY_TRACE = "updateUserSpecialty"
   }
 }

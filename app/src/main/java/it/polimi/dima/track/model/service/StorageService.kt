@@ -2,10 +2,12 @@ package it.polimi.dima.track.model.service
 
 import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface StorageService {
   val trainings: Flow<List<Training>>
+  val user: Flow<User>
   val personalBests: Flow<List<PersonalBest>>
   suspend fun searchTrainings(query: String): List<Training>
   suspend fun getTraining(trainingId: String): Training?
@@ -21,5 +23,7 @@ interface StorageService {
   suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean
   suspend fun savePersonalBest(personalBest: PersonalBest): String
   suspend fun updatePersonalBest(personalBest: PersonalBest)
+  suspend fun updateUserName(newName: String)
+  suspend fun updateUserSpecialty(newSpecialty: String)
 
 }
