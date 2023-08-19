@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,10 +61,10 @@ fun FillRepetitionsScreen(
     ActionToolbar(
       title = R.string.fill_training,
       modifier = Modifier.toolbarActions(),
-      startActionIcon = Icons.Default.Close,
+      startActionIcon = Icons.Rounded.Close,
       startActionDescription = R.string.close,
       startAction = { viewModel.onCancelClick(popUpScreen) },
-      endActionIcon = Icons.Default.Check,
+      endActionIcon = Icons.Rounded.Check,
       endActionDescription = R.string.confirm,
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )

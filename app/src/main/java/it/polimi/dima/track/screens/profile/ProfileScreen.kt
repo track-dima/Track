@@ -1,6 +1,5 @@
 package it.polimi.dima.track.screens.profile
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,18 +12,18 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Badge
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Insights
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -45,8 +44,7 @@ import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DialogCancelButton
 import it.polimi.dima.track.common.composable.DialogConfirmButton
-import it.polimi.dima.track.common.ext.bigSpacer
-import it.polimi.dima.track.common.ext.smallSpacer
+import it.polimi.dima.track.common.composable.OutlinedCardWithHeader
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.User
@@ -64,7 +62,7 @@ fun ProfileScreen(
     ActionToolbar(
       title = R.string.profile,
       modifier = Modifier.toolbarActions(),
-      endActionIcon = Icons.Default.Settings,
+      endActionIcon = Icons.Rounded.Settings,
       endActionDescription = R.string.settings,
       endAction = { viewModel.onSettingsClick(openScreen) }
     ) { }
@@ -81,57 +79,17 @@ fun ProfileScreen(
         onEditName = { viewModel.onNameChange(it) },
         onEditSpecialty = { viewModel.onSpecialtyChange(it) }
       )
+      UserStatistics(user.value)
     }
   }
 }
 
 @Composable
-fun OutlinedCardWithHeader(
-  header: String,
-  modifier: Modifier = Modifier,
-  icon: ImageVector? = null,
-  iconContentDescription: String = "",
-  content: @Composable () -> Unit
-) {
-  OutlinedCard(
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(16.dp)
+fun UserStatistics(user: User) {
+  OutlinedCardWithHeader(
+    header = stringResource(id = R.string.statistics),
+    icon = Icons.Rounded.Insights
   ) {
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp)
-    ) {
-      OutlinedCardHeader(icon, iconContentDescription, header)
-      Divider(modifier = Modifier.padding(vertical = 16.dp))
-      content()
-    }
-  }
-}
-
-@Composable
-private fun OutlinedCardHeader(
-  icon: ImageVector?,
-  iconContentDescription: String,
-  header: String
-) {
-  Row(
-    modifier = Modifier.fillMaxWidth(),
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.Center
-  ) {
-    if (icon != null) {
-      Icon(
-        imageVector = icon,
-        contentDescription = iconContentDescription,
-        modifier = Modifier.padding(end = 16.dp)
-      )
-    }
-    Text(
-      text = header,
-      style = MaterialTheme.typography.bodyLarge
-    )
   }
 }
 
@@ -144,7 +102,6 @@ fun UserInformation(
   OutlinedCardWithHeader(
     header = stringResource(id = R.string.user_information),
     icon = Icons.Rounded.AccountCircle,
-    iconContentDescription = stringResource(id = R.string.user_information)
   ) {
     UserName(
       user = user,
