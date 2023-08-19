@@ -26,7 +26,9 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
   override val personalBests: Flow<List<PersonalBest>>
     get() =
       auth.currentUser.flatMapLatest { user ->
-        currentPersonalBestCollection(user.id).snapshots().map { snapshot -> snapshot.toObjects() }
+        currentPersonalBestCollection(user.id)
+          .whereEqualTo("globalPersonalBest", true)
+          .snapshots().map { snapshot -> snapshot.toObjects() }
       }
 
   override suspend fun getGlobalPersonalBestFromDistance(distance: Int): PersonalBest? =

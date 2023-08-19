@@ -12,14 +12,20 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Badge
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.FitnessCenter
 import androidx.compose.material.icons.rounded.Insights
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -37,16 +43,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
+import it.polimi.dima.track.TRAINING_ID
+import it.polimi.dima.track.TRAINING_SCREEN
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DialogCancelButton
 import it.polimi.dima.track.common.composable.DialogConfirmButton
 import it.polimi.dima.track.common.composable.OutlinedCardWithHeader
+import it.polimi.dima.track.common.ext.bigSpacer
+import it.polimi.dima.track.common.ext.isThisMonth
+import it.polimi.dima.track.common.ext.isThisWeek
+import it.polimi.dima.track.common.ext.removeLeadingZeros
+import it.polimi.dima.track.common.ext.secondsToHhMmSs
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
+import it.polimi.dima.track.model.PersonalBest
+import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.User
 
 
@@ -73,25 +90,199 @@ fun ProfileScreen(
         .verticalScroll(rememberScrollState())
     ) {
       val user = viewModel.user.collectAsStateWithLifecycle(User())
+      val trainings = viewModel.trainings.collectAsStateWithLifecycle(listOf())
+      val personalBests = viewModel.personalBests.collectAsStateWithLifecycle(listOf())
+
+      val distancePersonalBests =
+        personalBests.value.filter { it.type == TrainingStep.DurationType.DISTANCE }
+          .sortedBy { it.distance }
+      val durationPersonalBests =
+        personalBests.value.filter { it.type == TrainingStep.DurationType.TIME }
+          .sortedBy { it.duration }
 
       UserInformation(
         user = user.value,
         onEditName = { viewModel.onNameChange(it) },
         onEditSpecialty = { viewModel.onSpecialtyChange(it) }
       )
-      UserStatistics(user.value)
+      UserStatistics(trainings = trainings.value)
+      UserPersonalBests(
+        distancePersonalBests = distancePersonalBests,
+        durationPersonalBests = durationPersonalBests,
+        onPersonalBestClick = { openScreen("$TRAINING_SCREEN?$TRAINING_ID=${it}") }
+      )
     }
   }
 }
 
 @Composable
-fun UserStatistics(user: User) {
+fun UserPersonalBests(
+  distancePersonalBests: List<PersonalBest>,
+  durationPersonalBests: List<PersonalBest>,
+  onPersonalBestClick: (String) -> Unit = {}
+) {
+  OutlinedCardWithHeader(
+    header = stringResource(id = R.string.personal_bests),
+    icon = Icons.Rounded.EmojiEvents
+  ) {
+    Text(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(bottom = 16.dp),
+      textAlign = TextAlign.Center,
+      text = stringResource(id = R.string.distance).uppercase(),
+      style = MaterialTheme.typography.bodyLarge
+    )
+    if (distancePersonalBests.isNotEmpty()) {
+      distancePersonalBests.forEachIndexed { index, personalBest ->
+        PersonalBestCard(
+          personalBest = personalBest,
+          onPersonalBestClick = onPersonalBestClick
+        )
+        if (index != distancePersonalBests.size - 1)
+          Spacer(modifier = Modifier.spacer())
+      }
+    } else {
+      Text(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(bottom = 8.dp),
+        textAlign = TextAlign.Center,
+        text = stringResource(id = R.string.no_personal_bests_yet),
+        color = LocalContentColor.current.copy(alpha = 0.5f)
+      )
+    }
+    Divider(modifier = Modifier.padding(vertical = 16.dp))
+    Text(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(bottom = 16.dp),
+      textAlign = TextAlign.Center,
+      text = stringResource(id = R.string.duration).uppercase(),
+      style = MaterialTheme.typography.bodyLarge
+    )
+    if (durationPersonalBests.isNotEmpty()) {
+      durationPersonalBests.forEachIndexed { index, personalBest ->
+        PersonalBestCard(
+          personalBest = personalBest,
+          onPersonalBestClick = onPersonalBestClick
+        )
+        if (index != durationPersonalBests.size - 1)
+          Spacer(modifier = Modifier.spacer())
+      }
+    } else {
+      Text(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(bottom = 8.dp),
+        textAlign = TextAlign.Center,
+        text = stringResource(id = R.string.no_personal_bests_yet),
+        color = LocalContentColor.current.copy(alpha = 0.5f)
+      )
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PersonalBestCard(
+  personalBest: PersonalBest,
+  onPersonalBestClick: (String) -> Unit = { },
+) {
+  Card(
+    onClick = { onPersonalBestClick(personalBest.trainingId) },
+  ) {
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Text(
+        text = if (personalBest.type == TrainingStep.DurationType.DISTANCE) "${personalBest.distance}m"
+        else personalBest.duration.secondsToHhMmSs(),
+        style = MaterialTheme.typography.titleLarge
+      )
+      Spacer(modifier = Modifier.weight(1f))
+      Text(
+        text = personalBest.result.removeLeadingZeros(),
+        style = MaterialTheme.typography.titleLarge
+      )
+    }
+  }
+}
+
+@Composable
+fun UserStatistics(trainings: List<Training>) {
   OutlinedCardWithHeader(
     header = stringResource(id = R.string.statistics),
     icon = Icons.Rounded.Insights
   ) {
+    TotalTrainings(trainings = trainings)
+    Spacer(modifier = Modifier.bigSpacer())
+    TrainingsThisWeek(trainings = trainings)
+    Spacer(modifier = Modifier.bigSpacer())
+    TrainingThisMonth(trainings = trainings)
   }
 }
+
+@Composable
+fun TrainingThisMonth(trainings: List<Training>) {
+  val trainingsThisMonth = trainings.filter { it.dueDate.isThisMonth() }.size
+
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      imageVector = Icons.Rounded.CalendarMonth,
+      contentDescription = stringResource(id = R.string.trainings_this_month),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    Text(text = stringResource(id = R.string.trainings_this_month))
+    Spacer(modifier = Modifier.weight(1f))
+    Text(text = trainingsThisMonth.toString(), style = MaterialTheme.typography.titleLarge)
+  }
+}
+
+@Composable
+fun TrainingsThisWeek(trainings: List<Training>) {
+  val trainingsThisWeek = trainings.filter { it.dueDate.isThisWeek() }.size
+
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      imageVector = Icons.Rounded.DateRange,
+      contentDescription = stringResource(id = R.string.trainings_this_week),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    Text(text = stringResource(id = R.string.trainings_this_week))
+    Spacer(modifier = Modifier.weight(1f))
+    Text(text = trainingsThisWeek.toString(), style = MaterialTheme.typography.titleLarge)
+  }
+}
+
+@Composable
+fun TotalTrainings(trainings: List<Training>) {
+  val totalTrainings = trainings.size
+
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+      imageVector = Icons.Rounded.FitnessCenter,
+      contentDescription = stringResource(id = R.string.total_trainings),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    Text(text = stringResource(id = R.string.total_trainings))
+    Spacer(modifier = Modifier.weight(1f))
+    Text(text = totalTrainings.toString(), style = MaterialTheme.typography.titleLarge)
+  }
+}
+
 
 @Composable
 fun UserInformation(

@@ -98,4 +98,9 @@
     <string name="set_your_specialty">Set your specialty</string>
     <string name="edit_specialty">Edit specialty</string>
     <string name="statistics">Statistics</string>
+    <string name="total_trainings">Total trainings</string>
+    <string name="trainings_this_week">Trainings this week</string>
+    <string name="trainings_this_month">Trainings this month</string>
+    <string name="personal_bests">Personal bests</string>
+    <string name="no_personal_bests_yet">no personal bests yet...</string>
 </resources>

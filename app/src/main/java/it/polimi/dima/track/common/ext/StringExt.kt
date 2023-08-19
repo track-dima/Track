@@ -1,7 +1,6 @@
 package it.polimi.dima.track.common.ext
 
 import android.util.Patterns
-import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_MI
 import java.util.regex.Pattern
