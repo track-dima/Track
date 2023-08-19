@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Badge
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -30,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,8 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +47,7 @@ import it.polimi.dima.track.common.composable.DialogCancelButton
 import it.polimi.dima.track.common.composable.DialogConfirmButton
 import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.smallSpacer
+import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.User
 
@@ -87,13 +86,15 @@ fun ProfileScreen(
 }
 
 @Composable
-fun UserInformation(
-  user: User,
-  onEditName: (newName: String) -> Unit = { },
-  onEditSpecialty: (newSpecialty: String) -> Unit = { },
+fun OutlinedCardWithHeader(
+  header: String,
+  modifier: Modifier = Modifier,
+  icon: ImageVector? = null,
+  iconContentDescription: String = "",
+  content: @Composable () -> Unit
 ) {
   OutlinedCard(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .padding(16.dp)
   ) {
@@ -102,32 +103,58 @@ fun UserInformation(
         .fillMaxWidth()
         .padding(16.dp)
     ) {
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-      ) {
-        Icon(
-          imageVector = Icons.Rounded.AccountCircle,
-          contentDescription = stringResource(id = R.string.user_information),
-          modifier = Modifier.padding(end = 16.dp)
-        )
-        Text(
-          text = stringResource(id = R.string.user_information),
-          style = MaterialTheme.typography.bodyLarge
-        )
-      }
-      Spacer(modifier = Modifier.smallSpacer())
-      UserName(
-        user = user,
-        onEditName = onEditName
-      )
-      Spacer(modifier = Modifier.bigSpacer())
-      UserSpecialty(
-        user = user,
-        onEditSpecialty = onEditSpecialty
+      OutlinedCardHeader(icon, iconContentDescription, header)
+      Divider(modifier = Modifier.padding(vertical = 16.dp))
+      content()
+    }
+  }
+}
+
+@Composable
+private fun OutlinedCardHeader(
+  icon: ImageVector?,
+  iconContentDescription: String,
+  header: String
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.Center
+  ) {
+    if (icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = iconContentDescription,
+        modifier = Modifier.padding(end = 16.dp)
       )
     }
+    Text(
+      text = header,
+      style = MaterialTheme.typography.bodyLarge
+    )
+  }
+}
+
+@Composable
+fun UserInformation(
+  user: User,
+  onEditName: (newName: String) -> Unit = { },
+  onEditSpecialty: (newSpecialty: String) -> Unit = { },
+) {
+  OutlinedCardWithHeader(
+    header = stringResource(id = R.string.user_information),
+    icon = Icons.Rounded.AccountCircle,
+    iconContentDescription = stringResource(id = R.string.user_information)
+  ) {
+    UserName(
+      user = user,
+      onEditName = onEditName
+    )
+    Spacer(modifier = Modifier.spacer())
+    UserSpecialty(
+      user = user,
+      onEditSpecialty = onEditSpecialty
+    )
   }
 }
 
@@ -229,14 +256,32 @@ private fun SetSpecialtyDialog(
   onConfirmClick: (String) -> Unit,
   onDismissRequest: () -> Unit
 ) {
-  val radioOptions = listOf("Sprinter", "Marathon", "Middle Distance", "Long Distance")
-  val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf(radioOptions[0]) }
+  val radioOptions = listOf(
+    "Sprint",
+    "Middle-distance",
+    "Long-distance",
+    "Hurdles",
+    "Jumps",
+    "Throws",
+    "Combined events",
+    "Racewalking",
+    "Road running",
+    "Trail running",
+    "Marathon"
+  )
+  val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf(specialty.ifBlank { radioOptions[0] }) }
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = { Text(text = title) },
     text = {
-      Column(Modifier.selectableGroup()) {
+      Divider()
+      Column(
+        Modifier
+          .selectableGroup()
+          .height(280.dp)
+          .verticalScroll(rememberScrollState())
+      ) {
         radioOptions.forEach { text ->
           Row(
             Modifier

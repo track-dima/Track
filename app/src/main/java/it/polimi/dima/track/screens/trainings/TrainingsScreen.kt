@@ -27,6 +27,7 @@ import it.polimi.dima.track.common.ext.getCompleteTime
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.screens.profile.OutlinedCardWithHeader
 import it.polimi.dima.track.screens.training.TrainingCard
 
 
@@ -75,15 +76,9 @@ fun TrainingsScreen(
       Spacer(modifier = Modifier.smallSpacer())
 
       if (nextTraining != null) {
-        Column(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalAlignment = Alignment.CenterHorizontally
+        OutlinedCardWithHeader(
+          header = stringResource(id = R.string.next_scheduled_training)
         ) {
-          Text(
-            text = stringResource(id = R.string.next_scheduled_training),
-            modifier = Modifier.padding(vertical = 8.dp),
-            style = MaterialTheme.typography.bodyLarge
-          )
           TrainingCard(
             modifier = Modifier.padding(8.dp),
             training = nextTraining,
@@ -97,15 +92,9 @@ fun TrainingsScreen(
       }
 
       if (lastTraining != null) {
-        Column(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalAlignment = Alignment.CenterHorizontally
+        OutlinedCardWithHeader(
+          header = stringResource(id = R.string.last_training)
         ) {
-          Text(
-            text = stringResource(id = R.string.last_training),
-            modifier = Modifier.padding(vertical = 8.dp),
-            style = MaterialTheme.typography.bodyLarge
-          )
           TrainingCard(
             modifier = Modifier.padding(8.dp),
             training = lastTraining,
