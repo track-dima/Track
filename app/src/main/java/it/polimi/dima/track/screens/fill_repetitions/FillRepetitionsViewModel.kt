@@ -4,8 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.getBestResults
-import it.polimi.dima.track.common.ext.paceToSeconds
-import it.polimi.dima.track.common.ext.timeToSeconds
+import it.polimi.dima.track.common.ext.paceBetterThan
+import it.polimi.dima.track.common.ext.paceWorseThan
+import it.polimi.dima.track.common.ext.timeBetterThan
+import it.polimi.dima.track.common.ext.timeWorseThan
 import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
@@ -97,68 +99,182 @@ class FillRepetitionsViewModel @Inject constructor(
   }
 
   private suspend fun updatePersonalBests(training: Training) {
-    val bestInTraining = training.getBestResults()
-    val bestForDistances = bestInTraining.first
-    val bestForTimes = bestInTraining.second
-    var hasNewPB = false
+    val newBestsInTraining = training.getBestResults()
+    val bestForDistances = newBestsInTraining.first
+    val bestForTimes = newBestsInTraining.second
 
     bestForDistances.forEach { (distance, result) ->
-      val bestForDistance = storageService.getPersonalBestFromDistance(distance)
-      if (bestForDistance == null) {
-        hasNewPB = true
-        storageService.savePersonalBest(
-          PersonalBest(
-            distance = distance,
-            type = TrainingStep.DurationType.DISTANCE,
-            result = result,
-            trainingId = training.id
-          )
-        )
-      } else if (bestForDistance.result.timeToSeconds() > result.timeToSeconds()) {
-        hasNewPB = true
-        storageService.updatePersonalBest(
-          bestForDistance.copy(
-            result = result,
-            trainingId = training.id
-          )
-        )
-        updatePersonalBestFlag(bestForDistance.trainingId)
+      val trainingBestForDistance =
+        storageService.getPersonalBestFromDistanceAndTraining(distance, training.id)
+      val a = 5
+      when {
+        trainingBestForDistance == null -> {
+          val isNewPersonalBest = updateGlobalDistancePersonalBest(distance, result, training.id)
+          saveDistancePersonalBestForTraining(distance, result, training.id, isNewPersonalBest)
+        }
+        trainingBestForDistance.result.timeWorseThan(result) -> {
+          val isNewPersonalBest = updateGlobalDistancePersonalBest(distance, result, training.id)
+          updatePersonalBestForTraining(trainingBestForDistance, result, training.id, isNewPersonalBest)
+        }
+        trainingBestForDistance.globalPersonalBest && trainingBestForDistance.result.timeBetterThan(result) -> {
+          val promoted = promoteSecondGlobalDistancePersonalBest(distance, result)
+          updatePersonalBestForTraining(trainingBestForDistance, result, training.id, !promoted)
+        }
       }
     }
 
     bestForTimes.forEach { (duration, result) ->
-      val bestForTime = storageService.getPersonalBestFromDuration(duration)
-      if (bestForTime == null) {
-        hasNewPB = true
-        storageService.savePersonalBest(
-          PersonalBest(
-            duration = duration,
-            type = TrainingStep.DurationType.TIME,
-            result = result,
-            trainingId = training.id
-          )
-        )
-      } else if (bestForTime.result.paceToSeconds() > result.paceToSeconds()) {
-        hasNewPB = true
-        storageService.updatePersonalBest(
-          bestForTime.copy(
-            result = result,
-            trainingId = training.id
-          )
-        )
-        updatePersonalBestFlag(bestForTime.trainingId)
+      val trainingBestForDuration =
+        storageService.getPersonalBestFromDurationAndTraining(duration, training.id)
+      when {
+        trainingBestForDuration == null -> {
+          val isNewPersonalBest = updateGlobalDurationPersonalBest(duration, result, training.id)
+          saveDurationPersonalBestForTraining(duration, result, training.id, isNewPersonalBest)
+        }
+        trainingBestForDuration.result.paceWorseThan(result) -> {
+          val isNewPersonalBest = updateGlobalDistancePersonalBest(duration, result, training.id)
+          updatePersonalBestForTraining(trainingBestForDuration, result, training.id, isNewPersonalBest)
+        }
+        trainingBestForDuration.globalPersonalBest && trainingBestForDuration.result.paceBetterThan(result) -> {
+          val promoted = promoteSecondGlobalDurationPersonalBest(duration, result)
+          updatePersonalBestForTraining(trainingBestForDuration, result, training.id, !promoted)
+        }
       }
     }
 
-    if (hasNewPB) {
-      storageService.updateTraining(training.copy(personalBest = true))
-    }
+    updatePersonalBestFlag(training.id)
   }
 
-  private suspend fun updatePersonalBestFlag(oldTraining: String) {
-    if (!storageService.existsPersonalBestWithTrainingId(oldTraining)) {
-      storageService.updatePersonalBestFlag(oldTraining, false)
-    }
+  private suspend fun updatePersonalBestForTraining(
+    trainingBestForDistance: PersonalBest,
+    result: String,
+    trainingId: String,
+    isGeneralPersonalBest: Boolean
+  ) {
+    storageService.updatePersonalBest(
+      trainingBestForDistance.copy(
+        result = result,
+        trainingId = trainingId,
+        globalPersonalBest = isGeneralPersonalBest
+      )
+    )
+  }
+
+  private suspend fun saveDistancePersonalBestForTraining(
+    distance: Int,
+    result: String,
+    trainingId: String,
+    isGeneralPersonalBest: Boolean
+  ) {
+    storageService.savePersonalBest(
+      PersonalBest(
+        distance = distance,
+        type = TrainingStep.DurationType.DISTANCE,
+        result = result,
+        trainingId = trainingId,
+        globalPersonalBest = isGeneralPersonalBest
+      )
+    )
+  }
+
+  private suspend fun saveDurationPersonalBestForTraining(
+    duration: Int,
+    result: String,
+    trainingId: String,
+    isGeneralPersonalBest: Boolean
+  ) {
+    storageService.savePersonalBest(
+      PersonalBest(
+        duration = duration,
+        type = TrainingStep.DurationType.TIME,
+        result = result,
+        trainingId = trainingId,
+        globalPersonalBest = isGeneralPersonalBest
+      )
+    )
+  }
+
+  private suspend fun updateGlobalDistancePersonalBest(
+    distance: Int,
+    result: String,
+    trainingId: String
+  ): Boolean {
+    val bestForDistance = storageService.getGlobalPersonalBestFromDistance(distance)
+    val isNewPersonalBest =
+      if (bestForDistance == null) true
+      else if (bestForDistance.result.timeWorseThan(result)) {
+        if (trainingId != bestForDistance.trainingId) {
+          storageService.updatePersonalBest(
+            bestForDistance.copy(
+              globalPersonalBest = false
+            )
+          )
+          updatePersonalBestFlag(bestForDistance.trainingId)
+        }
+        true
+      } else false
+    return isNewPersonalBest
+  }
+
+  private suspend fun updateGlobalDurationPersonalBest(
+    duration: Int,
+    result: String,
+    trainingId: String
+  ): Boolean {
+    val bestForDuration = storageService.getGlobalPersonalBestFromDuration(duration)
+    val isNewPersonalBest =
+      if (bestForDuration == null) true
+      else if (bestForDuration.result.paceWorseThan(result)) {
+        if (trainingId != bestForDuration.trainingId) {
+          storageService.updatePersonalBest(
+            bestForDuration.copy(
+              globalPersonalBest = false
+            )
+          )
+          updatePersonalBestFlag(bestForDuration.trainingId)
+        }
+        true
+      } else false
+    return isNewPersonalBest
+  }
+
+  private suspend fun promoteSecondGlobalDistancePersonalBest(distance: Int, result: String): Boolean {
+    val secondBestForDistance = storageService.getSecondGlobalPersonalBestFromDistance(distance)
+    val promoted =
+      if (secondBestForDistance == null) false
+      else if (secondBestForDistance.result.timeBetterThan(result)) {
+        storageService.updatePersonalBest(
+          secondBestForDistance.copy(
+            globalPersonalBest = true
+          )
+        )
+        storageService.updatePersonalBestFlag(secondBestForDistance.trainingId, true)
+        true
+      }
+      else false
+    return promoted
+  }
+
+  private suspend fun promoteSecondGlobalDurationPersonalBest(duration: Int, result: String): Boolean {
+    val secondBestForDuration = storageService.getSecondGlobalPersonalBestFromDuration(duration)
+    val promoted =
+      if (secondBestForDuration == null) false
+      else if (secondBestForDuration.result.paceBetterThan(result)) {
+        storageService.updatePersonalBest(
+          secondBestForDuration.copy(
+            globalPersonalBest = true
+          )
+        )
+        storageService.updatePersonalBestFlag(secondBestForDuration.trainingId, true)
+        true
+      }
+      else false
+    return promoted
+  }
+
+  private suspend fun updatePersonalBestFlag(trainingId: String) {
+    val exists = storageService.existsGlobalPersonalBestWithTrainingId(trainingId)
+    storageService.updatePersonalBestFlag(trainingId, exists)
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {

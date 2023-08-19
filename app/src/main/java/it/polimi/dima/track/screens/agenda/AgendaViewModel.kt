@@ -97,6 +97,7 @@ class AgendaViewModel @Inject constructor(
         training.copy(
           transient = true,
           favorite = false,
+          personalBest = false,
           trainingSteps = emptyResults(training.trainingSteps)
         )
       )
