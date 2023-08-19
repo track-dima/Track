@@ -91,9 +91,7 @@ fun AgendaScreen(
     val options by viewModel.options
 
     Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+      modifier = Modifier.fillMaxSize()
     ) {
       ActionToolbar(
         title = R.string.agenda,

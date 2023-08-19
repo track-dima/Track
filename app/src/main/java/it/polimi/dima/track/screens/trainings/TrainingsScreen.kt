@@ -2,6 +2,7 @@ package it.polimi.dima.track.screens.trainings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -51,9 +52,7 @@ fun TrainingsScreen(
   val options by viewModel.options
 
   Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .fillMaxHeight()
+    modifier = Modifier.fillMaxSize()
   ) {
     ActionToolbar(
       title = R.string.trainings,
@@ -65,8 +64,7 @@ fun TrainingsScreen(
 
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+        .fillMaxSize()
         .verticalScroll(rememberScrollState())
     ) {
       if (nextTraining != null) {

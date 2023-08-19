@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -71,9 +72,7 @@ fun TrainingCard(
         if (showActions) DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
         if (training.isScheduled()) {
           Box(
-            modifier = Modifier
-              .fillMaxWidth()
-              .fillMaxHeight(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
           ) {
             Icon(
@@ -97,9 +96,7 @@ private fun TrainingCardContent(training: Training) {
   Text(text = training.description, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
   Box(
-    modifier = Modifier
-      .fillMaxWidth()
-      .fillMaxHeight(),
+    modifier = Modifier.fillMaxSize(),
     contentAlignment = Alignment.BottomStart
   ) {
     TrainingCardBottomInformation(training)

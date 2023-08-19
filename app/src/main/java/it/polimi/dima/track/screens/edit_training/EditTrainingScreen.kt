@@ -54,9 +54,7 @@ fun EditTrainingScreen(
   }
 
   Column(
-    modifier = modifier
-      .fillMaxWidth()
-      .fillMaxHeight(),
+    modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     ActionToolbar(
@@ -72,8 +70,7 @@ fun EditTrainingScreen(
 
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+        .fillMaxSize()
         .verticalScroll(rememberScrollState())
     ) {
       Spacer(modifier = Modifier.bigSpacer())

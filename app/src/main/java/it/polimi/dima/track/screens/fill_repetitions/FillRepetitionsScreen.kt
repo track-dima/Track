@@ -3,6 +3,7 @@ package it.polimi.dima.track.screens.fill_repetitions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
@@ -52,9 +53,7 @@ fun FillRepetitionsScreen(
 
 
   Column(
-    modifier = modifier
-      .fillMaxWidth()
-      .fillMaxHeight(),
+    modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
@@ -130,8 +129,7 @@ fun FillRepetitionsScreen(
 
     Column(
       modifier = modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+        .fillMaxSize()
         .verticalScroll(rememberScrollState())
     ) {
       Spacer(modifier = Modifier.bigSpacer())

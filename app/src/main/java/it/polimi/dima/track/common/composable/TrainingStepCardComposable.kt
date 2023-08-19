@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -176,8 +177,7 @@ fun RepetitionsCard(
       if (readOnly || fillTime) {
         Column(
           modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(end = 16.dp),
           horizontalAlignment = Alignment.End,
           verticalArrangement = Arrangement.Center
@@ -868,9 +868,7 @@ fun TrainingStepsListBox(
       floatingActionButtonPosition = FabPosition.End
     ) {
       Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight(),
+        modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically
       ) {
         UnmodifiableStepsList(trainingSteps = training.trainingSteps)
