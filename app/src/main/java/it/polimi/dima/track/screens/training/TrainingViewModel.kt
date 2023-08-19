@@ -7,14 +7,14 @@ import it.polimi.dima.track.TRAINING_SCREEN
 import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TrainingViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
 ) : TrackViewModel(logService) {
   val training = mutableStateOf(Training())
   val options = mutableStateOf<List<String>>(listOf())
@@ -22,7 +22,7 @@ class TrainingViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId) ?: Training()
+        training.value = trainingStorageService.getTraining(trainingId) ?: Training()
       }
     }
   }
@@ -34,13 +34,13 @@ class TrainingViewModel @Inject constructor(
   fun onFavoriteClick(favorite: Boolean) {
     training.value = training.value.copy(favorite = favorite)
     launchCatching {
-      storageService.updateTraining(training.value)
+      trainingStorageService.updateTraining(training.value)
     }
   }
 
   fun onDeleteTaskClick(training: Training, popUpScreen: () -> Unit) {
     launchCatching {
-      storageService.deleteTraining(training.id)
+      trainingStorageService.deleteTraining(training.id)
       popUpScreen()
     }
   }
@@ -51,7 +51,7 @@ class TrainingViewModel @Inject constructor(
     editTraining: (Training) -> Unit
   ) {
     launchCatching {
-      val newId = storageService.duplicateTraining(
+      val newId = trainingStorageService.duplicateTraining(
         training.copy(
           transient = true,
           favorite = false,

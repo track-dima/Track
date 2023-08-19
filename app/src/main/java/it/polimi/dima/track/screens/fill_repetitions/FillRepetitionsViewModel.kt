@@ -12,14 +12,16 @@ import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.PersonalBestStorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class FillRepetitionsViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
+  private val personalBestStorageService: PersonalBestStorageService,
 ) : TrackViewModel(logService) {
   val training = mutableStateOf(Training())
   val trainingSteps = mutableStateOf(listOf<TrainingStep>())
@@ -27,7 +29,7 @@ class FillRepetitionsViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId) ?: Training()
+        training.value = trainingStorageService.getTraining(trainingId) ?: Training()
         trainingSteps.value = training.value.trainingSteps
       }
     }
@@ -88,9 +90,9 @@ class FillRepetitionsViewModel @Inject constructor(
       training.value = training.value.copy(trainingSteps = trainingSteps.value)
       val editedTraining = training.value
       val id = if (editedTraining.id.isBlank()) {
-        storageService.saveTraining(editedTraining)
+        trainingStorageService.saveTraining(editedTraining)
       } else {
-        storageService.updateTraining(editedTraining)
+        trainingStorageService.updateTraining(editedTraining)
         editedTraining.id
       }
       updatePersonalBests(training.value.copy(id = id))
@@ -105,7 +107,7 @@ class FillRepetitionsViewModel @Inject constructor(
 
     bestForDistances.forEach { (distance, result) ->
       val trainingBestForDistance =
-        storageService.getPersonalBestFromDistanceAndTraining(distance, training.id)
+        personalBestStorageService.getPersonalBestFromDistanceAndTraining(distance, training.id)
       val a = 5
       when {
         trainingBestForDistance == null -> {
@@ -125,7 +127,7 @@ class FillRepetitionsViewModel @Inject constructor(
 
     bestForTimes.forEach { (duration, result) ->
       val trainingBestForDuration =
-        storageService.getPersonalBestFromDurationAndTraining(duration, training.id)
+        personalBestStorageService.getPersonalBestFromDurationAndTraining(duration, training.id)
       when {
         trainingBestForDuration == null -> {
           val isNewPersonalBest = updateGlobalDurationPersonalBest(duration, result, training.id)
@@ -151,7 +153,7 @@ class FillRepetitionsViewModel @Inject constructor(
     trainingId: String,
     isGeneralPersonalBest: Boolean
   ) {
-    storageService.updatePersonalBest(
+    personalBestStorageService.updatePersonalBest(
       trainingBestForDistance.copy(
         result = result,
         trainingId = trainingId,
@@ -166,7 +168,7 @@ class FillRepetitionsViewModel @Inject constructor(
     trainingId: String,
     isGeneralPersonalBest: Boolean
   ) {
-    storageService.savePersonalBest(
+    personalBestStorageService.savePersonalBest(
       PersonalBest(
         distance = distance,
         type = TrainingStep.DurationType.DISTANCE,
@@ -183,7 +185,7 @@ class FillRepetitionsViewModel @Inject constructor(
     trainingId: String,
     isGeneralPersonalBest: Boolean
   ) {
-    storageService.savePersonalBest(
+    personalBestStorageService.savePersonalBest(
       PersonalBest(
         duration = duration,
         type = TrainingStep.DurationType.TIME,
@@ -199,12 +201,12 @@ class FillRepetitionsViewModel @Inject constructor(
     result: String,
     trainingId: String
   ): Boolean {
-    val bestForDistance = storageService.getGlobalPersonalBestFromDistance(distance)
+    val bestForDistance = personalBestStorageService.getGlobalPersonalBestFromDistance(distance)
     val isNewPersonalBest =
       if (bestForDistance == null) true
       else if (bestForDistance.result.timeWorseThan(result)) {
         if (trainingId != bestForDistance.trainingId) {
-          storageService.updatePersonalBest(
+          personalBestStorageService.updatePersonalBest(
             bestForDistance.copy(
               globalPersonalBest = false
             )
@@ -221,12 +223,12 @@ class FillRepetitionsViewModel @Inject constructor(
     result: String,
     trainingId: String
   ): Boolean {
-    val bestForDuration = storageService.getGlobalPersonalBestFromDuration(duration)
+    val bestForDuration = personalBestStorageService.getGlobalPersonalBestFromDuration(duration)
     val isNewPersonalBest =
       if (bestForDuration == null) true
       else if (bestForDuration.result.paceWorseThan(result)) {
         if (trainingId != bestForDuration.trainingId) {
-          storageService.updatePersonalBest(
+          personalBestStorageService.updatePersonalBest(
             bestForDuration.copy(
               globalPersonalBest = false
             )
@@ -239,16 +241,16 @@ class FillRepetitionsViewModel @Inject constructor(
   }
 
   private suspend fun promoteSecondGlobalDistancePersonalBest(distance: Int, result: String): Boolean {
-    val secondBestForDistance = storageService.getSecondGlobalPersonalBestFromDistance(distance)
+    val secondBestForDistance = personalBestStorageService.getSecondGlobalPersonalBestFromDistance(distance)
     val promoted =
       if (secondBestForDistance == null) false
       else if (secondBestForDistance.result.timeBetterThan(result)) {
-        storageService.updatePersonalBest(
+        personalBestStorageService.updatePersonalBest(
           secondBestForDistance.copy(
             globalPersonalBest = true
           )
         )
-        storageService.updatePersonalBestFlag(secondBestForDistance.trainingId, true)
+        trainingStorageService.updatePersonalBestFlag(secondBestForDistance.trainingId, true)
         true
       }
       else false
@@ -256,16 +258,16 @@ class FillRepetitionsViewModel @Inject constructor(
   }
 
   private suspend fun promoteSecondGlobalDurationPersonalBest(duration: Int, result: String): Boolean {
-    val secondBestForDuration = storageService.getSecondGlobalPersonalBestFromDuration(duration)
+    val secondBestForDuration = personalBestStorageService.getSecondGlobalPersonalBestFromDuration(duration)
     val promoted =
       if (secondBestForDuration == null) false
       else if (secondBestForDuration.result.paceBetterThan(result)) {
-        storageService.updatePersonalBest(
+        personalBestStorageService.updatePersonalBest(
           secondBestForDuration.copy(
             globalPersonalBest = true
           )
         )
-        storageService.updatePersonalBestFlag(secondBestForDuration.trainingId, true)
+        trainingStorageService.updatePersonalBestFlag(secondBestForDuration.trainingId, true)
         true
       }
       else false
@@ -273,8 +275,8 @@ class FillRepetitionsViewModel @Inject constructor(
   }
 
   private suspend fun updatePersonalBestFlag(trainingId: String) {
-    val exists = storageService.existsGlobalPersonalBestWithTrainingId(trainingId)
-    storageService.updatePersonalBestFlag(trainingId, exists)
+    val exists = personalBestStorageService.existsGlobalPersonalBestWithTrainingId(trainingId)
+    trainingStorageService.updatePersonalBestFlag(trainingId, exists)
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {

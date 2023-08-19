@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
 ) : TrackViewModel(logService) {
 
   val searchText: MutableStateFlow<String> = MutableStateFlow("")
@@ -33,7 +33,7 @@ class SearchViewModel @Inject constructor(
       if (query.isEmpty()) {
         flowOf(emptyList()) // Emit an empty list if the query is empty
       } else {
-        flow { emit(storageService.searchTrainings(query)) }
+        flow { emit(trainingStorageService.searchTrainings(query)) }
       }
     }
     .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())

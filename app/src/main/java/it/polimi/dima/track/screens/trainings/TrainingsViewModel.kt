@@ -13,7 +13,7 @@ import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import it.polimi.dima.track.screens.training.TrainingActionOption
 import javax.inject.Inject
@@ -21,11 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainingsViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
   val options = mutableStateOf<List<String>>(listOf())
-  val trainings = storageService.trainings
+  val trainings = trainingStorageService.trainings
 
   fun loadTaskOptions() {
     // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
@@ -59,6 +59,6 @@ class TrainingsViewModel @Inject constructor(
   }
 
   private fun onFavouriteTrainingClick(training: Training) {
-    launchCatching { storageService.updateTraining(training.copy(favorite = !training.favorite)) }
+    launchCatching { trainingStorageService.updateTraining(training.copy(favorite = !training.favorite)) }
   }
 }

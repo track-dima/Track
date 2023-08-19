@@ -14,7 +14,7 @@ import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import it.polimi.dima.track.screens.training.TrainingActionOption
 import kotlinx.coroutines.flow.Flow
@@ -25,11 +25,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
   val options = mutableStateOf<List<String>>(listOf())
-  private val trainings = storageService.trainings
+  private val trainings = trainingStorageService.trainings
 
   private val favoriteSelected = MutableStateFlow(false)
   val isFavoriteFilterActive: Boolean get() = favoriteSelected.value
@@ -84,16 +84,16 @@ class AgendaViewModel @Inject constructor(
   }
 
   private fun onFavouriteTrainingClick(training: Training) {
-    launchCatching { storageService.updateTraining(training.copy(favorite = !training.favorite)) }
+    launchCatching { trainingStorageService.updateTraining(training.copy(favorite = !training.favorite)) }
   }
 
   fun onDeleteTaskClick(trainingId: String) {
-    launchCatching { storageService.deleteTraining(trainingId) }
+    launchCatching { trainingStorageService.deleteTraining(trainingId) }
   }
 
   private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
     launchCatching {
-      val newId = storageService.duplicateTraining(
+      val newId = trainingStorageService.duplicateTraining(
         training.copy(
           transient = true,
           favorite = false,
