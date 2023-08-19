@@ -5,6 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import it.polimi.dima.track.common.ext.paceToSeconds
+import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.User
@@ -91,25 +93,64 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
     matchingTasks.map { it.reference.delete().asDeferred() }.awaitAll()
   }
 
-  override suspend fun getPersonalBestFromDistance(distance: Int): PersonalBest? =
+  override suspend fun getGlobalPersonalBestFromDistance(distance: Int): PersonalBest? =
     currentPersonalBestCollection(auth.currentUserId)
       .whereEqualTo("distance", distance)
+      .whereEqualTo("globalPersonalBest", true)
       .get()
       .await()
       .toObjects<PersonalBest>()
       .firstOrNull()
 
-  override suspend fun getPersonalBestFromDuration(duration: Int): PersonalBest? =
+  override suspend fun getGlobalPersonalBestFromDuration(duration: Int): PersonalBest? =
     currentPersonalBestCollection(auth.currentUserId)
       .whereEqualTo("duration", duration)
+      .whereEqualTo("globalPersonalBest", true)
       .get()
       .await()
       .toObjects<PersonalBest>()
       .firstOrNull()
 
-  override suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean =
+  override suspend fun getSecondGlobalPersonalBestFromDistance(distance: Int): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("distance", distance)
+      .whereEqualTo("globalPersonalBest", false)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .minByOrNull { it.result.timeToSeconds() }
+
+  override suspend fun getSecondGlobalPersonalBestFromDuration(duration: Int): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("duration", duration)
+      .whereEqualTo("globalPersonalBest", false)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .minByOrNull { it.result.paceToSeconds() }
+
+  override suspend fun getPersonalBestFromDistanceAndTraining(distance: Int, trainingId: String): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("distance", distance)
+      .whereEqualTo("trainingId", trainingId)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .firstOrNull()
+
+  override suspend fun getPersonalBestFromDurationAndTraining(duration: Int, trainingId: String): PersonalBest? =
+    currentPersonalBestCollection(auth.currentUserId)
+      .whereEqualTo("duration", duration)
+      .whereEqualTo("trainingId", trainingId)
+      .get()
+      .await()
+      .toObjects<PersonalBest>()
+      .firstOrNull()
+
+  override suspend fun existsGlobalPersonalBestWithTrainingId(trainingId: String): Boolean =
     currentPersonalBestCollection(auth.currentUserId)
       .whereEqualTo("trainingId", trainingId)
+      .whereEqualTo("globalPersonalBest", true)
       .get()
       .await()
       .toObjects<PersonalBest>()

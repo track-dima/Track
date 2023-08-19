@@ -115,3 +115,21 @@ fun String.extractPaceUnit(): String {
   val split = this.split(" ")
   return split[1]
 }
+
+fun String.timeWorseThan(result: String): Boolean {
+  return this.timeToSeconds() > result.timeToSeconds() ||
+      (this.timeToSeconds() == result.timeToSeconds() && this.extractCents() > result.extractCents())
+}
+
+fun String.timeBetterThan(result: String): Boolean {
+  return this.timeToSeconds() < result.timeToSeconds() ||
+      (this.timeToSeconds() == result.timeToSeconds() && this.extractCents() < result.extractCents())
+}
+
+fun String.paceWorseThan(result: String): Boolean {
+  return this.paceToSeconds() > result.paceToSeconds()
+}
+
+fun String.paceBetterThan(result: String): Boolean {
+  return this.paceToSeconds() < result.paceToSeconds()
+}

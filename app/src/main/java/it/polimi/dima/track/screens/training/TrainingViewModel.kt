@@ -52,7 +52,12 @@ class TrainingViewModel @Inject constructor(
   ) {
     launchCatching {
       val newId = storageService.duplicateTraining(
-        training.copy(transient = true, favorite = false, trainingSteps = emptyResults(training.trainingSteps))
+        training.copy(
+          transient = true,
+          favorite = false,
+          personalBest = false,
+          trainingSteps = emptyResults(training.trainingSteps)
+        )
       )
       popUpScreen()
       editTraining(Training(id = newId))

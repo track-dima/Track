@@ -18,12 +18,15 @@ interface StorageService {
   suspend fun deleteAllForUser(userId: String)
   suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean)
 
-  suspend fun getPersonalBestFromDistance(distance: Int): PersonalBest?
-  suspend fun getPersonalBestFromDuration(duration: Int): PersonalBest?
-  suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean
+  suspend fun getGlobalPersonalBestFromDistance(distance: Int): PersonalBest?
+  suspend fun getGlobalPersonalBestFromDuration(duration: Int): PersonalBest?
+  suspend fun getSecondGlobalPersonalBestFromDistance(distance: Int): PersonalBest?
+  suspend fun getSecondGlobalPersonalBestFromDuration(duration: Int): PersonalBest?
+  suspend fun getPersonalBestFromDistanceAndTraining(distance: Int, trainingId: String): PersonalBest?
+  suspend fun getPersonalBestFromDurationAndTraining(duration: Int, trainingId: String): PersonalBest?
+  suspend fun existsGlobalPersonalBestWithTrainingId(trainingId: String): Boolean
   suspend fun savePersonalBest(personalBest: PersonalBest): String
   suspend fun updatePersonalBest(personalBest: PersonalBest)
   suspend fun updateUserName(newName: String)
   suspend fun updateUserSpecialty(newSpecialty: String)
-
 }
