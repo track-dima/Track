@@ -9,9 +9,9 @@ fun Date?.getWeekInterval(default: String = ""): String {
   return if (this != null) {
     calendar.time = this
     val startOfWeek = calendar.clone() as Calendar
-    startOfWeek.set(Calendar.DAY_OF_WEEK, startOfWeek.firstDayOfWeek)
+    startOfWeek[Calendar.DAY_OF_WEEK] = startOfWeek.firstDayOfWeek
     val endOfWeek = calendar.clone() as Calendar
-    endOfWeek.set(Calendar.DAY_OF_WEEK, endOfWeek.firstDayOfWeek)
+    endOfWeek[Calendar.DAY_OF_WEEK] = endOfWeek.firstDayOfWeek
     endOfWeek.add(Calendar.DAY_OF_WEEK, 6)
 
     val startMonth =
@@ -20,11 +20,11 @@ fun Date?.getWeekInterval(default: String = ""): String {
       endOfWeek.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
 
     return if (startMonth == endMonth) {
-      "${startOfWeek.get(Calendar.DAY_OF_MONTH)}-${endOfWeek.get(Calendar.DAY_OF_MONTH)} " +
-          "$startMonth ${startOfWeek.get(Calendar.YEAR)}"
+      "${startOfWeek[Calendar.DAY_OF_MONTH]}-${endOfWeek[Calendar.DAY_OF_MONTH]} " +
+          "$startMonth ${startOfWeek[Calendar.YEAR]}"
     } else {
-      "${startOfWeek.get(Calendar.DAY_OF_MONTH)} $startMonth - " +
-          "${endOfWeek.get(Calendar.DAY_OF_MONTH)} $endMonth ${startOfWeek.get(Calendar.YEAR)}"
+      "${startOfWeek[Calendar.DAY_OF_MONTH]} $startMonth - " +
+          "${endOfWeek[Calendar.DAY_OF_MONTH]} $endMonth ${startOfWeek[Calendar.YEAR]}"
     }
   } else default
 }
@@ -33,7 +33,7 @@ fun Date?.getDay(default: String = ""): String {
   val calendar = Calendar.getInstance()
   return if (this != null) {
     calendar.time = this
-    calendar.get(Calendar.DAY_OF_MONTH).toString()
+    calendar[Calendar.DAY_OF_MONTH].toString()
   } else default
 }
 
@@ -50,8 +50,8 @@ fun Date?.isToday(): Boolean {
   return if (this != null) {
     calendar.time = this
     val today = Calendar.getInstance()
-    today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR) &&
-        today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+    today[Calendar.DAY_OF_YEAR] == calendar[Calendar.DAY_OF_YEAR] &&
+        today[Calendar.YEAR] == calendar[Calendar.YEAR]
   } else false
 }
 
@@ -60,8 +60,8 @@ fun Date?.isThisWeek(): Boolean {
   return if (this != null) {
     calendar.time = this
     val today = Calendar.getInstance()
-    today.get(Calendar.WEEK_OF_YEAR) == calendar.get(Calendar.WEEK_OF_YEAR) &&
-        today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+    today[Calendar.WEEK_OF_YEAR] == calendar[Calendar.WEEK_OF_YEAR] &&
+        today[Calendar.YEAR] == calendar[Calendar.YEAR]
   } else false
 }
 
@@ -70,7 +70,7 @@ fun Date?.isThisMonth(): Boolean {
   return if (this != null) {
     calendar.time = this
     val today = Calendar.getInstance()
-    today.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
-        today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+    today[Calendar.MONTH] == calendar[Calendar.MONTH] &&
+        today[Calendar.YEAR] == calendar[Calendar.YEAR]
   } else false
 }

@@ -15,13 +15,11 @@ data class Training(
   val notes: String = "",
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
+  val personalBest: Boolean = false,
 
   // Searchable tokens
   val searchable: List<String> = listOf(),
 
   // If true, the training is deleted when the user leaves the screen
   val transient: Boolean = false,
-
-  // UNUSED
-  val personalBest: Boolean = false,
 )

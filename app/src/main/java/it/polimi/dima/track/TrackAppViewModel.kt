@@ -14,39 +14,44 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrackAppViewModel @Inject constructor(
-    logService: LogService
+  logService: LogService
 ) : TrackViewModel(logService) {
-    var uiState = mutableStateOf(TrackAppUiState())
-        private set
+  var uiState = mutableStateOf(TrackAppUiState())
+    private set
 
-    fun calculateNavigationType(windowSize: WindowSizeClass) {
-        uiState.value = uiState.value.copy(
-            navigationType = when (windowSize.widthSizeClass) {
-                WindowWidthSizeClass.Compact -> {
-                    NavigationType.BOTTOM_NAVIGATION
-                }
-                WindowWidthSizeClass.Medium -> {
-                    NavigationType.NAVIGATION_RAIL
-                }
-                WindowWidthSizeClass.Expanded -> {
-                    NavigationType.PERMANENT_NAVIGATION_DRAWER
-                }
-                else -> {
-                    NavigationType.BOTTOM_NAVIGATION
-                }
-            },
-            navigationContentPosition = when (windowSize.heightSizeClass) {
-                WindowHeightSizeClass.Compact -> {
-                    NavigationContentPosition.TOP
-                }
-                WindowHeightSizeClass.Medium,
-                WindowHeightSizeClass.Expanded -> {
-                    NavigationContentPosition.CENTER
-                }
-                else -> {
-                    NavigationContentPosition.TOP
-                }
-            }
-        )
-    }
+  fun calculateNavigationType(windowSize: WindowSizeClass) {
+    uiState.value = uiState.value.copy(
+      navigationType = when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+          NavigationType.BOTTOM_NAVIGATION
+        }
+
+        WindowWidthSizeClass.Medium -> {
+          NavigationType.NAVIGATION_RAIL
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+          NavigationType.PERMANENT_NAVIGATION_DRAWER
+        }
+
+        else -> {
+          NavigationType.BOTTOM_NAVIGATION
+        }
+      },
+      navigationContentPosition = when (windowSize.heightSizeClass) {
+        WindowHeightSizeClass.Compact -> {
+          NavigationContentPosition.TOP
+        }
+
+        WindowHeightSizeClass.Medium,
+        WindowHeightSizeClass.Expanded -> {
+          NavigationContentPosition.CENTER
+        }
+
+        else -> {
+          NavigationContentPosition.TOP
+        }
+      }
+    )
+  }
 }

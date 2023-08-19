@@ -11,18 +11,18 @@ import it.polimi.dima.track.ui.theme.TrackTheme
 
 @AndroidEntryPoint
 class TrackActivity : AppCompatActivity() {
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent {
-            val windowSize = calculateWindowSizeClass(this)
+  @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    setContent {
+      val windowSize = calculateWindowSizeClass(this)
 
-            TrackTheme {
-                TrackApp(
-                    windowSize = windowSize,
-                )
-            }
-        }
+      TrackTheme {
+        TrackApp(
+          windowSize = windowSize,
+        )
+      }
     }
+  }
 }
