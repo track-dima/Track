@@ -187,7 +187,7 @@ fun updateBestTimeResults(
 ): MutableMap<Int, String> {
   newBestResults.forEach { (key, result) ->
     if (bestResults.containsKey(key)) {
-      if (result.timeToSeconds() < bestResults[key]!!.timeToSeconds()) {
+      if (result.timeBetterThan(bestResults[key]!!)) {
         bestResults[key] = result
       }
     } else {
@@ -203,7 +203,7 @@ fun updateBestPaceResults(
 ): MutableMap<Int, String> {
   newBestResults.forEach { (key, result) ->
     if (bestResults.containsKey(key)) {
-      if (result.paceToSeconds() < bestResults[key]!!.paceToSeconds()) {
+      if (result.paceBetterThan(bestResults[key]!!)) {
         bestResults[key] = result
       }
     } else {
@@ -214,7 +214,7 @@ fun updateBestPaceResults(
 }
 
 private fun TrainingStep.repetitionBestTimeResult(): String {
-  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.timeToSeconds() }
+  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.timeToSeconds().toFloat() + it.extractCents().toFloat() / 100 }
 }
 
 private fun TrainingStep.repetitionBestPaceResult(): String {

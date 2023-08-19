@@ -9,9 +9,9 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.*
@@ -34,7 +34,6 @@ import it.polimi.dima.track.common.ext.getDay
 import it.polimi.dima.track.common.ext.getDayName
 import it.polimi.dima.track.common.ext.getWeekInterval
 import it.polimi.dima.track.common.ext.isToday
-import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
@@ -77,7 +76,7 @@ fun AgendaScreen(
           modifier = modifier.padding(16.dp)
         ) {
           Icon(
-            Icons.Filled.Add,
+            Icons.Rounded.Add,
             modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
             contentDescription = stringResource(id = R.string.add_training),
           )
@@ -99,13 +98,13 @@ fun AgendaScreen(
       ActionToolbar(
         title = R.string.agenda,
         modifier = Modifier.toolbarActions(),
-        endActionIcon = Icons.Default.Settings,
+        endActionIcon = Icons.Rounded.Settings,
         endActionDescription = R.string.settings,
         endAction = { viewModel.onSettingsClick(openScreen) }
       ) {
         IconButton(onClick = { openScreen(SEARCH_SCREEN) }) {
           Icon(
-            Icons.Default.Search,
+            Icons.Rounded.Search,
             contentDescription = stringResource(R.string.search_trainings)
           )
         }

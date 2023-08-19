@@ -3,10 +3,10 @@ package it.polimi.dima.track.common.composable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -63,7 +63,7 @@ fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier =
     value = value,
     onValueChange = { onNewValue(it) },
     placeholder = { Text(stringResource(R.string.email)) },
-    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") }
+    leadingIcon = { Icon(imageVector = Icons.Rounded.Email, contentDescription = "Email") }
   )
 }
 
@@ -91,8 +91,8 @@ private fun PasswordField(
   var isVisible by remember { mutableStateOf(false) }
 
   val icon =
-    if (isVisible) Icons.Filled.Visibility
-    else Icons.Filled.VisibilityOff
+    if (isVisible) Icons.Rounded.Visibility
+    else Icons.Rounded.VisibilityOff
 
   val visualTransformation =
     if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
@@ -102,7 +102,7 @@ private fun PasswordField(
     value = value,
     onValueChange = { onNewValue(it) },
     placeholder = { Text(text = stringResource(placeholder)) },
-    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
+    leadingIcon = { Icon(imageVector = Icons.Rounded.Lock, contentDescription = "Lock") },
     trailingIcon = {
       IconButton(onClick = { isVisible = !isVisible }) {
         Icon(icon, contentDescription = "Visibility")

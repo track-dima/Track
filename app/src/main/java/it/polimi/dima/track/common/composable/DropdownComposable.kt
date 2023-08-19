@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ fun DropdownContextMenu(
   Box(modifier = modifier) {
     val icon: @Composable () -> Unit = {
       Icon(
-        imageVector = Icons.Default.MoreVert,
+        imageVector = Icons.Rounded.MoreVert,
         contentDescription = stringResource(R.string.more_options)
       )
     }

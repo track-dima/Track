@@ -9,7 +9,7 @@ import it.polimi.dima.track.common.ext.calculateSearchTokens
 import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,14 +18,14 @@ import javax.inject.Inject
 @HiltViewModel
 class EditTrainingViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
 ) : TrackViewModel(logService) {
   val training = mutableStateOf(Training())
 
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId) ?: Training()
+        training.value = trainingStorageService.getTraining(trainingId) ?: Training()
       }
     }
   }
@@ -91,9 +91,9 @@ class EditTrainingViewModel @Inject constructor(
   private suspend fun saveTraining(): String {
     val editedTraining = training.value.copy(searchable = training.value.calculateSearchTokens())
     return if (editedTraining.id.isBlank()) {
-      storageService.saveTraining(editedTraining)
+      trainingStorageService.saveTraining(editedTraining)
     } else {
-      storageService.updateTraining(editedTraining)
+      trainingStorageService.updateTraining(editedTraining)
       editedTraining.id
     }
   }
@@ -101,7 +101,7 @@ class EditTrainingViewModel @Inject constructor(
   fun onCancelClick(popUpScreen: () -> Unit) {
     if (training.value.transient) {
       launchCatching {
-        storageService.deleteTraining(training.value.id)
+        trainingStorageService.deleteTraining(training.value.id)
       }
     }
     popUpScreen()

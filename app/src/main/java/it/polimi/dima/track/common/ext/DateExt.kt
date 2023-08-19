@@ -54,3 +54,23 @@ fun Date?.isToday(): Boolean {
         today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
   } else false
 }
+
+fun Date?.isThisWeek(): Boolean {
+  val calendar = Calendar.getInstance()
+  return if (this != null) {
+    calendar.time = this
+    val today = Calendar.getInstance()
+    today.get(Calendar.WEEK_OF_YEAR) == calendar.get(Calendar.WEEK_OF_YEAR) &&
+        today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+  } else false
+}
+
+fun Date?.isThisMonth(): Boolean {
+  val calendar = Calendar.getInstance()
+  return if (this != null) {
+    calendar.time = this
+    val today = Calendar.getInstance()
+    today.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
+        today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+  } else false
+}

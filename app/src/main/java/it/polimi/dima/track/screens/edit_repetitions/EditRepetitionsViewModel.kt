@@ -7,7 +7,7 @@ import it.polimi.dima.track.common.ext.calculateSearchTokens
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.service.LogService
-import it.polimi.dima.track.model.service.StorageService
+import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import org.burnoutcrew.reorderable.ItemPosition
 import java.util.UUID
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditRepetitionsViewModel @Inject constructor(
   logService: LogService,
-  private val storageService: StorageService,
+  private val trainingStorageService: TrainingStorageService,
 ) : TrackViewModel(logService) {
   val training = mutableStateOf(Training())
   val trainingSteps = mutableStateOf(listOf<TrainingStep>())
@@ -24,7 +24,7 @@ class EditRepetitionsViewModel @Inject constructor(
   fun initialize(trainingId: String) {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = storageService.getTraining(trainingId) ?: Training()
+        training.value = trainingStorageService.getTraining(trainingId) ?: Training()
         trainingSteps.value = training.value.trainingSteps
       }
     }
@@ -318,9 +318,9 @@ class EditRepetitionsViewModel @Inject constructor(
       )
       val editedTraining = training.value
       if (editedTraining.id.isBlank()) {
-        storageService.saveTraining(editedTraining)
+        trainingStorageService.saveTraining(editedTraining)
       } else {
-        storageService.updateTraining(editedTraining)
+        trainingStorageService.updateTraining(editedTraining)
       }
       popUpScreen()
     }

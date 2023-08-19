@@ -9,4 +9,5 @@ data class PersonalBest(
   val duration: Int = 0,
   val result: String = "",
   val trainingId: String = "",
+  val globalPersonalBest: Boolean = false
 )

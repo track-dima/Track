@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,7 +58,7 @@ fun FullScreenDialog(
           verticalAlignment = Alignment.CenterVertically,
         ) {
           IconButton(onClick = onDismissRequest) {
-            Icon(Icons.Filled.Close, stringResource(R.string.close))
+            Icon(Icons.Rounded.Close, stringResource(R.string.close))
           }
           Text(
             modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),

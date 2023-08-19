@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Card
@@ -78,7 +77,7 @@ fun TrainingCard(
             contentAlignment = Alignment.BottomCenter
           ) {
             Icon(
-              imageVector = Icons.Default.Schedule,
+              imageVector = Icons.Rounded.Schedule,
               tint = DarkOrange,
               contentDescription = "Scheduled training",
               modifier = Modifier.size(24.dp)

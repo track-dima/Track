@@ -13,11 +13,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Straighten
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Straighten
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,7 +52,6 @@ import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.rememberPickerState
 import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
-import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
@@ -183,10 +182,10 @@ fun EditRepetitionsScreen(
       ActionToolbar(
         title = R.string.edit_repetitions,
         modifier = Modifier.toolbarActions(),
-        startActionIcon = Icons.Default.Close,
+        startActionIcon = Icons.Rounded.Close,
         startActionDescription = R.string.close,
         startAction = { viewModel.onCancelClick(popUpScreen) },
-        endActionIcon = Icons.Default.Check,
+        endActionIcon = Icons.Rounded.Check,
         endActionDescription = R.string.confirm,
         endAction = { viewModel.onDoneClick(popUpScreen) }
       )
@@ -320,7 +319,7 @@ private fun EditRepetitionsFABs(
 ) {
   ExtendedFloatingActionButton(
     onClick = onPrincipalActionClick,
-    icon = { Icon(Icons.Filled.Add, stringResource(R.string.add_repetition)) },
+    icon = { Icon(Icons.Rounded.Add, stringResource(R.string.add_repetition)) },
     text = { Text(text = stringResource(R.string.add_repetition)) },
   )
   SmallFloatingActionButton(
@@ -422,7 +421,7 @@ private fun EditStepRecoverSelection(
 
     RegularCardEditor(
       R.string.recover_duration,
-      Icons.Filled.Timer,
+      Icons.Rounded.Timer,
       currentStep.value.recoverDuration.secondsToHhMmSs(),
       Modifier.card()
     ) {
@@ -454,7 +453,7 @@ private fun EditStepRecoverSelection(
 
     RegularCardEditor(
       R.string.distance,
-      Icons.Filled.Straighten,
+      Icons.Rounded.Straighten,
       "${currentStep.value.recoverDistance} ${currentStep.value.recoverDistanceUnit}",
       Modifier.card()
     ) {
@@ -506,7 +505,7 @@ private fun EditStepDurationSelection(
 
     RegularCardEditor(
       R.string.duration,
-      Icons.Filled.Timer,
+      Icons.Rounded.Timer,
       currentStep.value.duration.secondsToHhMmSs(),
       Modifier.card()
     ) {
@@ -538,7 +537,7 @@ private fun EditStepDurationSelection(
 
     RegularCardEditor(
       R.string.distance,
-      Icons.Filled.Straighten,
+      Icons.Rounded.Straighten,
       "${currentStep.value.distance} ${currentStep.value.distanceUnit}",
       Modifier.card()
     ) {

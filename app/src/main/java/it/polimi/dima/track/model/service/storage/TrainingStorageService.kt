@@ -1,12 +1,11 @@
-package it.polimi.dima.track.model.service
+package it.polimi.dima.track.model.service.storage
 
-import it.polimi.dima.track.model.PersonalBest
 import it.polimi.dima.track.model.Training
+import it.polimi.dima.track.model.User
 import kotlinx.coroutines.flow.Flow
 
-interface StorageService {
+interface TrainingStorageService {
   val trainings: Flow<List<Training>>
-  val personalBests: Flow<List<PersonalBest>>
   suspend fun searchTrainings(query: String): List<Training>
   suspend fun getTraining(trainingId: String): Training?
   suspend fun saveTraining(training: Training): String
@@ -15,11 +14,4 @@ interface StorageService {
   suspend fun deleteTraining(trainingId: String)
   suspend fun deleteAllForUser(userId: String)
   suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean)
-
-  suspend fun getPersonalBestFromDistance(distance: Int): PersonalBest?
-  suspend fun getPersonalBestFromDuration(duration: Int): PersonalBest?
-  suspend fun existsPersonalBestWithTrainingId(trainingId: String): Boolean
-  suspend fun savePersonalBest(personalBest: PersonalBest): String
-  suspend fun updatePersonalBest(personalBest: PersonalBest)
-
 }

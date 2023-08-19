@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -41,13 +41,13 @@ fun SettingsScreen(
     Spacer(modifier = Modifier.bigSpacer())
 
     if (uiState.isAnonymousAccount) {
-      RegularCardEditor(R.string.sign_in, Icons.Filled.Person, "", Modifier.card()) {
+      RegularCardEditor(R.string.sign_in, Icons.Rounded.Person, "", Modifier.card()) {
         viewModel.onLoginClick(openScreen)
       }
 
       RegularCardEditor(
         R.string.create_account,
-        Icons.Filled.PersonAdd,
+        Icons.Rounded.PersonAdd,
         "",
         Modifier.card()
       ) {
@@ -64,7 +64,7 @@ fun SettingsScreen(
 private fun SignOutCard(signOut: () -> Unit) {
   var showWarningDialog by remember { mutableStateOf(false) }
 
-  RegularCardEditor(R.string.sign_out, Icons.Filled.ExitToApp, "", Modifier.card()) {
+  RegularCardEditor(R.string.sign_out, Icons.Rounded.ExitToApp, "", Modifier.card()) {
     showWarningDialog = true
   }
 
