@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.polimi.dima.track.R
+import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 
@@ -64,7 +65,7 @@ fun TimeSelectionDialog(
               onItemSelection = { displayCents.value = it == 1 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.spacer())
           }
 
           if (displayCents.value) {
@@ -484,7 +485,7 @@ private fun RecoverSelectionDialogContent(
         }
       )
 
-      Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.spacer())
 
       if (recoverType.value == TrainingStep.DurationType.TIME) {
         TimeSelectionDialogContent(

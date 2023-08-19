@@ -23,11 +23,11 @@ import androidx.compose.material.icons.rounded.DirectionsWalk
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.FitnessCenter
-import androidx.compose.material.icons.rounded.InsertChartOutlined
 import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.SportsGymnastics
 import androidx.compose.material.icons.rounded.Timer
+import androidx.compose.material.icons.rounded.Watch
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -855,7 +855,7 @@ fun TrainingStepsListBox(
           ) {
             if (filling)
               Icon(
-                Icons.Rounded.InsertChartOutlined,
+                Icons.Rounded.Watch,
                 contentDescription = stringResource(R.string.fill_training)
               )
             else Icon(

@@ -31,7 +31,7 @@ import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.extractCents
 import it.polimi.dima.track.common.ext.extractPaceUnit
 import it.polimi.dima.track.common.ext.paceToSeconds
-import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
@@ -54,8 +54,7 @@ fun FillRepetitionsScreen(
   Column(
     modifier = modifier
       .fillMaxWidth()
-      .fillMaxHeight()
-      .verticalScroll(rememberScrollState()),
+      .fillMaxHeight(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
@@ -70,7 +69,6 @@ fun FillRepetitionsScreen(
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )
 
-    Spacer(modifier = Modifier.spacer())
 
     val openResultDialog = rememberSaveable { mutableStateOf(false) }
     val currentHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
@@ -130,28 +128,35 @@ fun FillRepetitionsScreen(
       }
     }
 
-    val tree = training.calculateTree()
-
-    Column (
-      modifier = Modifier
+    Column(
+      modifier = modifier
         .fillMaxWidth()
-        .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
-      horizontalAlignment = Alignment.CenterHorizontally
+        .fillMaxHeight()
+        .verticalScroll(rememberScrollState())
     ) {
-      UnmodifiableStepsList(
-        trainingSteps = trainingSteps,
-        fillTime = true,
-        onTimeFillClick = { hierarchy, index, step ->
-          currentHierarchy.value = hierarchy
-          currentResultIndex.value = index
-          currentTrainingStep.value = step.id
-          currentResult.value = if (step.results.size > index) step.results[index] else ""
-          currentDurationType.value = step.durationType
-          openResultDialog.value = true
-        },
-      )
-    }
+      Spacer(modifier = Modifier.bigSpacer())
+      val tree = training.calculateTree()
 
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+        UnmodifiableStepsList(
+          trainingSteps = trainingSteps,
+          fillTime = true,
+          onTimeFillClick = { hierarchy, index, step ->
+            currentHierarchy.value = hierarchy
+            currentResultIndex.value = index
+            currentTrainingStep.value = step.id
+            currentResult.value = if (step.results.size > index) step.results[index] else ""
+            currentDurationType.value = step.durationType
+            openResultDialog.value = true
+          },
+        )
+      }
+    }
   }
 }
 

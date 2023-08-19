@@ -29,11 +29,13 @@ import it.polimi.dima.track.R
 import it.polimi.dima.track.SEARCH_SCREEN
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DeleteDialog
+import it.polimi.dima.track.common.ext.getCompleteTime
 import it.polimi.dima.track.common.ext.getDay
 import it.polimi.dima.track.common.ext.getDayName
 import it.polimi.dima.track.common.ext.getWeekInterval
 import it.polimi.dima.track.common.ext.isToday
 import it.polimi.dima.track.common.ext.smallSpacer
+import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
 import it.polimi.dima.track.model.Training
@@ -86,7 +88,7 @@ fun AgendaScreen(
     val trainings = viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
 
     // TODO is this sorting efficient?
-    val sortedTrainings = trainings.value.sortedByDescending { it.dueDate }
+    val sortedTrainings = trainings.value.sortedByDescending { it.getCompleteTime() }
     val options by viewModel.options
 
     Column(
@@ -119,7 +121,6 @@ fun AgendaScreen(
         }
       }
 
-      Spacer(modifier = Modifier.smallSpacer())
       AnimatedContent(
         targetState = sortedTrainings,
         label = "Agenda trainings",
@@ -133,7 +134,7 @@ fun AgendaScreen(
           onTrainingPressed = onTrainingPressed,
           onActionClick = { action, trainingItem ->
             when (TrainingActionOption.getByTitle(action)) {
-              TrainingActionOption.DeleteTask -> {
+              TrainingActionOption.DeleteTraining -> {
                 currentTraining.value = trainingItem.id
                 openDeleteDialog.value = true
               }
@@ -158,6 +159,8 @@ fun AgendaTrainings(
   showActions: Boolean = true
 ) {
   LazyColumn {
+    item { Spacer(modifier = Modifier.spacer()) }
+
     val groupedTrainings = trainings.groupBy {
       it.dueDate.getWeekInterval("No date")
     }

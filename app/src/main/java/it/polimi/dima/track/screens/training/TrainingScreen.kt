@@ -50,7 +50,7 @@ import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.ext.secondsToHhMm
-import it.polimi.dima.track.common.ext.spacer
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.common.utils.addToCalendar
@@ -126,7 +126,7 @@ fun TrainingScreen(
       TrainingInformation(training)
     }
 
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
 
     TrainingStepsListBox(
       training = training,
@@ -172,9 +172,9 @@ private fun TrainingToolbarActions(
       .padding(start = 4.dp, end = 8.dp),
     onActionClick = { action ->
       when (TrainingActionOption.getByTitle(action)) {
-        TrainingActionOption.DeleteTask -> onDeleteTaskClick()
+        TrainingActionOption.DeleteTraining -> onDeleteTaskClick()
         TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick()
-        TrainingActionOption.Share -> sendIntent(
+        TrainingActionOption.ShareLink -> sendIntent(
           context = context,
           text = "https://track.com/training/${training.id}"
         )
@@ -200,22 +200,22 @@ private fun TrainingInformation(training: Training) {
   TrainingTitle(training)
 
   if (training.description.isNotEmpty()) {
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingDescription(training)
   }
 
   if (training.hasDueDate() || training.hasDueTime()) {
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingTime(training)
   }
 
   if (training.notes.isNotEmpty()) {
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingNotes(training)
   }
 
   if (training.type.isNotEmpty()) {
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingType(training)
   }
 }
