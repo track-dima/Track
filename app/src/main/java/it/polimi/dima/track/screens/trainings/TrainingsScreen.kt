@@ -8,13 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.rounded.Event
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -23,11 +22,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
+import it.polimi.dima.track.common.composable.OutlinedCardWithHeader
 import it.polimi.dima.track.common.ext.getCompleteTime
 import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.Training
-import it.polimi.dima.track.screens.profile.OutlinedCardWithHeader
 import it.polimi.dima.track.screens.training.TrainingCard
 
 
@@ -61,7 +60,7 @@ fun TrainingsScreen(
     ActionToolbar(
       title = R.string.trainings,
       modifier = Modifier.toolbarActions(),
-      endActionIcon = Icons.Default.Settings,
+      endActionIcon = Icons.Rounded.Settings,
       endActionDescription = R.string.settings,
       endAction = { viewModel.onSettingsClick(openScreen) }
     ) { }
@@ -72,12 +71,10 @@ fun TrainingsScreen(
         .fillMaxHeight()
         .verticalScroll(rememberScrollState())
     ) {
-
-      Spacer(modifier = Modifier.smallSpacer())
-
       if (nextTraining != null) {
         OutlinedCardWithHeader(
-          header = stringResource(id = R.string.next_scheduled_training)
+          header = stringResource(id = R.string.next_scheduled_training),
+          icon = Icons.Rounded.Event,
         ) {
           TrainingCard(
             modifier = Modifier.padding(8.dp),
@@ -93,7 +90,8 @@ fun TrainingsScreen(
 
       if (lastTraining != null) {
         OutlinedCardWithHeader(
-          header = stringResource(id = R.string.last_training)
+          header = stringResource(id = R.string.last_training),
+          icon = Icons.Rounded.History
         ) {
           TrainingCard(
             modifier = Modifier.padding(8.dp),

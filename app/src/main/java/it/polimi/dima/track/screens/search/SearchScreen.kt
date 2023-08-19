@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +46,6 @@ import it.polimi.dima.track.common.utils.NavigationType
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.screens.agenda.AgendaTrainings
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchScreen(
   popUpScreen: () -> Unit,

@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,10 +62,10 @@ fun EditTrainingScreen(
     ActionToolbar(
       title = R.string.edit_training,
       modifier = Modifier.toolbarActions(),
-      startActionIcon = Icons.Default.Close,
+      startActionIcon = Icons.Rounded.Close,
       startActionDescription = R.string.close,
       startAction = { viewModel.onCancelClick(popUpScreen) },
-      endActionIcon = Icons.Default.Check,
+      endActionIcon = Icons.Rounded.Check,
       endActionDescription = R.string.confirm,
       endAction = { viewModel.onDoneClick(popUpScreen) }
     )
@@ -117,7 +117,7 @@ private fun CardEditors(
   val openTimeDialog = rememberSaveable { mutableStateOf(false) }
   RegularCardEditor(
     R.string.date,
-    Icons.Filled.CalendarMonth,
+    Icons.Rounded.CalendarMonth,
     training.dueDateString,
     Modifier.card()
   ) {
@@ -126,7 +126,7 @@ private fun CardEditors(
 
   RegularCardEditor(
     R.string.time,
-    Icons.Filled.AccessTime,
+    Icons.Rounded.AccessTime,
     training.dueTimeString,
     Modifier.card()
   ) {

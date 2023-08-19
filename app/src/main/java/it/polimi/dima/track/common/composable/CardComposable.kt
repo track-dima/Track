@@ -83,3 +83,51 @@ fun CardSelector(
     DropdownSelector(label, options, selection, Modifier.dropdownSelector(), onNewValue)
   }
 }
+
+@Composable
+fun OutlinedCardWithHeader(
+  header: String,
+  modifier: Modifier = Modifier,
+  icon: ImageVector? = null,
+  content: @Composable () -> Unit
+) {
+  OutlinedCard(
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(16.dp)
+  ) {
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+    ) {
+      OutlinedCardHeader(icon, header)
+      Divider(modifier = Modifier.padding(vertical = 16.dp))
+      content()
+    }
+  }
+}
+
+@Composable
+private fun OutlinedCardHeader(
+  icon: ImageVector?,
+  header: String
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.Center
+  ) {
+    if (icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = header,
+        modifier = Modifier.padding(end = 16.dp)
+      )
+    }
+    Text(
+      text = header,
+      style = MaterialTheme.typography.bodyLarge
+    )
+  }
+}
