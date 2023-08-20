@@ -108,7 +108,6 @@ class FillRepetitionsViewModel @Inject constructor(
     bestForDistances.forEach { (distance, result) ->
       val trainingBestForDistance =
         personalBestStorageService.getPersonalBestFromDistanceAndTraining(distance, training.id)
-      val a = 5
       when {
         trainingBestForDistance == null -> {
           val isNewPersonalBest = updateGlobalDistancePersonalBest(distance, result, training.id)
@@ -134,7 +133,7 @@ class FillRepetitionsViewModel @Inject constructor(
           saveDurationPersonalBestForTraining(duration, result, training.id, isNewPersonalBest)
         }
         trainingBestForDuration.result.paceWorseThan(result) -> {
-          val isNewPersonalBest = updateGlobalDistancePersonalBest(duration, result, training.id)
+          val isNewPersonalBest = updateGlobalDurationPersonalBest(duration, result, training.id)
           updatePersonalBestForTraining(trainingBestForDuration, result, training.id, isNewPersonalBest)
         }
         trainingBestForDuration.globalPersonalBest && trainingBestForDuration.result.paceBetterThan(result) -> {
