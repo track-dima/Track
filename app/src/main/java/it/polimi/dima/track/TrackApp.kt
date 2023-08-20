@@ -209,6 +209,7 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
 
   composable(TRAININGS_SCREEN) {
     TrainingsScreen(
+      navigationType = navigationType,
       openScreen = { route -> appState.navigate(route) },
       onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
     )

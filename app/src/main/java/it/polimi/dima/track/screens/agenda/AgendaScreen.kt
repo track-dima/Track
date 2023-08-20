@@ -71,16 +71,17 @@ fun AgendaScreen(
   Scaffold(
     floatingActionButton = {
       if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
-        LargeFloatingActionButton(
+        ExtendedFloatingActionButton(
           onClick = { viewModel.onAddClick(openScreen) },
-          modifier = modifier.padding(16.dp)
-        ) {
-          Icon(
-            Icons.Rounded.Add,
-            modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
-            contentDescription = stringResource(id = R.string.add_training),
-          )
-        }
+          modifier = modifier.padding(16.dp),
+          text = { Text(stringResource(id = R.string.add_training)) },
+          icon = {
+            Icon(
+              Icons.Rounded.Add,
+              contentDescription = stringResource(id = R.string.add_training),
+            )
+          },
+        )
       }
     }
   ) {

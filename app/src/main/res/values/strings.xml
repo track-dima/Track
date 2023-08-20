@@ -102,5 +102,7 @@
     <string name="trainings_this_week">Trainings this week</string>
     <string name="trainings_this_month">Trainings this month</string>
     <string name="personal_bests">Personal bests</string>
-    <string name="no_personal_bests_yet">no personal bests yet...</string>
+    <string name="no_personal_bests_yet">no personal bests yet…</string>
+    <string name="no_planned_trainings">no planned trainings yet…</string>
+    <string name="no_trainings_in_history">no trainings in history…</string>
 </resources>

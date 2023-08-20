@@ -34,6 +34,8 @@ class TrainingsViewModel @Inject constructor(
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
+  fun onAddClick(openScreen: (String) -> Unit) = openScreen(EDIT_TRAINING_SCREEN)
+
   fun onTrainingActionClick(
     openScreen: (String) -> Unit,
     training: Training,
