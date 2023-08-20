@@ -33,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -42,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -833,46 +835,49 @@ fun TrainingStepsListBox(
     modifier = Modifier
       .fieldModifier()
       .fillMaxWidth()
-      .height(max(32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
+      .height(max(80.dp + 32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
   ) {
-    Scaffold(
-      floatingActionButton = {
-        Row(
-          modifier = Modifier
-            .fillMaxHeight()
-            .padding(end = 8.dp, top = 40.dp),
-          verticalAlignment = Alignment.Top
-        ) {
-          FloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            onClick = {
-              if (filling) {
-                onFillSteps()
-              } else {
-                onEditSteps()
-              }
-            },
-          ) {
-            if (filling)
-              Icon(
-                Icons.Rounded.Watch,
-                contentDescription = stringResource(R.string.fill_training)
-              )
-            else Icon(
-              Icons.Rounded.Edit,
-              contentDescription = stringResource(R.string.edit_repetitions)
-            )
-          }
-        }
-      },
-      floatingActionButtonPosition = FabPosition.End
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp, bottom = 8.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center
     ) {
-      Row(
-        modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        UnmodifiableStepsList(trainingSteps = training.trainingSteps)
-      }
+      ExtendedFloatingActionButton(
+        text = {
+          Text(
+            text = if (filling) stringResource(R.string.fill_training) else stringResource(
+              R.string.edit_repetitions
+            )
+          )
+        },
+        icon = {
+          if (filling)
+            Icon(
+              Icons.Rounded.Watch,
+              contentDescription = stringResource(R.string.fill_training)
+            )
+          else Icon(
+            Icons.Rounded.Edit,
+            contentDescription = stringResource(R.string.edit_repetitions)
+          )
+        },
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        onClick = {
+          if (filling) {
+            onFillSteps()
+          } else {
+            onEditSteps()
+          }
+        },
+      )
+    }
+    Row(
+      modifier = Modifier.fillMaxSize(),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      UnmodifiableStepsList(trainingSteps = training.trainingSteps)
     }
   }
 }

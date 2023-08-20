@@ -199,7 +199,6 @@ fun EditRepetitionsScreen(
           .detectReorderAfterLongPress(state)
           .weight(1f)
       ) {
-        item { Spacer(modifier = Modifier.spacer()) }
         items(trainingSteps, { it.id }) { trainingStep ->
           ReorderableItem(state, key = trainingStep.id) {
 

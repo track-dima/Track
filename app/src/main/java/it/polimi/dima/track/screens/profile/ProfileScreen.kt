@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.Insights
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -59,6 +60,7 @@ import it.polimi.dima.track.common.ext.isThisMonth
 import it.polimi.dima.track.common.ext.isThisWeek
 import it.polimi.dima.track.common.ext.removeLeadingZeros
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
+import it.polimi.dima.track.common.ext.smallSpacer
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.PersonalBest
@@ -191,6 +193,9 @@ fun PersonalBestCard(
 ) {
   Card(
     onClick = { onPersonalBestClick(personalBest.trainingId) },
+    colors = CardDefaults.outlinedCardColors(
+      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+    )
   ) {
     Row(
       modifier = Modifier
@@ -298,7 +303,7 @@ fun UserInformation(
       user = user,
       onEditName = onEditName
     )
-    Spacer(modifier = Modifier.spacer())
+    Spacer(modifier = Modifier.smallSpacer())
     UserSpecialty(
       user = user,
       onEditSpecialty = onEditSpecialty
