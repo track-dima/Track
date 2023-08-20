@@ -23,8 +23,15 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
   override val user: Flow<User>
     get() =
       auth.currentUser.flatMapLatest { user ->
-        firestore.collection(USER_COLLECTION).document(user.id).snapshots()
-          .map { snapshot -> snapshot.toObject()!! }
+        if (user.isAnonymous) {
+          auth.currentUser
+        } else {
+          firestore.collection(USER_COLLECTION).document(user.id).snapshots()
+            .map { snapshot ->
+              val userObject = snapshot.toObject<User>()!!
+              userObject.copy(isAnonymous = false)
+            }
+        }
       }
 
   override suspend fun updateUserName(newName: String) {

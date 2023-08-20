@@ -102,11 +102,13 @@ fun ProfileScreen(
         personalBests.value.filter { it.type == TrainingStep.DurationType.TIME }
           .sortedBy { it.duration }
 
-      UserInformation(
-        user = user.value,
-        onEditName = { viewModel.onNameChange(it) },
-        onEditSpecialty = { viewModel.onSpecialtyChange(it) }
-      )
+      if (!user.value.isAnonymous) {
+        UserInformation(
+          user = user.value,
+          onEditName = { viewModel.onNameChange(it) },
+          onEditSpecialty = { viewModel.onSpecialtyChange(it) }
+        )
+      }
       UserStatistics(trainings = trainings.value)
       UserPersonalBests(
         distancePersonalBests = distancePersonalBests,
@@ -476,7 +478,7 @@ private fun SetSpecialtyDialog(
 
 @Composable
 private fun ModifiableField(
-  text: String,
+  text: String?,
   placeholder: String,
   onEditClick: () -> Unit,
   editLabel: String,
@@ -492,7 +494,7 @@ private fun ModifiableField(
       contentDescription = iconContentDescription,
       modifier = Modifier.padding(end = 16.dp)
     )
-    if (text.isNotBlank()) Text(text = text)
+    if (!text.isNullOrEmpty()) Text(text = text)
     else Text(
       text = placeholder,
       color = LocalContentColor.current.copy(alpha = 0.5f)

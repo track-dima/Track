@@ -105,4 +105,5 @@
     <string name="no_personal_bests_yet">no personal bests yet…</string>
     <string name="no_planned_trainings">no planned trainings yet…</string>
     <string name="no_trainings_in_history">no trainings in history…</string>
+    <string name="no_trainings">No trainings</string>
 </resources>

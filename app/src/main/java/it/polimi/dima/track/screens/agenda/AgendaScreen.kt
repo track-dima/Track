@@ -119,28 +119,40 @@ fun AgendaScreen(
         }
       }
 
-      AnimatedContent(
-        targetState = sortedTrainings,
-        label = "Agenda trainings",
-        transitionSpec = {
-          fadeIn() with fadeOut()
+      if (sortedTrainings.isEmpty()) {
+        Column(
+          modifier = Modifier.fillMaxSize(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center
+        ) {
+          Text(
+            text = stringResource(R.string.no_trainings),
+          )
         }
-      ) { trainings ->
-        AgendaTrainings(
-          trainings = trainings,
-          options = options,
-          onTrainingPressed = onTrainingPressed,
-          onActionClick = { action, trainingItem ->
-            when (TrainingActionOption.getByTitle(action)) {
-              TrainingActionOption.DeleteTraining -> {
-                currentTraining.value = trainingItem.id
-                openDeleteDialog.value = true
-              }
-
-              else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
-            }
+      } else {
+        AnimatedContent(
+          targetState = sortedTrainings,
+          label = "Agenda trainings",
+          transitionSpec = {
+            fadeIn() with fadeOut()
           }
-        )
+        ) { trainings ->
+          AgendaTrainings(
+            trainings = trainings,
+            options = options,
+            onTrainingPressed = onTrainingPressed,
+            onActionClick = { action, trainingItem ->
+              when (TrainingActionOption.getByTitle(action)) {
+                TrainingActionOption.DeleteTraining -> {
+                  currentTraining.value = trainingItem.id
+                  openDeleteDialog.value = true
+                }
+
+                else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
+              }
+            }
+          )
+        }
       }
     }
   }
