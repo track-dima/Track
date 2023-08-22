@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.common.utils.NavigationContentPosition
 import it.polimi.dima.track.common.utils.NavigationType
+import it.polimi.dima.track.common.utils.TrackContentType
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.screens.TrackViewModel
 import it.polimi.dima.track.screens.signup.SignUpUiState

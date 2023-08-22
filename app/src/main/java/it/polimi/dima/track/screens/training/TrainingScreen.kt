@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -45,21 +43,23 @@ import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.composable.IconButtonStyle
 import it.polimi.dima.track.common.composable.NoTitleToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.calculateTotalTime
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.ext.secondsToHhMm
-import it.polimi.dima.track.common.ext.bigSpacer
+import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
-import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.model.Training
 
 @Composable
 fun TrainingScreen(
-  popUpScreen: () -> Unit,
+  modifier: Modifier = Modifier,
+  compactMode: Boolean = false,
+  popUpScreen: () -> Unit = {},
   openScreen: (String) -> Unit,
   trainingId: String,
   onEditPressed: (Training) -> Unit,
@@ -68,7 +68,7 @@ fun TrainingScreen(
   val training by viewModel.training
   val options by viewModel.options
 
-  LaunchedEffect(Unit) {
+  LaunchedEffect(trainingId) {
     viewModel.initialize(trainingId)
   }
 
@@ -87,21 +87,23 @@ fun TrainingScreen(
   }
 
   Column(
-    modifier = Modifier
-      .fillMaxSize()
+    modifier = modifier
       .verticalScroll(rememberScrollState()),
   ) {
     NoTitleToolbar(
       navigationIcon = {
-        FilledTonalIconButton(
-          modifier = Modifier.padding(8.dp, 0.dp),
-          onClick = popUpScreen
-        ) {
-          Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
+        if (!compactMode) {
+          FilledTonalIconButton(
+            modifier = Modifier.padding(8.dp, 0.dp),
+            onClick = popUpScreen
+          ) {
+            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
+          }
         }
       }
     ) {
       TrainingToolbarActions(
+        compactMode = compactMode,
         training = training,
         onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
         onEditPressed = { onEditPressed(training) },
@@ -140,6 +142,7 @@ fun TrainingScreen(
 
 @Composable
 private fun TrainingToolbarActions(
+  compactMode: Boolean,
   training: Training,
   onFavoriteClick: (Boolean) -> Unit,
   onEditPressed: () -> Unit,
@@ -149,15 +152,17 @@ private fun TrainingToolbarActions(
 ) {
   val context = LocalContext.current
 
-  FilledTonalIconToggleButton(
-    modifier = Modifier.padding(horizontal = 4.dp),
-    checked = training.favorite,
-    onCheckedChange = onFavoriteClick
-  ) {
-    Icon(
-      if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-      contentDescription = stringResource(R.string.favorite)
-    )
+  if (!compactMode) {
+    FilledTonalIconToggleButton(
+      modifier = Modifier.padding(horizontal = 4.dp),
+      checked = training.favorite,
+      onCheckedChange = onFavoriteClick
+    ) {
+      Icon(
+        if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+        contentDescription = stringResource(R.string.favorite)
+      )
+    }
   }
   FilledTonalIconButton(
     modifier = Modifier.padding(horizontal = 4.dp),

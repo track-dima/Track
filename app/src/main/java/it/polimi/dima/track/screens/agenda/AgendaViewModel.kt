@@ -28,7 +28,7 @@ class AgendaViewModel @Inject constructor(
   private val trainingStorageService: TrainingStorageService,
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
-  val options = mutableStateOf<List<String>>(listOf())
+  val actions = mutableStateOf<List<String>>(listOf())
   private val trainings = trainingStorageService.trainings
 
   private val favoriteSelected = MutableStateFlow(false)
@@ -45,9 +45,9 @@ class AgendaViewModel @Inject constructor(
     }
   }
 
-  fun loadTaskOptions() {
+  fun loadTrainingOptions() {
     // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
-    options.value = TrainingActionOption.getOptions(AGENDA_SCREEN)
+    actions.value = TrainingActionOption.getOptions(AGENDA_SCREEN)
   }
 
   fun onFavoriteToggle(showFavorites: Boolean) {

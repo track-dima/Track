@@ -103,7 +103,7 @@ fun TrainingsScreen(
             TrainingCard(
               modifier = Modifier.padding(8.dp),
               training = nextTraining,
-              options = options,
+              actions = options,
               onClick = { onTrainingPressed(nextTraining) },
               onActionClick = { action ->
                 viewModel.onTrainingActionClick(openScreen, nextTraining, action, context)
@@ -129,7 +129,7 @@ fun TrainingsScreen(
             TrainingCard(
               modifier = Modifier.padding(8.dp),
               training = lastTraining,
-              options = options,
+              actions = options,
               onClick = { onTrainingPressed(lastTraining) },
               onActionClick = { action ->
                 viewModel.onTrainingActionClick(openScreen, lastTraining, action, context)
