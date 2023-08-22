@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -40,6 +41,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import it.polimi.dima.track.common.snackbar.SnackBarManager
 import it.polimi.dima.track.common.utils.NavigationContentPosition
 import it.polimi.dima.track.common.utils.NavigationType
+import it.polimi.dima.track.common.utils.TrackContentType
 import it.polimi.dima.track.navigation.PermanentNavigationDrawerContent
 import it.polimi.dima.track.navigation.TopLevelDestination
 import it.polimi.dima.track.navigation.TrackBottomNavigationBar
@@ -61,9 +63,10 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun TrackApp(
   windowSize: WindowSizeClass,
+  width: Dp,
   viewModel: TrackAppViewModel = hiltViewModel()
 ) {
-  viewModel.calculateNavigationType(windowSize)
+  viewModel.calculateNavigationType(windowSize, width)
   val uiState by viewModel.uiState
   val appState = rememberAppState()
   val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
@@ -103,6 +106,7 @@ fun TrackApp(
         TrackAppContent(
           appState = appState,
           navigationType = uiState.navigationType,
+          contentType = uiState.contentType,
           navigationContentPosition = uiState.navigationContentPosition,
           innerPadding = innerPaddingModifier,
           selectedDestination = selectedDestination,
@@ -118,6 +122,7 @@ fun TrackApp(
 fun TrackAppContent(
   appState: TrackAppState,
   navigationType: NavigationType,
+  contentType: TrackContentType,
   selectedDestination: String,
   innerPadding: PaddingValues,
   navigationContentPosition: NavigationContentPosition,
@@ -144,7 +149,7 @@ fun TrackAppContent(
         startDestination = SPLASH_SCREEN,
         modifier = Modifier.weight(1f)
       ) {
-        trackGraph(appState, navigationType)
+        trackGraph(appState, navigationType, contentType)
       }
       AnimatedVisibility(visible = navigationType == NavigationType.BOTTOM_NAVIGATION) {
         TrackBottomNavigationBar(
@@ -187,7 +192,11 @@ fun resources(): Resources {
   return LocalContext.current.resources
 }
 
-fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: NavigationType) {
+fun NavGraphBuilder.trackGraph(
+  appState: TrackAppState,
+  navigationType: NavigationType,
+  contentType: TrackContentType
+) {
   composable(SPLASH_SCREEN) {
     SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
   }
@@ -219,7 +228,8 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
     AgendaScreen(
       openScreen = { route -> appState.navigate(route) },
       onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") },
-      navigationType = navigationType
+      navigationType = navigationType,
+      contentType = contentType
     )
   }
 

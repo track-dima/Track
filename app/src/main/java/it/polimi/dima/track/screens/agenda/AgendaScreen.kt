@@ -39,6 +39,7 @@ import it.polimi.dima.track.common.ext.isToday
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
+import it.polimi.dima.track.common.utils.TrackContentType
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.screens.training.TrainingActionOption
 import it.polimi.dima.track.screens.training.TrainingCard
@@ -50,6 +51,7 @@ import it.polimi.dima.track.screens.training.TrainingScreen
 fun AgendaScreen(
   openScreen: (String) -> Unit,
   navigationType: NavigationType,
+  contentType: TrackContentType,
   viewModel: AgendaViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
@@ -71,7 +73,7 @@ fun AgendaScreen(
   val trainings by viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
   val sortedTrainings = trainings.sortedByDescending { it.getCompleteTime() }
 
-  if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+  if (contentType == TrackContentType.LIST_AND_DETAIL) {
     var selectedTrainingId by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(sortedTrainings) {
@@ -94,7 +96,9 @@ fun AgendaScreen(
         showActions = false
       )
       if (selectedTrainingId.isNotEmpty()) {
+        // TODO favorite reloads the list
         TrainingScreen(
+          modifier = Modifier.padding(start = 8.dp),
           compactMode = true,
           openScreen = openScreen,
           trainingId = selectedTrainingId,

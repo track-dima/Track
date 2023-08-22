@@ -4,6 +4,8 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.common.utils.NavigationContentPosition
 import it.polimi.dima.track.common.utils.NavigationType
@@ -20,7 +22,7 @@ class TrackAppViewModel @Inject constructor(
   var uiState = mutableStateOf(TrackAppUiState())
     private set
 
-  fun calculateNavigationType(windowSize: WindowSizeClass) {
+  fun calculateNavigationType(windowSize: WindowSizeClass, width: Dp) {
     uiState.value = uiState.value.copy(
       navigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -38,6 +40,11 @@ class TrackAppViewModel @Inject constructor(
         else -> {
           NavigationType.BOTTOM_NAVIGATION
         }
+      },
+      contentType = if (width > 1200.dp) {
+        TrackContentType.LIST_AND_DETAIL
+      } else {
+        TrackContentType.LIST_ONLY
       },
       navigationContentPosition = when (windowSize.heightSizeClass) {
         WindowHeightSizeClass.Compact -> {

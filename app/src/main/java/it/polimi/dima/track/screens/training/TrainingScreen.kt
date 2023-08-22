@@ -41,7 +41,7 @@ import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.composable.IconButtonStyle
-import it.polimi.dima.track.common.composable.NoTitleToolbar
+import it.polimi.dima.track.common.composable.NoTitleTransparentToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
 import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.calculateTotalTime
@@ -90,7 +90,7 @@ fun TrainingScreen(
     modifier = modifier
       .verticalScroll(rememberScrollState()),
   ) {
-    NoTitleToolbar(
+    NoTitleTransparentToolbar(
       navigationIcon = {
         if (!compactMode) {
           FilledTonalIconButton(
@@ -103,7 +103,6 @@ fun TrainingScreen(
       }
     ) {
       TrainingToolbarActions(
-        compactMode = compactMode,
         training = training,
         onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
         onEditPressed = { onEditPressed(training) },
@@ -142,7 +141,6 @@ fun TrainingScreen(
 
 @Composable
 private fun TrainingToolbarActions(
-  compactMode: Boolean,
   training: Training,
   onFavoriteClick: (Boolean) -> Unit,
   onEditPressed: () -> Unit,
@@ -152,17 +150,15 @@ private fun TrainingToolbarActions(
 ) {
   val context = LocalContext.current
 
-  if (!compactMode) {
-    FilledTonalIconToggleButton(
-      modifier = Modifier.padding(horizontal = 4.dp),
-      checked = training.favorite,
-      onCheckedChange = onFavoriteClick
-    ) {
-      Icon(
-        if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-        contentDescription = stringResource(R.string.favorite)
-      )
-    }
+  FilledTonalIconToggleButton(
+    modifier = Modifier.padding(horizontal = 4.dp),
+    checked = training.favorite,
+    onCheckedChange = onFavoriteClick
+  ) {
+    Icon(
+      if (training.favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+      contentDescription = stringResource(R.string.favorite)
+    )
   }
   FilledTonalIconButton(
     modifier = Modifier.padding(horizontal = 4.dp),
@@ -183,11 +179,13 @@ private fun TrainingToolbarActions(
           context = context,
           text = "https://track.com/training/${training.id}"
         )
+
         TrainingActionOption.CopyTraining -> copyToClipboard(
           context = context,
           text = training.parseTraining(),
           label = "Training",
         )
+
         TrainingActionOption.AddToCalendar -> addToCalendar(
           context = context,
           training = training

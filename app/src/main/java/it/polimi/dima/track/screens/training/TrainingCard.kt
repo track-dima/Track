@@ -59,7 +59,7 @@ fun TrainingCard(
     modifier = modifier,
     onClick = onClick,
     colors = if (selected) CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.secondaryContainer
+      containerColor = MaterialTheme.colorScheme.primaryContainer
     ) else CardDefaults.cardColors(),
   ) {
     Row(
