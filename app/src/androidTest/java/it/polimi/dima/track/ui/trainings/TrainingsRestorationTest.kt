@@ -21,7 +21,7 @@ import it.polimi.dima.track.TestExpandedTabletWidth
 import it.polimi.dima.track.TrackApp
 import it.polimi.dima.track.data.mockedTrainings
 import it.polimi.dima.track.injection.InjectingTestCase
-import it.polimi.dima.track.injection.MockTrainingStorageServiceImpl
+import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
 import it.polimi.dima.track.model.service.module.StorageModule

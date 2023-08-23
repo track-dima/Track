@@ -4,7 +4,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -25,7 +24,7 @@ import it.polimi.dima.track.TestMediumWidth
 import it.polimi.dima.track.TrackApp
 import it.polimi.dima.track.data.mockedTrainings
 import it.polimi.dima.track.injection.InjectingTestCase
-import it.polimi.dima.track.injection.MockTrainingStorageServiceImpl
+import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
 import it.polimi.dima.track.model.service.module.StorageModule

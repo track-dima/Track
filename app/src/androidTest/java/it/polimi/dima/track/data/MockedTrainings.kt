@@ -5,7 +5,7 @@ import java.util.Calendar
 
 private val calendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, 2) }
 
-val mockedTrainings: List<Training> = (1..10).map {
+val mockedTrainings: List<Training> = (1..5).map {
   Training(
     id = it.toString(),
     title = "Training $it",
