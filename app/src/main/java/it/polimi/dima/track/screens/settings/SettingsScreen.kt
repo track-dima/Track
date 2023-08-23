@@ -58,10 +58,9 @@ fun SettingsScreen(
     } else {
       SignOutCard { viewModel.onSignOutClick() }
       DeleteMyAccountCard { viewModel.onDeleteMyAccountClick(restartApp) }
-    }
-
-    Button(onClick = { viewModel.onFitbitButtonClick(context) } ) {
-      Text("Connect to your FitBit account")
+      Button(onClick = { viewModel.onFitbitButtonClick(context) }) {
+        Text("Connect to your FitBit account")
+      }
     }
   }
 }

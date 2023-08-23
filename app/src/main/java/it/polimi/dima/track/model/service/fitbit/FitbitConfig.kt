@@ -1,4 +1,4 @@
-package it.polimi.dima.track.services.fitbit
+package it.polimi.dima.track.model.service.fitbit
 
 data class FitbitConfig(
     val clientId: String = "23QZSP",

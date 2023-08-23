@@ -10,8 +10,7 @@ import it.polimi.dima.track.SPLASH_SCREEN
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.screens.TrackViewModel
-import it.polimi.dima.track.services.fitbit.FitbitAuthManager
-import it.polimi.dima.track.services.fitbit.FitbitConfig
+import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.map
 class SettingsViewModel @Inject constructor(
   logService: LogService,
   private val accountService: AccountService,
+  private val fitbitAuthManager: FitbitAuthManager,
 ) : TrackViewModel(logService) {
   val uiState = accountService.currentUser.map { SettingsUiState(it.isAnonymous) }
 
@@ -40,7 +40,6 @@ class SettingsViewModel @Inject constructor(
   }
 
   fun onFitbitButtonClick(context: Context) {
-    val fitbitAuthManager = FitbitAuthManager(FitbitConfig())
     CustomTabsIntent.Builder()
       .build()
       .launchUrl(context, Uri.parse(fitbitAuthManager.createAuthorizationUrl()))

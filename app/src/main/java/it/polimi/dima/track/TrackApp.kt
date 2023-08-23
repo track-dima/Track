@@ -48,6 +48,7 @@ import it.polimi.dima.track.screens.agenda.AgendaScreen
 import it.polimi.dima.track.screens.edit_repetitions.EditRepetitionsScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
 import it.polimi.dima.track.screens.fill_repetitions.FillRepetitionsScreen
+import it.polimi.dima.track.screens.fitbit.FitbitScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.profile.ProfileScreen
 import it.polimi.dima.track.screens.search.SearchScreen
@@ -276,5 +277,14 @@ fun NavGraphBuilder.trackGraph(appState: TrackAppState, navigationType: Navigati
       trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID,
       onEditPressed = { training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
     )
+  }
+
+  composable(
+    route = FITBIT_SCREEN,
+    deepLinks = listOf(navDeepLink { uriPattern = "https://track.com/fitbit?code={authorizationCode}#_=_" })) {
+      FitbitScreen(
+        fitbitAuthorizationCode = it.arguments!!.getString("authorizationCode")!!,
+        openScreen = { route -> appState.navigate(route) }
+      )
   }
 }
