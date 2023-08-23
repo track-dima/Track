@@ -16,14 +16,18 @@ import it.polimi.dima.track.model.service.impl.LogServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.TrainingStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ServiceModule {
   @Binds
+  @Singleton
   abstract fun provideAccountService(impl: AccountServiceImpl): AccountService
   @Binds
+  @Singleton
   abstract fun provideLogService(impl: LogServiceImpl): LogService
   @Binds
+  @Singleton
   abstract fun provideConfigurationService(impl: ConfigurationServiceImpl): ConfigurationService
 }
