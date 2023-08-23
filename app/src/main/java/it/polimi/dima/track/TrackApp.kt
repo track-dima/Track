@@ -232,7 +232,8 @@ fun NavGraphBuilder.trackGraph(
     TrainingsScreen(
       navigationType = navigationType,
       openScreen = { route -> appState.navigate(route) },
-      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
+      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") },
+      contentType = contentType
     )
   }
 

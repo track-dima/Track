@@ -24,12 +24,12 @@ class TrainingsViewModel @Inject constructor(
   private val trainingStorageService: TrainingStorageService,
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
-  val options = mutableStateOf<List<String>>(listOf())
+  val actions = mutableStateOf<List<String>>(listOf())
   val trainings = trainingStorageService.trainings
 
   fun loadTaskOptions() {
     // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
-    options.value = TrainingActionOption.getOptions(TRAININGS_SCREEN)
+    actions.value = TrainingActionOption.getOptions(TRAININGS_SCREEN)
   }
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)

@@ -55,7 +55,6 @@ fun AgendaScreen(
   viewModel: AgendaViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
-  val context = LocalContext.current
   val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
   val currentTraining = rememberSaveable { mutableStateOf("") }
 
@@ -108,6 +107,7 @@ fun AgendaScreen(
     }
   } else {
     val actions by viewModel.actions
+    val context = LocalContext.current
 
     AgendaContent(
       onFabClick = { viewModel.onAddClick(openScreen) },
