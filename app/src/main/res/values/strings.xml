@@ -106,4 +106,7 @@
     <string name="no_planned_trainings">no planned trainings yet…</string>
     <string name="no_trainings_in_history">no trainings in history…</string>
     <string name="no_trainings">No trainings</string>
+    <string name="navigation_drawer">Navigation drawer</string>
+    <string name="navigation_rail">Navigation rail</string>
+    <string name="navigation_bottom">Navigation bottom</string>
 </resources>

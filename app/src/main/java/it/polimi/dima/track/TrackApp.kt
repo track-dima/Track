@@ -26,6 +26,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -87,22 +89,28 @@ fun TrackApp(
         )
       }
     ) { innerPaddingModifier ->
-      PermanentNavigationDrawer(drawerContent = {
-        if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
-          val systemUiController = rememberSystemUiController()
-          val useDarkIcons = !isSystemInDarkTheme()
-          val colorScheme = MaterialTheme.colorScheme
-          SideEffect {
-            systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = useDarkIcons)
+      PermanentNavigationDrawer(
+        drawerContent = {
+          if (uiState.navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+            val systemUiController = rememberSystemUiController()
+            val useDarkIcons = !isSystemInDarkTheme()
+            val colorScheme = MaterialTheme.colorScheme
+            val navigationDrawerContentDescription = stringResource(R.string.navigation_drawer)
+            SideEffect {
+              systemUiController.setSystemBarsColor(
+                colorScheme.background,
+                darkIcons = useDarkIcons
+              )
+            }
+            PermanentNavigationDrawerContent(
+              modifier = Modifier.testTag(navigationDrawerContentDescription),
+              selectedDestination = selectedDestination,
+              navigationContentPosition = uiState.navigationContentPosition,
+              navigateToTopLevelDestination = appState::drawerNavigate,
+              openScreen = { route -> appState.navigate(route) }
+            )
           }
-          PermanentNavigationDrawerContent(
-            selectedDestination = selectedDestination,
-            navigationContentPosition = uiState.navigationContentPosition,
-            navigateToTopLevelDestination = appState::drawerNavigate,
-            openScreen = { route -> appState.navigate(route) }
-          )
-        }
-      }) {
+        }) {
         TrackAppContent(
           appState = appState,
           navigationType = uiState.navigationType,
@@ -130,7 +138,9 @@ fun TrackAppContent(
 ) {
   Row(modifier = Modifier.fillMaxSize()) {
     AnimatedVisibility(visible = navigationType == NavigationType.NAVIGATION_RAIL) {
+      val navigationRailContentDescription = stringResource(R.string.navigation_rail)
       TrackNavigationRail(
+        modifier = Modifier.testTag(navigationRailContentDescription),
         selectedDestination = selectedDestination,
         navigationContentPosition = navigationContentPosition,
         navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -152,7 +162,9 @@ fun TrackAppContent(
         trackGraph(appState, navigationType, contentType)
       }
       AnimatedVisibility(visible = navigationType == NavigationType.BOTTOM_NAVIGATION) {
+        val bottomNavigationContentDescription = stringResource(R.string.navigation_bottom)
         TrackBottomNavigationBar(
+          modifier = Modifier.testTag(bottomNavigationContentDescription),
           selectedDestination = selectedDestination,
           navigateToTopLevelDestination = navigateToTopLevelDestination
         )
