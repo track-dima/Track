@@ -8,12 +8,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import it.polimi.dima.track.HiltTestActivity
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TestCompactWidth
@@ -23,13 +18,6 @@ import it.polimi.dima.track.TestMediumWidth
 import it.polimi.dima.track.TrackApp
 import it.polimi.dima.track.data.mockedTrainings
 import it.polimi.dima.track.injection.InjectingTestCase
-import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
-import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
-import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
-import it.polimi.dima.track.model.service.module.StorageModule
-import it.polimi.dima.track.model.service.storage.PersonalBestStorageService
-import it.polimi.dima.track.model.service.storage.TrainingStorageService
-import it.polimi.dima.track.model.service.storage.UserStorageService
 import it.polimi.dima.track.utlis.compactWindowSize
 import it.polimi.dima.track.utlis.expandedTabletWindowSize
 import it.polimi.dima.track.utlis.expandedWindowSize
@@ -42,7 +30,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-@UninstallModules(StorageModule::class)
 @HiltAndroidTest
 class TrainingsWindowSizeTest : InjectingTestCase() {
 
@@ -52,19 +39,6 @@ class TrainingsWindowSizeTest : InjectingTestCase() {
    */
   @get:Rule(order = 1)
   val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
-
-  @Module
-  @InstallIn(SingletonComponent::class)
-  abstract class TestServiceModule {
-    @Binds
-    abstract fun provideMockTrainingStorageService(impl: MockTrainingStorageServiceImpl): TrainingStorageService
-
-    @Binds
-    abstract fun provideMockPersonalBestStorageService(impl: PersonalBestStorageServiceImpl): PersonalBestStorageService
-
-    @Binds
-    abstract fun provideMockUserStorageService(impl: UserStorageServiceImpl): UserStorageService
-  }
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
