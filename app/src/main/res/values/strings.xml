@@ -109,4 +109,6 @@
     <string name="navigation_drawer">Navigation drawer</string>
     <string name="navigation_rail">Navigation rail</string>
     <string name="navigation_bottom">Navigation bottom</string>
+    <string name="add_training_agenda_fab_tag">Add training agenda fab tag</string>
+    <string name="add_training_trainings_fab_tag">Add training trainings fab tag</string>
 </resources>

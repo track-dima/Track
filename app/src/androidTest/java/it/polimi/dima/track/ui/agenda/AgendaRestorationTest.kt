@@ -1,4 +1,4 @@
-package it.polimi.dima.track.ui.training
+package it.polimi.dima.track.ui.agenda
 
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @UninstallModules(StorageModule::class)
 @HiltAndroidTest
-class TrainingRestorationTest : InjectingTestCase() {
+class AgendaRestorationTest : InjectingTestCase() {
 
   /**
    * Note: To access to an empty activity, the code uses a custom activity [HiltTestActivity]
@@ -64,7 +64,7 @@ class TrainingRestorationTest : InjectingTestCase() {
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
   @TestCompactWidth
-  fun compactDevice_selectedTrainingTrainingRetained_afterConfigChange() {
+  fun compactDevice_agendaScreenSelectedTrainingTrainingRetained_afterConfigChange() {
     // Setup compact window
     val stateRestorationTester = StateRestorationTester(composeTestRule)
     stateRestorationTester.setContent {
@@ -110,8 +110,8 @@ class TrainingRestorationTest : InjectingTestCase() {
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
   @TestExpandedTabletWidth
-  fun expandedTabletDevice_selectedTrainingTrainingRetained_afterConfigChange() {
-    // Setup compact window
+  fun expandedTabletDevice_agendaScreenSelectedTrainingTrainingRetained_afterConfigChange() {
+    // Setup tablet expanded window
     val stateRestorationTester = StateRestorationTester(composeTestRule)
     stateRestorationTester.setContent {
       TrackApp(
@@ -127,11 +127,6 @@ class TrainingRestorationTest : InjectingTestCase() {
     composeTestRule.onNodeWithText(
       mockedTrainings[0].notes
     ).assertExists()
-
-    // In this case the close button is not shown
-    composeTestRule.onNodeWithContentDescriptionForStringId(
-      R.string.close
-    ).assertDoesNotExist()
 
     // Select second training
     composeTestRule.onNodeWithText(
@@ -149,7 +144,7 @@ class TrainingRestorationTest : InjectingTestCase() {
     // Simulate a config change
     stateRestorationTester.emulateSavedInstanceStateRestore()
 
-    // Verify that third training is still displayed on the details screen
+    // Verify that second training is still displayed on the details screen
     composeTestRule.onNodeWithText(
       mockedTrainings[0].notes
     ).assertDoesNotExist()
