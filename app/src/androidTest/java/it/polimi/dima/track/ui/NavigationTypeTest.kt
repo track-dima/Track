@@ -3,15 +3,19 @@ package it.polimi.dima.track.ui
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidTest
 import it.polimi.dima.track.HiltTestActivity
 import it.polimi.dima.track.R
+import it.polimi.dima.track.TestCompactWidth
+import it.polimi.dima.track.TestExpandedWidth
+import it.polimi.dima.track.TestMediumWidth
 import it.polimi.dima.track.TrackApp
 import it.polimi.dima.track.injection.InjectingTestCase
-import it.polimi.dima.track.onNodeWithTagForStringId
+import it.polimi.dima.track.utlis.compactWindowSize
+import it.polimi.dima.track.utlis.expandedWindowSize
+import it.polimi.dima.track.utlis.mediumWindowSize
+import it.polimi.dima.track.utlis.onNodeWithTagForStringId
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -28,12 +32,9 @@ class NavigationTypeTest : InjectingTestCase() {
   @get:Rule(order = 1)
   val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
-  private val compactWindowSize = DpSize(width = 400.dp, height = 600.dp)
-  private val mediumWindowSize = DpSize(width = 700.dp, height = 600.dp)
-  private val expandedWindowSize = DpSize(width = 900.dp, height = 600.dp)
-
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
+  @TestCompactWidth
   fun compactDevice_verifyUsingBottomNavigation() {
     // Set up compact window
     composeTestRule.setContent {
@@ -50,6 +51,7 @@ class NavigationTypeTest : InjectingTestCase() {
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
+  @TestMediumWidth
   fun mediumDevice_verifyUsingNavigationRail() {
     // Set up medium window
     composeTestRule.setContent {
@@ -66,6 +68,7 @@ class NavigationTypeTest : InjectingTestCase() {
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Test
+  @TestExpandedWidth
   fun expandedDevice_verifyUsingNavigationDrawer() {
     // Set up expanded window
     composeTestRule.setContent {

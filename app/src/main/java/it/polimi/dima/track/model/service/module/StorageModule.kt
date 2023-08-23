@@ -19,11 +19,11 @@ import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ServiceModule {
+abstract class StorageModule {
   @Binds
-  abstract fun provideAccountService(impl: AccountServiceImpl): AccountService
+  abstract fun provideTrainingStorageService(impl: TrainingStorageServiceImpl): TrainingStorageService
   @Binds
-  abstract fun provideLogService(impl: LogServiceImpl): LogService
+  abstract fun providePersonalBestStorageService(impl: PersonalBestStorageServiceImpl): PersonalBestStorageService
   @Binds
-  abstract fun provideConfigurationService(impl: ConfigurationServiceImpl): ConfigurationService
+  abstract fun provideUserStorageService(impl: UserStorageServiceImpl): UserStorageService
 }
