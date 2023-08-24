@@ -254,7 +254,10 @@ fun NavGraphBuilder.trackGraph(
   }
 
   composable(PROFILE_SCREEN) {
-    ProfileScreen(openScreen = { route -> appState.navigate(route) })
+    ProfileScreen(
+      openScreen = { route -> appState.navigate(route) },
+      contentType = contentType
+    )
   }
 
   composable(

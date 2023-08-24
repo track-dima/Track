@@ -2,7 +2,6 @@ package it.polimi.dima.track.injection
 
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
@@ -19,6 +18,7 @@ import javax.inject.Singleton
   components = [SingletonComponent::class],
   replaces = [StorageModule::class]
 )
+@Suppress("unused")
 abstract class TestServiceModule {
   @Binds
   @Singleton

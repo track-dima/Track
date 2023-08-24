@@ -79,7 +79,7 @@ fun TrainingsScreen(
 
     Row {
       TrainingsContent(
-        modifier = Modifier.fillMaxWidth(0.5f),
+        modifier = Modifier.fillMaxWidth(if (selectedTrainingId.isNotEmpty()) 0.5f else 1f),
         showFab = false,
         nextTraining = nextTraining,
         lastTraining = lastTraining,

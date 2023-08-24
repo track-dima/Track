@@ -84,7 +84,7 @@ fun AgendaScreen(
 
     Row {
       AgendaContent(
-        modifier = Modifier.fillMaxWidth(0.5f),
+        modifier = Modifier.fillMaxWidth(if (selectedTrainingId.isNotEmpty()) 0.5f else 1f),
         showFab = false,
         trainings = sortedTrainings,
         onSettingsClick = { viewModel.onSettingsClick(openScreen) },
