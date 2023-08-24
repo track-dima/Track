@@ -200,7 +200,9 @@ private fun TrainingToolbarActions(
 
 @Composable
 private fun TrainingInformation(training: Training) {
-  TrainingTitle(training)
+  if (training.title.isNotEmpty()) {
+    TrainingTitle(training)
+  }
 
   if (training.description.isNotEmpty()) {
     Spacer(modifier = Modifier.bigSpacer())
@@ -302,7 +304,7 @@ private fun TrainingTitle(training: Training) {
   ) {
     Icon(
       Icons.Rounded.DirectionsRun,
-      contentDescription = stringResource(R.string.run),
+      contentDescription = stringResource(R.string.title),
       modifier = Modifier
         .padding(end = 16.dp)
         .align(Alignment.CenterVertically)

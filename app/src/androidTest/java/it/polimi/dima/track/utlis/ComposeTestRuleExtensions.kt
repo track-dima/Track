@@ -21,8 +21,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
  * returns the [SemanticsNodeInteraction] object.
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithStringId(
-  @StringRes id: Int
-): SemanticsNodeInteraction = onNodeWithText(activity.getString(id))
+  @StringRes id: Int,
+  useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNodeWithText(activity.getString(id), useUnmergedTree = useUnmergedTree)
 
 /**
  * Finds a semantics node from the content description with the given string resource id.
@@ -34,8 +35,9 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.o
  * returns the [SemanticsNodeInteraction] object.
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithContentDescriptionForStringId(
-  @StringRes id: Int
-): SemanticsNodeInteraction = onNodeWithContentDescription(activity.getString(id))
+  @StringRes id: Int,
+  useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNodeWithContentDescription(activity.getString(id), useUnmergedTree = useUnmergedTree)
 
 /**
  * Finds a semantics node from the content description with the given string resource id.
@@ -47,13 +49,16 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.o
  * returns the [SemanticsNodeInteraction] object.
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithTagForStringId(
-  @StringRes id: Int
-): SemanticsNodeInteraction = onNodeWithTag(activity.getString(id))
+  @StringRes id: Int,
+  useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNodeWithTag(activity.getString(id), useUnmergedTree = useUnmergedTree)
 
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onAllNodesWithContentDescriptionForStringId(
-  @StringRes id: Int
-): SemanticsNodeInteractionCollection = onAllNodesWithContentDescription(activity.getString(id))
+  @StringRes id: Int,
+  useUnmergedTree: Boolean = false
+): SemanticsNodeInteractionCollection = onAllNodesWithContentDescription(activity.getString(id), useUnmergedTree = useUnmergedTree)
 
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onAllNodesWithStringId(
-  @StringRes id: Int
-): SemanticsNodeInteractionCollection = onAllNodesWithText(activity.getString(id))
+  @StringRes id: Int,
+  useUnmergedTree: Boolean = false
+): SemanticsNodeInteractionCollection = onAllNodesWithText(activity.getString(id), useUnmergedTree = useUnmergedTree)
