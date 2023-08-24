@@ -55,7 +55,6 @@ fun TrackNavigationRail(
     modifier = modifier.fillMaxHeight(),
     containerColor = MaterialTheme.colorScheme.inverseOnSurface
   ) {
-    // TODO remove custom nav rail positioning when NavRail component supports it. ticket : b/232495216
     Layout(
       modifier = Modifier.widthIn(max = 80.dp),
       content = {

@@ -1,5 +1,6 @@
 package it.polimi.dima.track
 
+import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -7,7 +8,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PermanentNavigationDrawer
@@ -73,9 +76,11 @@ fun TrackApp(
   val appState = rememberAppState()
   val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
   val selectedDestination = navBackStackEntry?.destination?.route ?: AGENDA_SCREEN
+  val orientation = LocalConfiguration.current.orientation
 
   Surface(color = MaterialTheme.colorScheme.background) {
     Scaffold(
+      contentWindowInsets = if (orientation != Configuration.ORIENTATION_LANDSCAPE) WindowInsets(0.dp) else WindowInsets.navigationBars,
       snackbarHost = {
         SnackbarHost(
           hostState = appState.snackbarHostState,
@@ -146,13 +151,12 @@ fun TrackAppContent(
         navigateToTopLevelDestination = navigateToTopLevelDestination,
         openScreen = { route -> appState.navigate(route) },
       )
-      // TODO check if setSystemBarsColor is needed
     }
     Column(
       modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.inverseOnSurface)
-        .padding(bottom = if (navigationType != NavigationType.BOTTOM_NAVIGATION) innerPadding.calculateBottomPadding() else 0.dp) // TODO usa tutto il padding
+        .padding(innerPadding)
     ) {
       NavHost(
         navController = appState.navController,
