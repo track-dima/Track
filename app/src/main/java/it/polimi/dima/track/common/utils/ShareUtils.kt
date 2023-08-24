@@ -67,7 +67,6 @@ private fun getStartTimeInMillis(training: Training): Long {
     if (training.dueDate != null) {
       convertLocalToUtc(training.dueDate.time, timeZone) + timeMillis
     } else {
-      // TODO check correctness
       val currentTimeUtc = convertLocalToUtc(currentTime, timeZone)
       currentTimeUtc - (currentTimeUtc % 86400000) + timeMillis
     }

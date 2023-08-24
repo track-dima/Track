@@ -46,7 +46,6 @@ class AgendaViewModel @Inject constructor(
   }
 
   fun loadTrainingOptions() {
-    // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
     actions.value = TrainingActionOption.getOptions(AGENDA_SCREEN)
   }
 

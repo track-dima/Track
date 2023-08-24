@@ -28,7 +28,6 @@ class TrainingsViewModel @Inject constructor(
   val trainings = trainingStorageService.trainings
 
   fun loadTaskOptions() {
-    // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
     actions.value = TrainingActionOption.getOptions(TRAININGS_SCREEN)
   }
 

@@ -52,6 +52,7 @@ fun TrackNavigationRail(
   openScreen: (String) -> Unit,
 ) {
   NavigationRail(
+    // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
     modifier = modifier.fillMaxHeight(),
     containerColor = MaterialTheme.colorScheme.inverseOnSurface
   ) {
