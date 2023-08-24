@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import it.polimi.dima.track.injection.service.MockPersonalBestStorageServiceImpl
 import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
@@ -26,7 +27,7 @@ abstract class TestServiceModule {
 
   @Binds
   @Singleton
-  abstract fun provideMockPersonalBestStorageService(impl: PersonalBestStorageServiceImpl): PersonalBestStorageService
+  abstract fun provideMockPersonalBestStorageService(impl: MockPersonalBestStorageServiceImpl): PersonalBestStorageService
 
   @Binds
   @Singleton

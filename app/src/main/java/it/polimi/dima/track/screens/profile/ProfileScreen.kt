@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -104,6 +105,7 @@ fun ProfileScreen(
         .sortedBy { it.duration }
 
     LazyVerticalStaggeredGrid(
+      modifier = Modifier.testTag(stringResource(id = R.string.lazy_grid_profile_tag)),
       columns = StaggeredGridCells.Fixed(if (contentType == TrackContentType.LIST_AND_DETAIL) 2 else 1),
       horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {

@@ -112,4 +112,5 @@
     <string name="add_training_agenda_fab_tag">Add training agenda fab tag</string>
     <string name="add_training_trainings_fab_tag">Add training trainings fab tag</string>
     <string name="no_training_steps">No training steps</string>
+    <string name="lazy_grid_profile_tag">Lazy grid profile tag</string>
 </resources>
