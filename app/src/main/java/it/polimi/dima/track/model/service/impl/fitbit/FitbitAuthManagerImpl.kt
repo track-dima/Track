@@ -2,7 +2,8 @@ package it.polimi.dima.track.model.service.impl.fitbit
 
 import android.net.Uri
 import android.util.Base64
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
 import it.polimi.dima.track.model.service.fitbit.FitbitConfig
 import it.polimi.dima.track.model.service.fitbit.FitbitOAuthToken
@@ -21,6 +22,7 @@ class FitbitAuthManagerImpl @Inject constructor() : FitbitAuthManager {
   private val codeVerifier = generateCodeVerifier()
   private val codeChallenge = generateCodeChallenge(codeVerifier)
   private val httpClient = OkHttpClient()
+  private val jacksonObjectMapper = jacksonObjectMapper()
 
   override fun createAuthorizationUrl(): String {
     return Uri.parse(config.authorizationUri)
@@ -35,26 +37,53 @@ class FitbitAuthManagerImpl @Inject constructor() : FitbitAuthManager {
   }
 
   override suspend fun exchangeCodeForToken(code: String): FitbitOAuthToken {
-    val request = Request.Builder()
-      .url(config.tokenUri)
-      .header("Authorization", "Basic ${createAuthorizationHeader()}")
-      .post(
-        FormBody.Builder()
-          .add("client_id", config.clientId)
-          .add("grant_type", config.grantType)
-          .add("code", code)
-          .add("code_verifier", codeVerifier)
-          .build()
-      )
-      .build()
+    val call = httpClient.newCall(
+      Request.Builder()
+        .url(config.tokenUri)
+        .header("Authorization", "Basic ${createAuthorizationHeader()}")
+        .post(
+          FormBody.Builder()
+            .add("client_id", config.clientId)
+            .add("grant_type", config.grantType)
+            .add("code", code)
+            .add("code_verifier", codeVerifier)
+            .build()
+        )
+        .build()
+    )
 
     return withContext(Dispatchers.IO) {
-      val response = httpClient.newCall(request).execute()
+      val response = call.execute()
       val responseBody = response.body()
       if (response.isSuccessful && responseBody != null) {
-        ObjectMapper().readValue(responseBody.string(), FitbitOAuthToken::class.java)
+        jacksonObjectMapper.readValue(responseBody.string())
       } else {
         throw IOException("Fitbit token retrieval failed")
+      }
+    }
+  }
+
+  override suspend fun refreshToken(refreshToken: String): FitbitOAuthToken {
+    val call = httpClient.newCall(
+      Request.Builder()
+        .url(config.tokenUri)
+        .header("Authorization", "Basic ${createAuthorizationHeader()}")
+        .post(
+          FormBody.Builder()
+            .add("grant_type", "refresh_token")
+            .add("refresh_token", refreshToken)
+            .build()
+        )
+        .build()
+    )
+
+    return withContext(Dispatchers.IO) {
+      val response = call.execute()
+      val responseBody = response.body()
+      if (response.isSuccessful && responseBody != null) {
+        jacksonObjectMapper.readValue(responseBody.string())
+      } else {
+        throw IOException("Unable to refresh token")
       }
     }
   }

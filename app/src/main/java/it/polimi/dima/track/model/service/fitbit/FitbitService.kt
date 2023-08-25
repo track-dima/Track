@@ -1,11 +1,7 @@
 package it.polimi.dima.track.model.service.fitbit
 
-import org.json.JSONObject
+import it.polimi.dima.track.model.Training
 
 interface FitbitService {
-    fun getUserInfo(
-        token: String,
-        onSuccess: (JSONObject) -> Unit,
-        onError: (String) -> Unit
-    )
+  suspend fun getActivitiesByTraining(training: Training): List<FitbitActivity>
 }
