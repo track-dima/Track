@@ -11,16 +11,23 @@ import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.screens.TrackViewModel
 import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
+import it.polimi.dima.track.model.service.storage.UserStorageService
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
   logService: LogService,
+  userStorageService: UserStorageService,
   private val accountService: AccountService,
   private val fitbitAuthManager: FitbitAuthManager,
 ) : TrackViewModel(logService) {
-  val uiState = accountService.currentUser.map { SettingsUiState(it.isAnonymous) }
+  val uiState = userStorageService.user.map {
+    SettingsUiState(
+      it.isAnonymous,
+      it.fitbitToken != null
+    )
+  }
 
   fun onLoginClick(openScreen: (String) -> Unit) = openScreen(LOGIN_SCREEN)
 

@@ -29,7 +29,7 @@ fun SettingsScreen(
   modifier: Modifier = Modifier,
   viewModel: SettingsViewModel = hiltViewModel()
 ) {
-  val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
+  val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState())
   val context = LocalContext.current
 
   Column(
@@ -58,8 +58,12 @@ fun SettingsScreen(
     } else {
       SignOutCard { viewModel.onSignOutClick() }
       DeleteMyAccountCard { viewModel.onDeleteMyAccountClick(restartApp) }
-      Button(onClick = { viewModel.onFitbitButtonClick(context) }) {
-        Text("Connect to your FitBit account")
+      if (!uiState.isFitbitConnected) {
+        Button(onClick = { viewModel.onFitbitButtonClick(context) }) {
+          Text("Connect to your FitBit account")
+        }
+      } else {
+        Text("Fitbit account connected!")
       }
     }
   }

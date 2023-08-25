@@ -6,12 +6,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
 import it.polimi.dima.track.model.service.fitbit.FitbitOAuthToken
+import it.polimi.dima.track.model.service.storage.UserStorageService
 import it.polimi.dima.track.screens.TrackViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class FitbitViewModel @Inject constructor(
   private val fitbitAuthManager: FitbitAuthManager,
+  private val userStorageService: UserStorageService,
   logService: LogService,
 ) : TrackViewModel(logService) {
   val token: MutableState<FitbitOAuthToken?> = mutableStateOf(null)
@@ -19,6 +21,7 @@ class FitbitViewModel @Inject constructor(
   fun initialize(authenticationCode: String) {
     launchCatching {
       token.value = fitbitAuthManager.exchangeCodeForToken(authenticationCode)
+      userStorageService.updateFitbitToken(token.value)
     }
   }
 }
