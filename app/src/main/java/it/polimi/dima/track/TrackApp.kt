@@ -54,6 +54,7 @@ import it.polimi.dima.track.navigation.TrackNavigationRail
 import it.polimi.dima.track.screens.agenda.AgendaScreen
 import it.polimi.dima.track.screens.edit_repetitions.EditRepetitionsScreen
 import it.polimi.dima.track.screens.edit_training.EditTrainingScreen
+import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import it.polimi.dima.track.screens.fill_repetitions.FillRepetitionsScreen
 import it.polimi.dima.track.screens.login.LoginScreen
 import it.polimi.dima.track.screens.profile.ProfileScreen
@@ -271,17 +272,20 @@ fun NavGraphBuilder.trackGraph(
     EditTrainingScreen(
       openScreen = { route -> appState.navigate(route) },
       popUpScreen = { appState.popUp() },
-      trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
     )
   }
 
   composable(
     route = "$EDIT_REPETITIONS_SCREEN$TRAINING_ID_ARG",
     arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
-  ) {
+  ){ backStackEntry ->
+    val editTrainingEntry = remember(backStackEntry) {
+      appState.getBackStackEntry(EDIT_TRAINING_SCREEN)
+    }
+    val editTrainingViewModel = hiltViewModel<EditTrainingViewModel>(editTrainingEntry)
     EditRepetitionsScreen(
       popUpScreen = { appState.popUp() },
-      trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+      viewModel = editTrainingViewModel
     )
   }
 

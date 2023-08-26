@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.CardSelector
@@ -52,6 +50,7 @@ import it.polimi.dima.track.common.ext.card
 import it.polimi.dima.track.common.ext.secondsToHhMmSs
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
+import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -61,17 +60,10 @@ import org.burnoutcrew.reorderable.reorderable
 @Composable
 fun EditRepetitionsScreen(
   popUpScreen: () -> Unit,
-  trainingId: String,
   modifier: Modifier = Modifier,
-  viewModel: EditRepetitionsViewModel = hiltViewModel()
+  viewModel: EditTrainingViewModel
 ) {
-  // TODO is resetting on change orientation
-
   val trainingSteps by viewModel.trainingSteps
-
-  LaunchedEffect(Unit) {
-    viewModel.initialize(trainingId)
-  }
 
   val openEditDialog = rememberSaveable { mutableStateOf(false) }
   // TODO remember saveable
@@ -87,7 +79,7 @@ fun EditRepetitionsScreen(
       ) {
         EditRepetitionsFABs(
           onPrincipalActionClick = {
-            currentStep.value = viewModel.onAddClick(listOf())
+            currentStep.value = viewModel.onAddStepClick(listOf())
             openEditDialog.value = true
             currentEditHierarchy.value = listOf()
             deleteOnDismissEdit.value = true
@@ -110,7 +102,7 @@ fun EditRepetitionsScreen(
         onDismissRequest = { openRepetitionsDialog.value = false },
         onConfirm = {
           openRepetitionsDialog.value = false
-          viewModel.onEditRepetitionsClick(
+          viewModel.onEditRepetitions(
             currentHierarchy.value,
             repetitionsPickerState.selectedItem.toInt()
           )
@@ -136,7 +128,7 @@ fun EditRepetitionsScreen(
         onDismissRequest = { openRecoverDialog.value = false },
         onConfirm = { recoverType, recoverDuration, recoverDistance, recoverDistanceUnit ->
           openRecoverDialog.value = false
-          viewModel.onEditRecoverClick(
+          viewModel.onEditRecover(
             currentHierarchy.value,
             recoverType,
             recoverDuration,
@@ -157,13 +149,13 @@ fun EditRepetitionsScreen(
         onDismissRequest = {
           openEditDialog.value = false
           if (deleteOnDismissEdit.value) {
-            viewModel.onDeleteClick(currentEditHierarchy.value, currentStep.value.id)
+            viewModel.deleteStep(currentEditHierarchy.value, currentStep.value.id)
             deleteOnDismissEdit.value = false
           }
         },
         onConfirm = {
           openEditDialog.value = false
-          viewModel.onEditClick(currentEditHierarchy.value, currentStep.value)
+          viewModel.editStep(currentEditHierarchy.value, currentStep.value)
         },
         currentStep = currentStep
       )
@@ -179,10 +171,10 @@ fun EditRepetitionsScreen(
         modifier = Modifier.toolbarActions(),
         startActionIcon = Icons.Rounded.Close,
         startActionDescription = R.string.close,
-        startAction = { viewModel.onCancelClick(popUpScreen) },
+        startAction = { viewModel.onDiscardStepsClick(popUpScreen) },
         endActionIcon = Icons.Rounded.Check,
         endActionDescription = R.string.confirm,
-        endAction = { viewModel.onDoneClick(popUpScreen) }
+        endAction = { viewModel.onSaveStepsClick(popUpScreen) }
       )
 
       val state = rememberReorderableLazyListState(
@@ -206,7 +198,7 @@ fun EditRepetitionsScreen(
                 onlyDuration = true,
                 trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
-                  viewModel.onDeleteClick(
+                  viewModel.deleteStep(
                     listOf(),
                     trainingStep.id
                   )
@@ -224,7 +216,7 @@ fun EditRepetitionsScreen(
                 onlyDuration = false,
                 trainingStep = trainingStep,
                 onDeleteClick = { _, trainingStep ->
-                  viewModel.onDeleteClick(
+                  viewModel.deleteStep(
                     listOf(),
                     trainingStep.id
                   )
@@ -240,7 +232,7 @@ fun EditRepetitionsScreen(
                 trainingStep,
                 showRecover = trainingStep.id != trainingSteps.last().id,
                 onDeleteClick = { _, trainingStep ->
-                  viewModel.onDeleteClick(
+                  viewModel.deleteStep(
                     listOf(),
                     trainingStep.id
                   )
@@ -256,7 +248,7 @@ fun EditRepetitionsScreen(
               TrainingStep.Type.REPETITION_BLOCK -> RepetitionBlockCard(
                 trainingStep,
                 onDeleteClick = { hierarchy, trainingStep ->
-                  viewModel.onDeleteClick(
+                  viewModel.deleteStep(
                     hierarchy,
                     trainingStep.id
                   )
@@ -269,7 +261,7 @@ fun EditRepetitionsScreen(
                 },
                 onAddClick = { hierarchy ->
                   openEditDialog.value = true
-                  currentStep.value = viewModel.onAddClick(hierarchy)
+                  currentStep.value = viewModel.onAddStepClick(hierarchy)
                   currentEditHierarchy.value = hierarchy
                   deleteOnDismissEdit.value = true
                 },

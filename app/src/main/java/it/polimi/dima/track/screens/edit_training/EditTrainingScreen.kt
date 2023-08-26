@@ -43,15 +43,10 @@ import it.polimi.dima.track.model.Type
 fun EditTrainingScreen(
   openScreen: (String) -> Unit,
   popUpScreen: () -> Unit,
-  trainingId: String,
   modifier: Modifier = Modifier,
   viewModel: EditTrainingViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
-
-  LaunchedEffect(Unit) {
-    viewModel.initialize(trainingId)
-  }
 
   Column(
     modifier = modifier.fillMaxSize(),
