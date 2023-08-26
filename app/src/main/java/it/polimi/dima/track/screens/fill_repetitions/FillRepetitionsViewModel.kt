@@ -1,6 +1,7 @@
 package it.polimi.dima.track.screens.fill_repetitions
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.common.ext.getBestResults
@@ -22,11 +23,14 @@ class FillRepetitionsViewModel @Inject constructor(
   logService: LogService,
   private val trainingStorageService: TrainingStorageService,
   private val personalBestStorageService: PersonalBestStorageService,
+  savedStateHandle: SavedStateHandle
 ) : TrackViewModel(logService) {
+  private val trainingId: String = savedStateHandle["trainingId"] ?: TRAINING_DEFAULT_ID
+
   val training = mutableStateOf(Training())
   val trainingSteps = mutableStateOf(listOf<TrainingStep>())
 
-  fun initialize(trainingId: String) {
+  init {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
         training.value = trainingStorageService.getTraining(trainingId) ?: Training()

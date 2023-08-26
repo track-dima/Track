@@ -294,8 +294,7 @@ fun NavGraphBuilder.trackGraph(
     arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
   ) {
     FillRepetitionsScreen(
-      popUpScreen = { appState.popUp() },
-      trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID
+      popUpScreen = { appState.popUp() }
     )
   }
 
