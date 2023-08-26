@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import it.polimi.dima.track.EDIT_MODE_EDIT
 import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_ID
@@ -62,13 +63,14 @@ fun TrainingScreen(
   popUpScreen: () -> Unit = {},
   openScreen: (String) -> Unit,
   trainingId: String,
-  onEditPressed: (Training) -> Unit,
+  onEditPressed: (String, String) -> Unit,
   viewModel: TrainingViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
   val options by viewModel.options
 
   LaunchedEffect(trainingId) {
+    // TODO is called on configuration change
     viewModel.initialize(trainingId)
   }
 
@@ -105,11 +107,11 @@ fun TrainingScreen(
       TrainingToolbarActions(
         training = training,
         onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
-        onEditPressed = { onEditPressed(training) },
+        onEditPressed = { onEditPressed(training.id, EDIT_MODE_EDIT) },
         options = options,
         onDuplicateTrainingClick = {
           viewModel.onDuplicateTrainingClick(
-            training,
+            training.id,
             popUpScreen,
             onEditPressed
           )

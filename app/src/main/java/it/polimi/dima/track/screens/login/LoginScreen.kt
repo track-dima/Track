@@ -34,7 +34,10 @@ fun LoginScreen(
     EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
     PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
 
-    BasicButton(R.string.sign_in, Modifier.basicButton()) { viewModel.onSignInClick(openAndPopUp) }
+    BasicButton(R.string.sign_in, Modifier.basicButton()) {
+      // TODO close keyboard
+      viewModel.onSignInClick(openAndPopUp)
+    }
 
     BasicTextButton(R.string.forgot_password, Modifier.textButton()) {
       viewModel.onForgotPasswordClick()

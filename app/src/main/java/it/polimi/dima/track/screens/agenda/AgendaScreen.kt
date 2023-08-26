@@ -26,6 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import it.polimi.dima.track.EDIT_MODE
+import it.polimi.dima.track.EDIT_MODE_ARG
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.SEARCH_SCREEN
@@ -102,7 +104,7 @@ fun AgendaScreen(
           compactMode = true,
           openScreen = openScreen,
           trainingId = selectedTrainingId,
-          onEditPressed = { openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${selectedTrainingId}") }
+          onEditPressed = { _, editMode -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${selectedTrainingId}&$EDIT_MODE=${editMode}") },
         )
       }
     }

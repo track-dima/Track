@@ -3,10 +3,13 @@ package it.polimi.dima.track.screens.edit_training
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_MODE_DEFAULT
+import it.polimi.dima.track.EDIT_MODE_EDIT
 import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.calculateSearchTokens
+import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.common.ext.toClockPattern
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
@@ -25,6 +28,7 @@ class EditTrainingViewModel @Inject constructor(
   savedStateHandle: SavedStateHandle
 ) : TrackViewModel(logService) {
   private val trainingId: String = savedStateHandle["trainingId"] ?: TRAINING_DEFAULT_ID
+  private val editMode: String = savedStateHandle["editMode"] ?: EDIT_MODE_DEFAULT
 
   val training = mutableStateOf(Training())
   val trainingSteps = mutableStateOf(listOf<TrainingStep>())
@@ -32,7 +36,18 @@ class EditTrainingViewModel @Inject constructor(
   init {
     launchCatching {
       if (trainingId != TRAINING_DEFAULT_ID) {
-        training.value = trainingStorageService.getTraining(trainingId) ?: Training()
+        val storageTraining = trainingStorageService.getTraining(trainingId) ?: Training()
+        training.value = if (editMode == EDIT_MODE_EDIT) {
+          storageTraining
+        } else {
+          // Duplicate training
+          storageTraining.copy(
+            id = "",
+            favorite = false,
+            personalBest = false,
+            trainingSteps = emptyResults(storageTraining.trainingSteps)
+          )
+        }
         trainingSteps.value = training.value.trainingSteps
       }
     }
@@ -82,8 +97,6 @@ class EditTrainingViewModel @Inject constructor(
 
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
-      // TODO senza transient ma impostando id a "" se duplicato
-      training.value = training.value.copy(transient = false)
       saveTraining()
       popUpScreen()
     }
@@ -100,12 +113,6 @@ class EditTrainingViewModel @Inject constructor(
   }
 
   fun onCancelClick(popUpScreen: () -> Unit) {
-    // TODO senza transient ma impostando id a "" se duplicato
-    if (training.value.transient) {
-      launchCatching {
-        trainingStorageService.deleteTraining(training.value.id)
-      }
-    }
     popUpScreen()
   }
 

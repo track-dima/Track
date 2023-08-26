@@ -254,8 +254,8 @@ fun NavGraphBuilder.trackGraph(
   composable(SEARCH_SCREEN) {
     SearchScreen(
       popUpScreen = { appState.popUp() },
-      navigationType = navigationType
-    ) { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
+      onTrainingPressed = { training -> appState.navigate("$TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
+    )
   }
 
   composable(PROFILE_SCREEN) {
@@ -266,8 +266,11 @@ fun NavGraphBuilder.trackGraph(
   }
 
   composable(
-    route = "$EDIT_TRAINING_SCREEN$TRAINING_ID_ARG",
-    arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
+    route = "$EDIT_TRAINING_SCREEN?$TRAINING_ID_ARG&$EDIT_MODE_ARG",
+    arguments = listOf(
+      navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID },
+      navArgument(EDIT_MODE) { defaultValue = EDIT_MODE_DEFAULT }
+    )
   ) {
     EditTrainingScreen(
       openScreen = { route -> appState.navigate(route) },
@@ -276,7 +279,7 @@ fun NavGraphBuilder.trackGraph(
   }
 
   composable(
-    route = "$EDIT_REPETITIONS_SCREEN$TRAINING_ID_ARG",
+    route = "$EDIT_REPETITIONS_SCREEN?$TRAINING_ID_ARG",
     arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
   ){ backStackEntry ->
     val editTrainingEntry = remember(backStackEntry) {
@@ -290,7 +293,7 @@ fun NavGraphBuilder.trackGraph(
   }
 
   composable(
-    route = "$FILL_REPETITIONS_SCREEN$TRAINING_ID_ARG",
+    route = "$FILL_REPETITIONS_SCREEN?$TRAINING_ID_ARG",
     arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID })
   ) {
     FillRepetitionsScreen(
@@ -299,7 +302,7 @@ fun NavGraphBuilder.trackGraph(
   }
 
   composable(
-    route = "$TRAINING_SCREEN$TRAINING_ID_ARG",
+    route = "$TRAINING_SCREEN?$TRAINING_ID_ARG",
     arguments = listOf(navArgument(TRAINING_ID) { defaultValue = TRAINING_DEFAULT_ID }),
     deepLinks = listOf(navDeepLink { uriPattern = "https://track.com/training/{trainingId}" })
   ) {
@@ -307,7 +310,7 @@ fun NavGraphBuilder.trackGraph(
       popUpScreen = { appState.popUpOrNavigate(TRAININGS_SCREEN) },
       openScreen = { route -> appState.navigate(route) },
       trainingId = it.arguments?.getString(TRAINING_ID) ?: TRAINING_DEFAULT_ID,
-      onEditPressed = { training -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${training.id}") }
+      onEditPressed = { trainingId, editMode -> appState.navigate("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${trainingId}&$EDIT_MODE=${editMode}") }
     )
   }
 }

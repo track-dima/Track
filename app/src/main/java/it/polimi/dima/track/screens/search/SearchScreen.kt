@@ -49,7 +49,6 @@ import it.polimi.dima.track.screens.agenda.AgendaTrainings
 @Composable
 fun SearchScreen(
   popUpScreen: () -> Unit,
-  navigationType: NavigationType,
   viewModel: SearchViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
