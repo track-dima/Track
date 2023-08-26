@@ -6,7 +6,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.*
@@ -14,6 +16,7 @@ import it.polimi.dima.track.common.ext.basicButton
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.textButton
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
   openAndPopUp: (String, String) -> Unit,
@@ -31,11 +34,13 @@ fun LoginScreen(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
     PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
 
     BasicButton(R.string.sign_in, Modifier.basicButton()) {
-      // TODO close keyboard
+      keyboardController?.hide()
       viewModel.onSignInClick(openAndPopUp)
     }
 

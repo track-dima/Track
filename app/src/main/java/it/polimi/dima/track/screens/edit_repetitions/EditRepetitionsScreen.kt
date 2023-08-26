@@ -70,8 +70,8 @@ fun EditRepetitionsScreen(
 
   val trainingSteps by viewModel.trainingSteps
 
-  val openEditDialog = rememberSaveable { mutableStateOf(false) }
-  // TODO remember saveable
+  // TODO remember edit dialog state over configuration changes
+  val openEditDialog = remember { mutableStateOf(false) }
   val currentStep = remember { mutableStateOf(TrainingStep()) }
   val currentEditHierarchy = rememberSaveable { mutableStateOf(listOf<String>()) }
   val deleteOnDismissEdit = rememberSaveable { mutableStateOf(false) }
