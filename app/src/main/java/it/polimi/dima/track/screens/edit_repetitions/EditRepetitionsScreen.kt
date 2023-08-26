@@ -1,6 +1,7 @@
 package it.polimi.dima.track.screens.edit_repetitions
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,6 +64,10 @@ fun EditRepetitionsScreen(
   modifier: Modifier = Modifier,
   viewModel: EditTrainingViewModel
 ) {
+  BackHandler {
+    viewModel.onDiscardStepsClick(popUpScreen)
+  }
+
   val trainingSteps by viewModel.trainingSteps
 
   val openEditDialog = rememberSaveable { mutableStateOf(false) }

@@ -405,7 +405,6 @@ class EditTrainingViewModel @Inject constructor(
   }
 
   fun onDiscardStepsClick(popUpScreen: () -> Unit) {
-    // TODO anche se vado indietro con i tasti
     popUpScreen()
     trainingSteps.value = training.value.trainingSteps
   }
