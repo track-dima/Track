@@ -29,7 +29,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -45,7 +45,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -61,7 +61,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -77,7 +77,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -93,7 +93,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -109,7 +109,7 @@ class TrainingMissingInformationTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = mockedTrainings[0].id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 

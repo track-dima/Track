@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.polimi.dima.track.R
-import it.polimi.dima.track.common.utils.NavigationType
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.screens.agenda.AgendaTrainings
 

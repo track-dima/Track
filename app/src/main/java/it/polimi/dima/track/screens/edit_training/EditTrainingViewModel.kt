@@ -1,11 +1,13 @@
 package it.polimi.dima.track.screens.edit_training
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_MODE_DEFAULT
 import it.polimi.dima.track.EDIT_MODE_EDIT
 import it.polimi.dima.track.EDIT_REPETITIONS_SCREEN
+import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.calculateSearchTokens
@@ -32,6 +34,7 @@ class EditTrainingViewModel @Inject constructor(
 
   val training = mutableStateOf(Training())
   val trainingSteps = mutableStateOf(listOf<TrainingStep>())
+  val titleResource = mutableStateOf(R.string.edit_training)
 
   init {
     launchCatching {
@@ -40,6 +43,7 @@ class EditTrainingViewModel @Inject constructor(
         training.value = if (editMode == EDIT_MODE_EDIT) {
           storageTraining
         } else {
+          titleResource.value = R.string.duplicate_training
           // Duplicate training
           storageTraining.copy(
             id = "",
@@ -49,6 +53,9 @@ class EditTrainingViewModel @Inject constructor(
           )
         }
         trainingSteps.value = training.value.trainingSteps
+      }
+      else {
+        titleResource.value = R.string.new_training
       }
     }
   }

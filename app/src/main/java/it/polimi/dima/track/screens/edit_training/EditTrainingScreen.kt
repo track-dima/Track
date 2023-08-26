@@ -47,13 +47,14 @@ fun EditTrainingScreen(
   viewModel: EditTrainingViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
+  val titleResource by viewModel.titleResource
 
   Column(
     modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     ActionToolbar(
-      title = R.string.edit_training,
+      title = titleResource,
       modifier = Modifier.toolbarActions(),
       startActionIcon = Icons.Rounded.Close,
       startActionDescription = R.string.close,

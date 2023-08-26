@@ -29,7 +29,7 @@ class TrainingNoTrainingStepsTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = emptyTraining.id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
@@ -45,7 +45,7 @@ class TrainingNoTrainingStepsTest : InjectingTestCase() {
       TrainingScreen(
         openScreen = {_ -> },
         trainingId = mockedTrainings[0].id,
-        onEditPressed = {},
+        onEditPressed = { _, _ -> },
       )
     }
 
