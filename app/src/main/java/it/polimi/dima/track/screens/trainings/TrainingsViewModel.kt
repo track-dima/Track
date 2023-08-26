@@ -3,6 +3,7 @@ package it.polimi.dima.track.screens.trainings
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_MODE
 import it.polimi.dima.track.EDIT_MODE_ARG
 import it.polimi.dima.track.EDIT_MODE_NEW
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
@@ -35,7 +36,7 @@ class TrainingsViewModel @Inject constructor(
 
   fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
-  fun onAddClick(openScreen: (String) -> Unit) = openScreen("$EDIT_TRAINING_SCREEN$EDIT_MODE_ARG=${EDIT_MODE_NEW}")
+  fun onAddClick(openScreen: (String) -> Unit) = openScreen("$EDIT_TRAINING_SCREEN?$EDIT_MODE=${EDIT_MODE_NEW}")
 
   fun onTrainingActionClick(
     openScreen: (String) -> Unit,
