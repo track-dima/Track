@@ -30,7 +30,7 @@ class SplashViewModel @Inject constructor(
     else createAnonymousAccount(openAndPopUp)
   }
 
-  private fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {
+  fun createAnonymousAccount(openAndPopUp: (String, String) -> Unit) {
     launchCatching(snackbar = false) {
       try {
         accountService.createAnonymousAccount()
