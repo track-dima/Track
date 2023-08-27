@@ -118,9 +118,17 @@ fun String.timeBetterThan(result: String): Boolean {
 }
 
 fun String.paceWorseThan(result: String): Boolean {
-  return this.paceToSeconds() > result.paceToSeconds()
+  val paceUnit = this.extractPaceUnit()
+  val secondsKm = this.paceToSeconds().toFloat() / (if (paceUnit == MIN_KM) 1.0 else 1.609)
+  val resultPaceUnit = result.extractPaceUnit()
+  val resultSecondsKm = result.paceToSeconds().toFloat() / (if (resultPaceUnit == MIN_KM) 1.0 else 1.609)
+  return secondsKm > resultSecondsKm
 }
 
 fun String.paceBetterThan(result: String): Boolean {
-  return this.paceToSeconds() < result.paceToSeconds()
+  val paceUnit = this.extractPaceUnit()
+  val secondsKm = this.paceToSeconds().toFloat() / (if (paceUnit == MIN_KM) 1.0 else 1.609)
+  val resultPaceUnit = result.extractPaceUnit()
+  val resultSecondsKm = result.paceToSeconds().toFloat() / (if (resultPaceUnit == MIN_KM) 1.0 else 1.609)
+  return secondsKm < resultSecondsKm
 }

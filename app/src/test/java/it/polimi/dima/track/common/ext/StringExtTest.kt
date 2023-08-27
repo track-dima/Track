@@ -443,6 +443,13 @@ class StringExtTest {
         assertFalse(pace1.paceWorseThan(pace2))
     }
 
+    @Test
+    fun paceWorseThan_DifferentUnits() {
+        val pace1 = "5:30 min/km"
+        val pace2 = "8:00 min/mi"
+        assertTrue(pace1.paceWorseThan(pace2))
+    }
+
     /*
      * PACE BETTER THAN TESTS
      */
@@ -466,6 +473,13 @@ class StringExtTest {
         val pace1 = "5:30 min/km"
         val pace2 = "5:30 min/km"
         assertFalse(pace1.paceBetterThan(pace2))
+    }
+
+    @Test
+    fun paceBetterThan_DifferentUnits() {
+        val pace1 = "4:30 min/km"
+        val pace2 = "8:00 min/mi"
+        assertTrue(pace1.paceBetterThan(pace2))
     }
 
     /*
