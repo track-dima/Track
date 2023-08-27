@@ -68,6 +68,7 @@ android {
                 useLegacyPackaging = true
             }
         }
+        unitTests.returnDefaultValues = true
     }
 }
 
