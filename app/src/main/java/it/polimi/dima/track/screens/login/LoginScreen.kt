@@ -24,28 +24,31 @@ fun LoginScreen(
   viewModel: LoginViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState
-
-  BasicToolbar(R.string.login_details)
-
   Column(
-    modifier = modifier
-      .fillMaxSize()
-      .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier.fillMaxSize(),
   ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    BasicToolbar(R.string.login_details)
 
-    EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
-    PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
+    Column(
+      modifier = modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      val keyboardController = LocalSoftwareKeyboardController.current
 
-    BasicButton(R.string.sign_in, Modifier.basicButton()) {
-      keyboardController?.hide()
-      viewModel.onSignInClick(openAndPopUp)
-    }
+      EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
+      PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
 
-    BasicTextButton(R.string.forgot_password, Modifier.textButton()) {
-      viewModel.onForgotPasswordClick()
+      BasicButton(R.string.sign_in, Modifier.basicButton()) {
+        keyboardController?.hide()
+        viewModel.onSignInClick(openAndPopUp)
+      }
+
+      BasicTextButton(R.string.forgot_password, Modifier.textButton()) {
+        viewModel.onForgotPasswordClick()
+      }
     }
   }
 }

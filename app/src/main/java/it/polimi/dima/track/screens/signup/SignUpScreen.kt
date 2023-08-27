@@ -24,25 +24,28 @@ fun SignUpScreen(
 ) {
   val uiState by viewModel.uiState
   val fieldModifier = Modifier.fieldModifier()
-
-  BasicToolbar(R.string.create_account)
-
   Column(
-    modifier = modifier
-      .fillMaxSize()
-      .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier.fillMaxSize(),
   ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    BasicToolbar(R.string.create_account)
 
-    EmailField(uiState.email, viewModel::onEmailChange, fieldModifier)
-    PasswordField(uiState.password, viewModel::onPasswordChange, fieldModifier)
-    RepeatPasswordField(uiState.repeatPassword, viewModel::onRepeatPasswordChange, fieldModifier)
+    Column(
+      modifier = modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      val keyboardController = LocalSoftwareKeyboardController.current
 
-    BasicButton(R.string.create_account, Modifier.basicButton()) {
-      keyboardController?.hide()
-      viewModel.onSignUpClick(openAndPopUp)
+      EmailField(uiState.email, viewModel::onEmailChange, fieldModifier)
+      PasswordField(uiState.password, viewModel::onPasswordChange, fieldModifier)
+      RepeatPasswordField(uiState.repeatPassword, viewModel::onRepeatPasswordChange, fieldModifier)
+
+      BasicButton(R.string.create_account, Modifier.basicButton()) {
+        keyboardController?.hide()
+        viewModel.onSignUpClick(openAndPopUp)
+      }
     }
   }
 }

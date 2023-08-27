@@ -1,4 +1,4 @@
-package it.polimi.dima.track.screens.login.trainings
+package it.polimi.dima.track.screens.trainings
 
 import android.content.Context
 import io.mockk.coEvery
@@ -19,7 +19,6 @@ import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.training.TrainingActionOption
-import it.polimi.dima.track.screens.trainings.TrainingsViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
