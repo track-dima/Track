@@ -1,6 +1,6 @@
 package it.polimi.dima.track.common.ext
 
-import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_MI
 import java.util.regex.Pattern
@@ -9,7 +9,7 @@ private const val MIN_PASS_LENGTH = 6
 private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{4,}$"
 
 fun String.isValidEmail(): Boolean {
-  return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+  return this.isNotBlank() && PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
 }
 
 fun String.isValidPassword(): Boolean {
@@ -27,7 +27,7 @@ fun String.removeLeadingZeros(): String {
   return if (split.size == 3) {
     // e.g. 00:12:34
     if (split[0].toInt() > 0)
-      this
+      "${split[0].toInt()}" + ":${split[1]}" + ":${split[2]}"
     else "${split[1].toInt()}" + ":${split[2]}"
   }
   else {
@@ -65,16 +65,8 @@ fun String.timeToPace(distance: Int, distanceUnit: String): String {
 }
 
 fun String.timeIsZero(): Boolean {
-  val split = this.split(":")
-  return if (split.size == 3) {
-    split[0].toInt() == 0 && split[1].toInt() == 0 && split[2].toInt() == 0
-  }
-  else {
-    // e.g. 00:12.34, or 00:12 min/km
-    if (this.split(" ").size > 1) return split[0].toInt() == 0 && split[1].split(" ")[0].toInt() == 0
-    val split2 = split[1].split(".")
-    split[0].toInt() == 0 && split2[0].toInt() == 0 && split2[1].toInt() == 0
-  }
+  val timePattern = """^(0+:)*(0+(\.00?)?)( min/km| min/mi)?$""".toRegex()
+  return matches(timePattern)
 }
 
 /**
