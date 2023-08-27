@@ -49,7 +49,7 @@ fun Training.getDueDateAndTime(): String {
     stringBuilder.append(this.dueTimeString)
   }
 
-  return stringBuilder.toString()
+  return stringBuilder.toString().trim()
 }
 
 fun Training.calculateRepetitions(): Int {
@@ -77,7 +77,7 @@ fun Training.parseTrainingSteps(): String {
       dot = "◦",
       lastStep = trainingSteps.last().id == it.id
     )
-  }
+  }.trimEnd('•', ' ')
 }
 
 fun Training.parseTraining(): String {
@@ -91,7 +91,7 @@ fun Training.parseTraining(): String {
   stringBuilder.append("\n\n")
   stringBuilder.append(parseTrainingSteps())
 
-  return stringBuilder.toString()
+  return stringBuilder.toString().trim()
 }
 
 fun Training.calculateSearchTokens(): List<String> {
