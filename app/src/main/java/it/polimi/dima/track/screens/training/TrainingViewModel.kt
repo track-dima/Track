@@ -2,9 +2,9 @@ package it.polimi.dima.track.screens.training
 
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.polimi.dima.track.EDIT_MODE_DUPLICATE
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_SCREEN
-import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.storage.TrainingStorageService
@@ -46,21 +46,11 @@ class TrainingViewModel @Inject constructor(
   }
 
   fun onDuplicateTrainingClick(
-    training: Training,
+    trainingId: String,
     popUpScreen: () -> Unit,
-    editTraining: (Training) -> Unit
+    editTraining: (String, String) -> Unit
   ) {
-    launchCatching {
-      val newId = trainingStorageService.duplicateTraining(
-        training.copy(
-          transient = true,
-          favorite = false,
-          personalBest = false,
-          trainingSteps = emptyResults(training.trainingSteps)
-        )
-      )
-      popUpScreen()
-      editTraining(Training(id = newId))
-    }
+    popUpScreen()
+    editTraining(trainingId, EDIT_MODE_DUPLICATE)
   }
 }

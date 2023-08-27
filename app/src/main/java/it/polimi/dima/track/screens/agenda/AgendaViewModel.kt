@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.AGENDA_SCREEN
+import it.polimi.dima.track.EDIT_MODE
+import it.polimi.dima.track.EDIT_MODE_ARG
+import it.polimi.dima.track.EDIT_MODE_DUPLICATE
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.TRAINING_ID
-import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
@@ -28,7 +30,7 @@ class AgendaViewModel @Inject constructor(
   private val trainingStorageService: TrainingStorageService,
   private val configurationService: ConfigurationService
 ) : TrackViewModel(logService) {
-  val options = mutableStateOf<List<String>>(listOf())
+  val actions = mutableStateOf<List<String>>(listOf())
   private val trainings = trainingStorageService.trainings
 
   private val favoriteSelected = MutableStateFlow(false)
@@ -45,9 +47,8 @@ class AgendaViewModel @Inject constructor(
     }
   }
 
-  fun loadTaskOptions() {
-    // TODO just as example of configuration service val hasEditOption = configurationService.isShowTrainingEditButtonConfig
-    options.value = TrainingActionOption.getOptions(AGENDA_SCREEN)
+  fun loadTrainingOptions() {
+    actions.value = TrainingActionOption.getOptions(AGENDA_SCREEN)
   }
 
   fun onFavoriteToggle(showFavorites: Boolean) {
@@ -77,7 +78,7 @@ class AgendaViewModel @Inject constructor(
         label = "Training",
       )
 
-      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training, openScreen)
+      TrainingActionOption.DuplicateTraining -> onDuplicateTrainingClick(training.id, openScreen)
       TrainingActionOption.ToggleFavourite -> onFavouriteTrainingClick(training)
       else -> Unit
     }
@@ -91,17 +92,7 @@ class AgendaViewModel @Inject constructor(
     launchCatching { trainingStorageService.deleteTraining(trainingId) }
   }
 
-  private fun onDuplicateTrainingClick(training: Training, openScreen: (String) -> Unit) {
-    launchCatching {
-      val newId = trainingStorageService.duplicateTraining(
-        training.copy(
-          transient = true,
-          favorite = false,
-          personalBest = false,
-          trainingSteps = emptyResults(training.trainingSteps)
-        )
-      )
-      openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${newId}")
-    }
+  private fun onDuplicateTrainingClick(trainingId: String, openScreen: (String) -> Unit) {
+    openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${trainingId}&$EDIT_MODE=${EDIT_MODE_DUPLICATE}")
   }
 }

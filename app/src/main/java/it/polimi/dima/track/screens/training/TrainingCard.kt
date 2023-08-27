@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +49,8 @@ import it.polimi.dima.track.ui.theme.DarkYellow
 fun TrainingCard(
   modifier: Modifier = Modifier,
   training: Training,
-  options: List<String> = listOf(),
+  actions: List<String> = listOf(),
+  selected: Boolean = false,
   showActions: Boolean = true,
   onActionClick: (String) -> Unit = {},
   onClick: () -> Unit
@@ -57,6 +58,9 @@ fun TrainingCard(
   Card(
     modifier = modifier,
     onClick = onClick,
+    colors = if (selected) CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.primaryContainer
+    ) else CardDefaults.cardColors(),
   ) {
     Row(
       modifier = Modifier
@@ -69,7 +73,7 @@ fun TrainingCard(
       }
 
       Column(modifier = Modifier.width(IntrinsicSize.Min), horizontalAlignment = Alignment.End) {
-        if (showActions) DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+        if (showActions) DropdownContextMenu(actions, Modifier.contextMenu(), onActionClick)
         if (training.isScheduled()) {
           Box(
             modifier = Modifier.fillMaxSize(),
@@ -92,8 +96,18 @@ fun TrainingCard(
 private fun TrainingCardContent(training: Training) {
   Text(text = training.getDueDateAndTime(), fontSize = 12.sp)
   Spacer(modifier = Modifier.smallSpacer())
-  Text(text = training.title, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
-  Text(text = training.description, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+  Text(
+    text = training.title,
+    style = MaterialTheme.typography.titleLarge,
+    maxLines = 2,
+    overflow = TextOverflow.Ellipsis
+  )
+  Text(
+    text = training.description,
+    style = MaterialTheme.typography.titleMedium,
+    maxLines = 2,
+    overflow = TextOverflow.Ellipsis
+  )
 
   Box(
     modifier = Modifier.fillMaxSize(),

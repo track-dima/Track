@@ -19,7 +19,4 @@ data class Training(
 
   // Searchable tokens
   val searchable: List<String> = listOf(),
-
-  // If true, the training is deleted when the user leaves the screen
-  val transient: Boolean = false,
 )

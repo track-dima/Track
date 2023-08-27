@@ -23,9 +23,34 @@
 
     <!-- TrainingsScreens -->
     <string name="trainings">Trainings</string>
+    <string name="next_scheduled_training">Next scheduled training</string>
+    <string name="last_training">Last training</string>
+    <string name="no_planned_trainings">no planned trainings yet…</string>
+    <string name="no_trainings_in_history">no trainings in history…</string>
+
+    <!-- AgendaScreen -->
+    <string name="agenda">Agenda</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile">Profile</string>
+    <string name="user_name">User name</string>
+    <string name="set_your_name">Set your name</string>
+    <string name="edit_name">Edit name</string>
+    <string name="user_information">User information</string>
+    <string name="user_specialty">User specialty</string>
+    <string name="set_your_specialty">Set your specialty</string>
+    <string name="edit_specialty">Edit specialty</string>
+    <string name="statistics">Statistics</string>
+    <string name="total_trainings">Total trainings</string>
+    <string name="trainings_this_week">Trainings this week</string>
+    <string name="trainings_this_month">Trainings this month</string>
+    <string name="personal_bests">Personal bests</string>
+    <string name="no_personal_bests_yet">no personal bests yet…</string>
 
     <!-- EditTrainingScreen -->
-    <string name="edit_training">Edit your training</string>
+    <string name="edit_training">Edit training</string>
+    <string name="new_training">New training</string>
+    <string name="duplicate_training">Duplicate training</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="url">URL</string>
@@ -44,10 +69,8 @@
     <string name="delete_account_title">Delete account?</string>
     <string name="delete_account_description">You will lose all your trainings and your account will be deleted. This action is irreversible.</string>
 
-    <string name="agenda">Agenda</string>
     <string name="edit">Edit</string>
     <string name="add_training">Add training</string>
-    <string name="profile">Profile</string>
     <string name="confirm">Confirm</string>
     <string name="close">Close</string>
     <string name="edit_repetitions">Edit repetitions</string>
@@ -88,22 +111,15 @@
     <string name="hurdles">Hurdles</string>
     <string name="strength">Strength</string>
     <string name="personal_best">Personal best</string>
-    <string name="next_scheduled_training">Next scheduled training</string>
-    <string name="last_training">Last training</string>
-    <string name="user_name">User name</string>
-    <string name="set_your_name">Set your name</string>
-    <string name="edit_name">Edit name</string>
-    <string name="user_information">User information</string>
-    <string name="user_specialty">User specialty</string>
-    <string name="set_your_specialty">Set your specialty</string>
-    <string name="edit_specialty">Edit specialty</string>
-    <string name="statistics">Statistics</string>
-    <string name="total_trainings">Total trainings</string>
-    <string name="trainings_this_week">Trainings this week</string>
-    <string name="trainings_this_month">Trainings this month</string>
-    <string name="personal_bests">Personal bests</string>
-    <string name="no_personal_bests_yet">no personal bests yet…</string>
-    <string name="no_planned_trainings">no planned trainings yet…</string>
-    <string name="no_trainings_in_history">no trainings in history…</string>
     <string name="no_trainings">No trainings</string>
+    <string name="no_training_steps">No training steps</string>
+
+    <!-- Tags -->
+    <string name="navigation_drawer">Navigation drawer</string>
+    <string name="navigation_rail">Navigation rail</string>
+    <string name="navigation_bottom">Navigation bottom</string>
+    <string name="add_training_agenda_fab_tag">Add training agenda fab tag</string>
+    <string name="add_training_trainings_fab_tag">Add training trainings fab tag</string>
+    <string name="lazy_grid_profile_tag">Lazy grid profile tag</string>
+    <string name="title_input_tag">Title input tag</string>
 </resources>

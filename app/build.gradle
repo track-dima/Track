@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "it.polimi.dima.track.TestRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -55,10 +55,20 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.7'
     }
+
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}"
         }
+    }
+
+    testOptions {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -98,6 +108,8 @@ dependencies {
     implementation "org.burnoutcrew.composereorderable:reorderable:0.9.6"
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation "io.mockk:mockk:1.13.7"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -108,6 +120,8 @@ dependencies {
 
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    debugImplementation "androidx.fragment:fragment-testing:1.6.1"
+    debugImplementation "androidx.fragment:fragment-ktx:1.6.1"
 }
 
 kapt {

@@ -21,12 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import it.polimi.dima.track.EDIT_MODE
+import it.polimi.dima.track.EDIT_MODE_ARG
+import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.SEARCH_SCREEN
+import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.ext.getCompleteTime
@@ -37,22 +42,22 @@ import it.polimi.dima.track.common.ext.isToday
 import it.polimi.dima.track.common.ext.spacer
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.common.utils.NavigationType
+import it.polimi.dima.track.common.utils.TrackContentType
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.screens.training.TrainingActionOption
 import it.polimi.dima.track.screens.training.TrainingCard
+import it.polimi.dima.track.screens.training.TrainingScreen
 
 
-@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AgendaScreen(
   openScreen: (String) -> Unit,
-  modifier: Modifier = Modifier,
   navigationType: NavigationType,
+  contentType: TrackContentType,
   viewModel: AgendaViewModel = hiltViewModel(),
   onTrainingPressed: (Training) -> Unit
 ) {
-  val context = LocalContext.current
   val openDeleteDialog = rememberSaveable { mutableStateOf(false) }
   val currentTraining = rememberSaveable { mutableStateOf("") }
 
@@ -67,13 +72,98 @@ fun AgendaScreen(
       onDismissRequest = { openDeleteDialog.value = false }
     )
   }
+  val trainings by viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
+  val sortedTrainings = trainings.sortedByDescending { it.getCompleteTime() }
 
+  if (contentType == TrackContentType.LIST_AND_DETAIL) {
+    var selectedTrainingId by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(sortedTrainings) {
+      if (sortedTrainings.isNotEmpty() && !sortedTrainings.any { it.id == selectedTrainingId }) {
+        selectedTrainingId = sortedTrainings.first().id
+      }
+    }
+
+    Row {
+      AgendaContent(
+        modifier = Modifier.fillMaxWidth(if (selectedTrainingId.isNotEmpty()) 0.5f else 1f),
+        showFab = false,
+        trainings = sortedTrainings,
+        onSettingsClick = { viewModel.onSettingsClick(openScreen) },
+        openScreen = openScreen,
+        onTrainingPressed = { selectedTrainingId = it.id },
+        selectedTrainingId = selectedTrainingId,
+        isFavoriteFilterActive = viewModel.isFavoriteFilterActive,
+        onFavoriteToggle = { viewModel.onFavoriteToggle(it) },
+        showActions = false
+      )
+      if (selectedTrainingId.isNotEmpty()) {
+        // TODO favorite reloads the list
+        TrainingScreen(
+          modifier = Modifier.padding(start = 8.dp),
+          compactMode = true,
+          openScreen = openScreen,
+          trainingId = selectedTrainingId,
+          onEditPressed = { _, editMode -> openScreen("$EDIT_TRAINING_SCREEN?$TRAINING_ID=${selectedTrainingId}&$EDIT_MODE=${editMode}") },
+        )
+      }
+    }
+  } else {
+    val actions by viewModel.actions
+    val context = LocalContext.current
+
+    AgendaContent(
+      onFabClick = { viewModel.onAddClick(openScreen) },
+      showFab = navigationType == NavigationType.BOTTOM_NAVIGATION,
+      trainings = sortedTrainings,
+      onSettingsClick = { viewModel.onSettingsClick(openScreen) },
+      openScreen = openScreen,
+      onTrainingPressed = onTrainingPressed,
+      isFavoriteFilterActive = viewModel.isFavoriteFilterActive,
+      onFavoriteToggle = { viewModel.onFavoriteToggle(it) },
+      actions = actions,
+      onActionClick = { action, trainingItem ->
+        when (TrainingActionOption.getByTitle(action)) {
+          TrainingActionOption.DeleteTraining -> {
+            currentTraining.value = trainingItem.id
+            openDeleteDialog.value = true
+          }
+
+          else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
+        }
+      }
+    )
+  }
+
+
+  LaunchedEffect(viewModel) { viewModel.loadTrainingOptions() }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+@OptIn(ExperimentalAnimationApi::class)
+private fun AgendaContent(
+  modifier: Modifier = Modifier,
+  showFab: Boolean = true,
+  onFabClick: () -> Unit = {},
+  trainings: List<Training>,
+  selectedTrainingId: String = "",
+  openScreen: (String) -> Unit,
+  onSettingsClick: () -> Unit,
+  onTrainingPressed: (Training) -> Unit,
+  isFavoriteFilterActive: Boolean,
+  onFavoriteToggle: (Boolean) -> Unit,
+  showActions: Boolean = true,
+  actions: List<String> = emptyList(),
+  onActionClick: (String, Training) -> Unit = { _, _ -> }
+) {
   Scaffold(
+    modifier = modifier,
     floatingActionButton = {
-      if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+      if (showFab) {
         ExtendedFloatingActionButton(
-          onClick = { viewModel.onAddClick(openScreen) },
-          modifier = modifier.padding(16.dp),
+          onClick = onFabClick,
+          modifier = Modifier.padding(16.dp).testTag(stringResource(id = R.string.add_training_agenda_fab_tag)),
           text = { Text(stringResource(id = R.string.add_training)) },
           icon = {
             Icon(
@@ -85,21 +175,15 @@ fun AgendaScreen(
       }
     }
   ) {
-    val trainings = viewModel.filteredTrainings.collectAsStateWithLifecycle(emptyList())
-
-    // TODO is this sorting efficient?
-    val sortedTrainings = trainings.value.sortedByDescending { it.getCompleteTime() }
-    val options by viewModel.options
-
     Column(
-      modifier = Modifier.fillMaxSize()
+      modifier = Modifier.fillMaxSize(),
     ) {
       ActionToolbar(
         title = R.string.agenda,
         modifier = Modifier.toolbarActions(),
         endActionIcon = Icons.Rounded.Settings,
         endActionDescription = R.string.settings,
-        endAction = { viewModel.onSettingsClick(openScreen) }
+        endAction = onSettingsClick
       ) {
         IconButton(onClick = { openScreen(SEARCH_SCREEN) }) {
           Icon(
@@ -109,17 +193,17 @@ fun AgendaScreen(
         }
 
         IconToggleButton(
-          checked = viewModel.isFavoriteFilterActive,
-          onCheckedChange = { viewModel.onFavoriteToggle(it) }
+          checked = isFavoriteFilterActive,
+          onCheckedChange = onFavoriteToggle
         ) {
           Icon(
-            if (viewModel.isFavoriteFilterActive) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+            if (isFavoriteFilterActive) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
             contentDescription = stringResource(R.string.favorite)
           )
         }
       }
 
-      if (sortedTrainings.isEmpty()) {
+      if (trainings.isEmpty()) {
         Column(
           modifier = Modifier.fillMaxSize(),
           horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,7 +215,7 @@ fun AgendaScreen(
         }
       } else {
         AnimatedContent(
-          targetState = sortedTrainings,
+          targetState = trainings,
           label = "Agenda trainings",
           transitionSpec = {
             fadeIn() with fadeOut()
@@ -139,34 +223,28 @@ fun AgendaScreen(
         ) { trainings ->
           AgendaTrainings(
             trainings = trainings,
-            options = options,
+            selectedTrainingId = selectedTrainingId,
             onTrainingPressed = onTrainingPressed,
-            onActionClick = { action, trainingItem ->
-              when (TrainingActionOption.getByTitle(action)) {
-                TrainingActionOption.DeleteTraining -> {
-                  currentTraining.value = trainingItem.id
-                  openDeleteDialog.value = true
-                }
-
-                else -> viewModel.onTrainingActionClick(openScreen, trainingItem, action, context)
-              }
+            showActions = showActions,
+            actions = actions,
+            onActionClick = { action, training ->
+              onActionClick(action, training)
             }
           )
         }
       }
     }
   }
-
-  LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
 }
 
 @Composable
 fun AgendaTrainings(
   trainings: List<Training>,
-  options: List<String> = listOf(),
+  selectedTrainingId: String = "",
   onTrainingPressed: (Training) -> Unit,
+  showActions: Boolean = true,
   onActionClick: (String, Training) -> Unit = { _, _ -> },
-  showActions: Boolean = true
+  actions: List<String> = listOf()
 ) {
   LazyColumn {
     item { Spacer(modifier = Modifier.spacer()) }
@@ -212,7 +290,8 @@ fun AgendaTrainings(
                 TrainingCard(
                   modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
                   training = trainingItem,
-                  options = options,
+                  actions = actions,
+                  selected = trainingItem.id == selectedTrainingId,
                   onClick = { onTrainingPressed(trainingItem) },
                   onActionClick = { onActionClick(it, trainingItem) },
                   showActions = showActions

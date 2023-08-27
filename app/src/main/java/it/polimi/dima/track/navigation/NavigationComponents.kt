@@ -45,16 +45,17 @@ import it.polimi.dima.track.common.utils.NavigationContentPosition
 
 @Composable
 fun TrackNavigationRail(
+  modifier: Modifier = Modifier,
   selectedDestination: String,
   navigationContentPosition: NavigationContentPosition,
   navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
   openScreen: (String) -> Unit,
 ) {
   NavigationRail(
-    modifier = Modifier.fillMaxHeight(),
+    // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
+    modifier = modifier.fillMaxHeight(),
     containerColor = MaterialTheme.colorScheme.inverseOnSurface
   ) {
-    // TODO remove custom nav rail positioning when NavRail component supports it. ticket : b/232495216
     Layout(
       modifier = Modifier.widthIn(max = 80.dp),
       content = {
@@ -141,10 +142,11 @@ fun TrackNavigationRail(
 
 @Composable
 fun TrackBottomNavigationBar(
+  modifier: Modifier = Modifier,
   selectedDestination: String,
   navigateToTopLevelDestination: (TopLevelDestination) -> Unit
 ) {
-  NavigationBar(modifier = Modifier.fillMaxWidth()) {
+  NavigationBar(modifier = modifier.fillMaxWidth()) {
     TOP_LEVEL_DESTINATIONS.forEach { destination ->
       val selected = selectedDestination == destination.route
       NavigationBarItem(
@@ -163,12 +165,13 @@ fun TrackBottomNavigationBar(
 
 @Composable
 fun PermanentNavigationDrawerContent(
+  modifier: Modifier = Modifier,
   selectedDestination: String,
   navigationContentPosition: NavigationContentPosition,
   navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
   openScreen: (String) -> Unit,
 ) {
-  PermanentDrawerSheet(modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp)) {
+  PermanentDrawerSheet(modifier = modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp)) {
     // TODO remove custom nav drawer content positioning when NavDrawer component supports it. ticket : b/232495216
     Layout(
       modifier = Modifier

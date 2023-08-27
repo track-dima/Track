@@ -837,48 +837,76 @@ fun TrainingStepsListBox(
       .fillMaxWidth()
       .height(max(80.dp + 32.dp + 78.dp * (tree.first) + 70.dp * (tree.second), 128.dp)),
   ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 16.dp, bottom = 8.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center
-    ) {
-      ExtendedFloatingActionButton(
-        text = {
-          Text(
-            text = if (filling) stringResource(R.string.fill_training) else stringResource(
-              R.string.edit_repetitions
-            )
-          )
-        },
-        icon = {
-          if (filling)
-            Icon(
-              Icons.Rounded.Watch,
-              contentDescription = stringResource(R.string.fill_training)
-            )
-          else Icon(
-            Icons.Rounded.Edit,
-            contentDescription = stringResource(R.string.edit_repetitions)
-          )
-        },
-        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        onClick = {
-          if (filling) {
-            onFillSteps()
-          } else {
-            onEditSteps()
-          }
-        },
+    if (training.trainingSteps.isEmpty() && filling) {
+      NoTrainingStepsText()
+    } else {
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = 16.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+      ) {
+        TrainingStepsListFab(filling, onFillSteps, onEditSteps)
+      }
+      Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        UnmodifiableStepsList(trainingSteps = training.trainingSteps)
+      }
+    }
+  }
+}
+
+@Composable
+private fun TrainingStepsListFab(
+  filling: Boolean,
+  onFillSteps: () -> Unit,
+  onEditSteps: () -> Unit
+) {
+  ExtendedFloatingActionButton(
+    text = {
+      Text(
+        text = if (filling) stringResource(R.string.fill_training) else stringResource(
+          R.string.edit_repetitions
+        )
       )
-    }
-    Row(
-      modifier = Modifier.fillMaxSize(),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      UnmodifiableStepsList(trainingSteps = training.trainingSteps)
-    }
+    },
+    icon = {
+      if (filling)
+        Icon(
+          Icons.Rounded.Watch,
+          contentDescription = stringResource(R.string.fill_training)
+        )
+      else Icon(
+        Icons.Rounded.Edit,
+        contentDescription = stringResource(R.string.edit_repetitions)
+      )
+    },
+    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+    onClick = {
+      if (filling) {
+        onFillSteps()
+      } else {
+        onEditSteps()
+      }
+    },
+  )
+}
+
+@Composable
+private fun NoTrainingStepsText() {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(16.dp),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Text(
+      text = stringResource(R.string.no_training_steps),
+    )
   }
 }
 

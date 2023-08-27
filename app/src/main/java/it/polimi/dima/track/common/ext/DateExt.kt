@@ -13,18 +13,24 @@ fun Date?.getWeekInterval(default: String = ""): String {
     val endOfWeek = calendar.clone() as Calendar
     endOfWeek[Calendar.DAY_OF_WEEK] = endOfWeek.firstDayOfWeek
     endOfWeek.add(Calendar.DAY_OF_WEEK, 6)
-
     val startMonth =
       startOfWeek.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
     val endMonth =
       endOfWeek.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
+    val startYear = startOfWeek[Calendar.YEAR]
+    val endYear = endOfWeek[Calendar.YEAR]
 
     return if (startMonth == endMonth) {
       "${startOfWeek[Calendar.DAY_OF_MONTH]}-${endOfWeek[Calendar.DAY_OF_MONTH]} " +
-          "$startMonth ${startOfWeek[Calendar.YEAR]}"
+          "$startMonth $startYear"
     } else {
-      "${startOfWeek[Calendar.DAY_OF_MONTH]} $startMonth - " +
-          "${endOfWeek[Calendar.DAY_OF_MONTH]} $endMonth ${startOfWeek[Calendar.YEAR]}"
+      if (startYear == endYear) {
+        "${startOfWeek[Calendar.DAY_OF_MONTH]} $startMonth - " +
+            "${endOfWeek[Calendar.DAY_OF_MONTH]} $endMonth $startYear"
+      } else {
+        "${startOfWeek[Calendar.DAY_OF_MONTH]} $startMonth $startYear - " +
+            "${endOfWeek[Calendar.DAY_OF_MONTH]} $endMonth $endYear"
+      }
     }
   } else default
 }

@@ -1,7 +1,6 @@
 package it.polimi.dima.track.common.composable
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -14,7 +13,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +22,7 @@ fun BasicToolbar(@StringRes title: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoTitleToolbar(
+fun NoTitleTransparentToolbar(
   navigationIcon: @Composable () -> Unit,
   actions: @Composable RowScope.() -> Unit
 ) {
