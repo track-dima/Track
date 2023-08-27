@@ -4,7 +4,6 @@ import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.TrainingStep
 import it.polimi.dima.track.screens.edit_training.EditTrainingViewModel
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
 
