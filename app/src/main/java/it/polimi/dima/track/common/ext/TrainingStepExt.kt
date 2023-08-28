@@ -1,6 +1,7 @@
 package it.polimi.dima.track.common.ext
 
 import it.polimi.dima.track.model.TrainingStep
+import it.polimi.dima.track.model.TrainingStep.PaceUnit.Companion.MIN_KM
 
 fun TrainingStep.calculateTree(): Pair<Int, Int> {
   // Calculate the number of normal steps and the number of repetition blocks
@@ -91,7 +92,7 @@ fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): Stri
     }
 
     TrainingStep.Type.REPETITION_BLOCK -> {
-      val tabs = "\t" + "\t".repeat(level * 3)
+      val tabs = "\t" + "\t".repeat(level * 2)
       val recover = getRecoverString()
       val extraRecover = getExtraRecoverString()
       "$repetitions sets of:\n" +
@@ -116,14 +117,16 @@ fun TrainingStep.parseToString(level: Int, dot: String, lastStep: Boolean): Stri
 fun TrainingStep.calculateSearchTokens(): List<String> {
   val tokens = mutableSetOf<String>()
 
-  return if (type == TrainingStep.Type.REPETITION_BLOCK && stepsInRepetition.isEmpty()) {
-    tokens.toList()
-  } else if (stepsInRepetition.isEmpty()) {
-    tokens.add(getDurationString())
-    tokens.toList()
-  } else {
-    tokens.addAll(stepsInRepetition.flatMap { it.calculateSearchTokens() })
-    tokens.toList()
+  return when (type) {
+    TrainingStep.Type.REPETITION_BLOCK -> {
+      tokens.addAll(stepsInRepetition.flatMap { it.calculateSearchTokens() })
+      tokens.toList()
+    }
+    TrainingStep.Type.REPETITION -> {
+      tokens.add(getDurationString())
+      tokens.toList()
+    }
+    else -> tokens.toList()
   }
 }
 
@@ -146,13 +149,6 @@ private fun TrainingStep.getDurationString() =
     duration.secondsToHhMmSs()
   } else {
     distance.toString() + distanceUnit
-  }
-
-private fun TrainingStep.getDurationForResult(): Int =
-  if (durationType == TrainingStep.DurationType.TIME) {
-    duration
-  } else {
-    distance.distanceToMeters(distanceUnit)
   }
 
 fun TrainingStep.getBestResults(): Pair<Map<Int, String>, Map<Int, String>> {
@@ -180,7 +176,6 @@ fun TrainingStep.getBestResults(): Pair<Map<Int, String>, Map<Int, String>> {
   }
 }
 
-
 fun updateBestTimeResults(
   bestResults: MutableMap<Int, String>,
   newBestResults: Map<Int, String>
@@ -196,6 +191,7 @@ fun updateBestTimeResults(
   }
   return bestResults
 }
+
 
 fun updateBestPaceResults(
   bestResults: MutableMap<Int, String>,
@@ -213,10 +209,17 @@ fun updateBestPaceResults(
   return bestResults
 }
 
+private fun TrainingStep.getDurationForResult(): Int =
+  if (durationType == TrainingStep.DurationType.TIME) {
+    duration
+  } else {
+    distance.distanceToMeters(distanceUnit)
+  }
+
 private fun TrainingStep.repetitionBestTimeResult(): String {
   return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.timeToSeconds().toFloat() + it.extractCents().toFloat() / 100 }
 }
 
 private fun TrainingStep.repetitionBestPaceResult(): String {
-  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.paceToSeconds() }
+  return results.filter { it.isNotBlank() && !it.timeIsZero() }.minBy { it.paceToSeconds().toFloat() / (if (it.extractPaceUnit() == MIN_KM) 1.0 else 1.609) }
 }

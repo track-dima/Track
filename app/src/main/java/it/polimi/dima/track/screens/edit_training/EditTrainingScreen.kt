@@ -18,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import it.polimi.dima.track.R
@@ -43,22 +45,18 @@ import it.polimi.dima.track.model.Type
 fun EditTrainingScreen(
   openScreen: (String) -> Unit,
   popUpScreen: () -> Unit,
-  trainingId: String,
   modifier: Modifier = Modifier,
   viewModel: EditTrainingViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
-
-  LaunchedEffect(Unit) {
-    viewModel.initialize(trainingId)
-  }
+  val titleResource by viewModel.titleResource
 
   Column(
     modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     ActionToolbar(
-      title = R.string.edit_training,
+      title = titleResource,
       modifier = Modifier.toolbarActions(),
       startActionIcon = Icons.Rounded.Close,
       startActionDescription = R.string.close,
@@ -76,7 +74,9 @@ fun EditTrainingScreen(
       Spacer(modifier = Modifier.bigSpacer())
 
       val fieldModifier = Modifier.fieldModifier()
-      BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier)
+      BasicField(R.string.title, training.title, viewModel::onTitleChange, fieldModifier.testTag(
+        stringResource(id = R.string.title_input_tag)
+      ))
       BasicField(
         R.string.description,
         training.description,

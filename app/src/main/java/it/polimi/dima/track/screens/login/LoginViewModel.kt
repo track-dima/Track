@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.LOGIN_SCREEN
 import it.polimi.dima.track.R
-import it.polimi.dima.track.SETTINGS_SCREEN
 import it.polimi.dima.track.TRAININGS_SCREEN
 import it.polimi.dima.track.common.ext.isValidEmail
 import it.polimi.dima.track.common.snackbar.SnackBarManager

@@ -52,7 +52,7 @@ fun DropdownContextMenu(
       options.forEach { selectionOption ->
         DropdownMenuItem(
           /*
-           * TODO aggiungere leading icon
+           * Possiamo anche usare una leading icon, ma in questo caso non è necessario.
            * https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)
            */
           text = { Text(text = selectionOption, style = MaterialTheme.typography.bodyLarge) },

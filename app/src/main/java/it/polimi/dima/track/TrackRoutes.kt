@@ -16,4 +16,10 @@ const val FITBIT_SCREEN = "FitbitScreen"
 
 const val TRAINING_ID = "trainingId"
 const val TRAINING_DEFAULT_ID = "-1"
-const val TRAINING_ID_ARG = "?$TRAINING_ID={$TRAINING_ID}"
+const val TRAINING_ID_ARG = "$TRAINING_ID={$TRAINING_ID}"
+const val EDIT_MODE = "editMode"
+const val EDIT_MODE_EDIT = "edit"
+const val EDIT_MODE_NEW = "new"
+const val EDIT_MODE_DUPLICATE = "duplicate"
+const val EDIT_MODE_DEFAULT = EDIT_MODE_EDIT
+const val EDIT_MODE_ARG = "$EDIT_MODE={$EDIT_MODE}"

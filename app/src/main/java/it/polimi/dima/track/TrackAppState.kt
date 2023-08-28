@@ -29,6 +29,8 @@ class TrackAppState constructor(
     }
   }
 
+  fun getBackStackEntry(route: String) = navController.getBackStackEntry(route)
+
   fun popUp() {
     navController.popBackStack()
   }

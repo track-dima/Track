@@ -52,5 +52,5 @@ enum class NavigationContentPosition {
  * App Content shown depending on device size and state.
  */
 enum class TrackContentType {
-  SINGLE_PANE, DUAL_PANE
+  LIST_AND_DETAIL, LIST_ONLY
 }

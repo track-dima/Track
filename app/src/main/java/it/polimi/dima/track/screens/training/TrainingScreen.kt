@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,21 +50,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import it.polimi.dima.track.EDIT_MODE_EDIT
 import it.polimi.dima.track.FILL_REPETITIONS_SCREEN
 import it.polimi.dima.track.R
 import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.composable.DeleteDialog
 import it.polimi.dima.track.common.composable.DropdownContextMenu
 import it.polimi.dima.track.common.composable.IconButtonStyle
-import it.polimi.dima.track.common.composable.NoTitleToolbar
+import it.polimi.dima.track.common.composable.NoTitleTransparentToolbar
 import it.polimi.dima.track.common.composable.TrainingStepsListBox
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.calculateTotalTime
 import it.polimi.dima.track.common.ext.contextMenu
 import it.polimi.dima.track.common.ext.hasDueDate
 import it.polimi.dima.track.common.ext.hasDueTime
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.ext.secondsToHhMm
-import it.polimi.dima.track.common.ext.bigSpacer
+import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.common.utils.addToCalendar
@@ -77,17 +78,20 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun TrainingScreen(
-  popUpScreen: () -> Unit,
+  modifier: Modifier = Modifier,
+  compactMode: Boolean = false,
+  popUpScreen: () -> Unit = {},
   openScreen: (String) -> Unit,
   trainingId: String,
-  onEditPressed: (Training) -> Unit,
+  onEditPressed: (String, String) -> Unit,
   viewModel: TrainingViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
   val options by viewModel.options
   val isFitbitConnected by viewModel.isFitbitConnected
 
-  LaunchedEffect(Unit) {
+  LaunchedEffect(trainingId) {
+    // TODO is called on configuration change
     viewModel.initialize(trainingId)
   }
 
@@ -106,28 +110,29 @@ fun TrainingScreen(
   }
 
   Column(
-    modifier = Modifier
-      .fillMaxSize()
+    modifier = modifier
       .verticalScroll(rememberScrollState()),
   ) {
-    NoTitleToolbar(
+    NoTitleTransparentToolbar(
       navigationIcon = {
-        FilledTonalIconButton(
-          modifier = Modifier.padding(8.dp, 0.dp),
-          onClick = popUpScreen
-        ) {
-          Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
+        if (!compactMode) {
+          FilledTonalIconButton(
+            modifier = Modifier.padding(8.dp, 0.dp),
+            onClick = popUpScreen
+          ) {
+            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
+          }
         }
       }
     ) {
       TrainingToolbarActions(
         training = training,
         onFavoriteClick = { favorite -> viewModel.onFavoriteClick(favorite) },
-        onEditPressed = { onEditPressed(training) },
+        onEditPressed = { onEditPressed(training.id, EDIT_MODE_EDIT) },
         options = options,
         onDuplicateTrainingClick = {
           viewModel.onDuplicateTrainingClick(
-            training,
+            training.id,
             popUpScreen,
             onEditPressed
           )
@@ -223,7 +228,9 @@ private fun TrainingToolbarActions(
 
 @Composable
 private fun TrainingInformation(training: Training) {
-  TrainingTitle(training)
+  if (training.title.isNotEmpty()) {
+    TrainingTitle(training)
+  }
 
   if (training.description.isNotEmpty()) {
     Spacer(modifier = Modifier.bigSpacer())
@@ -325,7 +332,7 @@ private fun TrainingTitle(training: Training) {
   ) {
     Icon(
       Icons.Rounded.DirectionsRun,
-      contentDescription = stringResource(R.string.run),
+      contentDescription = stringResource(R.string.title),
       modifier = Modifier
         .padding(end = 16.dp)
         .align(Alignment.CenterVertically)

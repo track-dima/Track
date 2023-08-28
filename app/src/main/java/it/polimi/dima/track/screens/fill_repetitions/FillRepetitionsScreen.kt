@@ -2,7 +2,6 @@ package it.polimi.dima.track.screens.fill_repetitions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,11 +26,11 @@ import it.polimi.dima.track.common.composable.PaceSelectionDialog
 import it.polimi.dima.track.common.composable.TimeSelectionDialog
 import it.polimi.dima.track.common.composable.UnmodifiableStepsList
 import it.polimi.dima.track.common.composable.rememberPickerState
+import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.calculateTree
 import it.polimi.dima.track.common.ext.extractCents
 import it.polimi.dima.track.common.ext.extractPaceUnit
 import it.polimi.dima.track.common.ext.paceToSeconds
-import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.ext.timeToSeconds
 import it.polimi.dima.track.common.ext.toolbarActions
 import it.polimi.dima.track.model.TrainingStep
@@ -41,16 +39,10 @@ import it.polimi.dima.track.model.TrainingStep
 fun FillRepetitionsScreen(
   modifier: Modifier = Modifier,
   popUpScreen: () -> Unit,
-  trainingId: String,
   viewModel: FillRepetitionsViewModel = hiltViewModel()
 ) {
   val training by viewModel.training
   val trainingSteps by viewModel.trainingSteps
-
-  LaunchedEffect(Unit) {
-    viewModel.initialize(trainingId)
-  }
-
 
   Column(
     modifier = modifier.fillMaxSize(),
