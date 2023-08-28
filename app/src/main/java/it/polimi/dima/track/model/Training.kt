@@ -16,10 +16,23 @@ data class Training(
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
   val personalBest: Boolean = false,
+  val fitbitData: FitbitData? = null,
 
   // Searchable tokens
   val searchable: List<String> = listOf(),
 
   // If true, the training is deleted when the user leaves the screen
   val transient: Boolean = false,
-)
+) {
+  val dueDatetime: Date?
+    get() {
+      if (dueDate == null || dueTime == null) {
+        return null
+      }
+      return Date(
+        dueDate.time
+            + (dueTime["hour"] ?: 0) * 60 * 60 * 1000
+            + (dueTime["minute"] ?: 0) * 60 * 1000
+      )
+    }
+}

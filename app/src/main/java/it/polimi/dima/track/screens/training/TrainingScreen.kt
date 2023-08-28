@@ -1,14 +1,17 @@
 package it.polimi.dima.track.screens.training
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -19,8 +22,16 @@ import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.Notes
+import androidx.compose.material.icons.rounded.PinDrop
+import androidx.compose.material.icons.rounded.Snowshoeing
+import androidx.compose.material.icons.rounded.Stairs
 import androidx.compose.material.icons.rounded.Terrain
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
@@ -30,9 +41,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,7 +69,11 @@ import it.polimi.dima.track.common.ext.bigSpacer
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.common.utils.addToCalendar
+import it.polimi.dima.track.model.FitbitData
 import it.polimi.dima.track.model.Training
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun TrainingScreen(
@@ -67,6 +85,7 @@ fun TrainingScreen(
 ) {
   val training by viewModel.training
   val options by viewModel.options
+  val isFitbitConnected by viewModel.isFitbitConnected
 
   LaunchedEffect(Unit) {
     viewModel.initialize(trainingId)
@@ -124,6 +143,11 @@ fun TrainingScreen(
       verticalArrangement = Arrangement.Center
     ) {
       TrainingInformation(training)
+
+      if (isFitbitConnected) {
+        Spacer(modifier = Modifier.bigSpacer())
+        TrainingFitbitData(training) { viewModel.onImportFitbitDataClick() }
+      }
     }
 
     Spacer(modifier = Modifier.bigSpacer())
@@ -178,11 +202,13 @@ private fun TrainingToolbarActions(
           context = context,
           text = "https://track.com/training/${training.id}"
         )
+
         TrainingActionOption.CopyTraining -> copyToClipboard(
           context = context,
           text = training.parseTraining(),
           label = "Training",
         )
+
         TrainingActionOption.AddToCalendar -> addToCalendar(
           context = context,
           training = training
@@ -309,6 +335,107 @@ private fun TrainingTitle(training: Training) {
         text = training.title,
         style = MaterialTheme.typography.titleLarge
       )
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TrainingFitbitData(
+  training: Training,
+  onImportFitbitDataClick: suspend () -> Unit,
+) {
+  val coroutineScope = rememberCoroutineScope()
+  val showDialog = remember { mutableStateOf(false) }
+
+  if (training.fitbitData == null) {
+    Button(
+      onClick = {
+        showDialog.value = true
+        coroutineScope.launch {
+          withContext(Dispatchers.IO) {
+            onImportFitbitDataClick()
+            showDialog.value = false
+          }
+        }
+      },
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      Text("Import Fitbit data")
+    }
+  } else {
+    TrainingCalories(training.fitbitData)
+    TrainingSteps(training.fitbitData)
+    TrainingDistance(training.fitbitData)
+    TrainingElevationGain(training.fitbitData)
+  }
+
+  if (showDialog.value) {
+    AlertDialog(onDismissRequest = { showDialog.value = false }) {
+      Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+          .size(100.dp)
+          .background(Color.White, shape = RoundedCornerShape(8.dp))
+      ) {
+        CircularProgressIndicator()
+      }
+    }
+  }
+}
+
+@Composable
+private fun TrainingCalories(fitbitData: FitbitData) {
+  Row {
+    Icon(
+      Icons.Rounded.LocalFireDepartment,
+      contentDescription = stringResource(R.string.calories),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    SelectionContainer {
+      Text(text = "${fitbitData.calories} calories")
+    }
+  }
+}
+
+@Composable
+private fun TrainingSteps(fitbitData: FitbitData) {
+  Row {
+    Icon(
+      Icons.Rounded.Snowshoeing,
+      contentDescription = stringResource(R.string.steps),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    SelectionContainer {
+      Text(text = "${fitbitData.steps} steps")
+    }
+  }
+}
+
+@Composable
+private fun TrainingDistance(fitbitData: FitbitData) {
+  Row {
+    Icon(
+      Icons.Rounded.PinDrop,
+      contentDescription = stringResource(R.string.distance),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    SelectionContainer {
+      Text(text = "${fitbitData.distance} m")
+    }
+  }
+}
+
+@Composable
+private fun TrainingElevationGain(fitbitData: FitbitData) {
+  Row {
+    Icon(
+      Icons.Rounded.Stairs,
+      contentDescription = stringResource(R.string.elevation_gain),
+      modifier = Modifier.padding(end = 16.dp)
+    )
+    SelectionContainer {
+      Text(text = fitbitData.elevationGain.toString())
     }
   }
 }

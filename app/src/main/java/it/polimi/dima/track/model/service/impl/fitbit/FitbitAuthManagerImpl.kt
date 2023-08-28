@@ -36,6 +36,25 @@ class FitbitAuthManagerImpl @Inject constructor() : FitbitAuthManager {
       .toString()
   }
 
+  override suspend fun isAccessTokenActive(accessToken: String): Boolean {
+    val call = httpClient.newCall(
+      Request.Builder()
+        .url("https://api.fitbit.com/1.1/oauth2/introspect")
+        .header("Authorization", "Bearer $accessToken")
+        .post(
+          FormBody.Builder()
+            .add("token", accessToken)
+            .build()
+        )
+        .build()
+    )
+
+    return withContext(Dispatchers.IO) {
+      val response = call.execute()
+      response.isSuccessful
+    }
+  }
+
   override suspend fun exchangeCodeForToken(code: String): FitbitOAuthToken {
     val call = httpClient.newCall(
       Request.Builder()

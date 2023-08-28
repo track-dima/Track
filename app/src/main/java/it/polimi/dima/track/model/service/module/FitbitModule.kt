@@ -18,5 +18,6 @@ interface FitbitModule {
     fun bindFitbitAuthManager(impl: FitbitAuthManagerImpl): FitbitAuthManager
 
     @Binds
+    @Singleton
     fun bindFitbitService(impl: FitbitServiceImpl): FitbitService
 }

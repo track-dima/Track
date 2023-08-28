@@ -1,15 +1,15 @@
 package it.polimi.dima.track.model.service.fitbit
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.util.Date
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class FitbitActivity(
-  val activeDuration: Int,
-  val activityName: String,
-  val calories: Int,
-  val distance: Int,
+  val startTime: Date,
   val duration: Int,
-  val pace: Int,
-  val speed: Int,
-  val steps: Int,
+  val activityName: String,
+  var calories: Int,
+  var steps: Int,
+  var distance: Int,
+  var elevationGain: Int,
 )
