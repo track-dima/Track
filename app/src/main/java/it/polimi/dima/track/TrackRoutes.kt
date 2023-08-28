@@ -12,6 +12,7 @@ const val EDIT_TRAINING_SCREEN = "EditTrainingScreen"
 const val EDIT_REPETITIONS_SCREEN = "EditRepetitionsScreen"
 const val FILL_REPETITIONS_SCREEN = "FillRepetitionsScreen"
 const val TRAINING_SCREEN = "TrainingScreen"
+const val FITBIT_SCREEN = "FitbitScreen"
 
 const val TRAINING_ID = "trainingId"
 const val TRAINING_DEFAULT_ID = "-1"

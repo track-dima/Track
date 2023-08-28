@@ -16,7 +16,20 @@ data class Training(
   val favorite: Boolean = false,
   val trainingSteps: List<TrainingStep> = listOf(),
   val personalBest: Boolean = false,
+  val fitbitData: FitbitData? = null,
 
   // Searchable tokens
   val searchable: List<String> = listOf(),
-)
+) {
+  val dueDatetime: Date?
+    get() {
+      if (dueDate == null || dueTime == null) {
+        return null
+      }
+      return Date(
+        dueDate.time
+            + (dueTime["hour"] ?: 0) * 60 * 60 * 1000
+            + (dueTime["minute"] ?: 0) * 60 * 1000
+      )
+    }
+}

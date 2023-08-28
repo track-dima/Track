@@ -112,6 +112,9 @@
     <string name="strength">Strength</string>
     <string name="personal_best">Personal best</string>
     <string name="no_trainings">No trainings</string>
+    <string name="calories">Calories</string>
+    <string name="steps">Steps</string>
+    <string name="elevation_gain">Elevation gain</string>
     <string name="no_training_steps">No training steps</string>
 
     <!-- Tags -->
