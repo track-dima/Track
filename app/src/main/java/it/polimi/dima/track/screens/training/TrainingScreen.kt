@@ -69,7 +69,6 @@ import it.polimi.dima.track.common.ext.secondsToHhMm
 import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
-import it.polimi.dima.track.common.utils.addToCalendar
 import it.polimi.dima.track.model.FitbitData
 import it.polimi.dima.track.model.Training
 import kotlinx.coroutines.Dispatchers
@@ -372,8 +371,14 @@ private fun TrainingFitbitData(
     }
   } else {
     TrainingCalories(training.fitbitData)
+
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingSteps(training.fitbitData)
+
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingDistance(training.fitbitData)
+
+    Spacer(modifier = Modifier.bigSpacer())
     TrainingElevationGain(training.fitbitData)
   }
 
@@ -442,7 +447,7 @@ private fun TrainingElevationGain(fitbitData: FitbitData) {
       modifier = Modifier.padding(end = 16.dp)
     )
     SelectionContainer {
-      Text(text = fitbitData.elevationGain.toString())
+      Text(text = "${fitbitData.elevationGain} floors")
     }
   }
 }
