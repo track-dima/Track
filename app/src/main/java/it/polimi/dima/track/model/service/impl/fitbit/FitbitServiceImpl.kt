@@ -1,7 +1,5 @@
 package it.polimi.dima.track.model.service.impl.fitbit
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -24,7 +22,6 @@ class FitbitServiceImpl @Inject constructor() : FitbitService {
   private val httpClient = OkHttpClient()
   private val jacksonObjectMapper = jacksonObjectMapper()
 
-  @RequiresApi(Build.VERSION_CODES.O)
   override suspend fun getActivitiesByTraining(training: Training): List<FitbitActivity> {
     if (training.dueDate == null || training.dueDatetime == null) {
       throw IOException()

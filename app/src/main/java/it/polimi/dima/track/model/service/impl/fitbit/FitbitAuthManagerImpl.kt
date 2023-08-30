@@ -1,7 +1,6 @@
 package it.polimi.dima.track.model.service.impl.fitbit
 
 import android.net.Uri
-import android.util.Base64
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
@@ -15,14 +14,18 @@ import okhttp3.Request
 import java.io.IOException
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.Base64
 import javax.inject.Inject
 
-class FitbitAuthManagerImpl @Inject constructor() : FitbitAuthManager {
-  private val config: FitbitConfig = FitbitConfig()
-  private val codeVerifier = generateCodeVerifier()
-  private val codeChallenge = generateCodeChallenge(codeVerifier)
-  private val httpClient = OkHttpClient()
+class FitbitAuthManagerImpl @Inject constructor(
+  private val httpClient: OkHttpClient
+) : FitbitAuthManager {
+  private val base64Encoder = Base64.getUrlEncoder().withoutPadding()
   private val jacksonObjectMapper = jacksonObjectMapper()
+
+  override val config: FitbitConfig = FitbitConfig()
+  override val codeVerifier = generateCodeVerifier()
+  override val codeChallenge = generateCodeChallenge()
 
   override fun createAuthorizationUrl(): String {
     return Uri.parse(config.authorizationUri)
@@ -110,24 +113,18 @@ class FitbitAuthManagerImpl @Inject constructor() : FitbitAuthManager {
   private fun generateCodeVerifier(): String {
     val randomBytes = ByteArray(32)
     SecureRandom().nextBytes(randomBytes)
-    return Base64.encodeToString(
-      randomBytes,
-      Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
-    )
+    return base64Encoder.encodeToString(randomBytes)
   }
 
-  private fun generateCodeChallenge(codeVerifier: String): String {
+  private fun generateCodeChallenge(): String {
     val sha256bytes = MessageDigest
       .getInstance("SHA-256")
       .digest(codeVerifier.toByteArray())
-    return Base64.encodeToString(
-      sha256bytes,
-      Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
-    )
+    return base64Encoder.encodeToString(sha256bytes)
   }
 
   private fun createAuthorizationHeader(): String {
     val clientIdAndSecret = "${config.clientId}:${config.clientSecret}"
-    return Base64.encodeToString(clientIdAndSecret.toByteArray(), Base64.NO_WRAP)
+    return base64Encoder.encodeToString(clientIdAndSecret.toByteArray())
   }
 }
