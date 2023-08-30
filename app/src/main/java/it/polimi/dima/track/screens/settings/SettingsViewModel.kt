@@ -1,6 +1,7 @@
 package it.polimi.dima.track.screens.settings
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,8 +48,8 @@ class SettingsViewModel @Inject constructor(
   }
 
   fun onFitbitButtonClick(context: Context) {
-    CustomTabsIntent.Builder()
-      .build()
-      .launchUrl(context, Uri.parse(fitbitAuthManager.createAuthorizationUrl()))
+    val intent = CustomTabsIntent.Builder().build()
+    intent.intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    intent.launchUrl(context, Uri.parse(fitbitAuthManager.createAuthorizationUrl()))
   }
 }

@@ -320,7 +320,7 @@ fun NavGraphBuilder.trackGraph(
     deepLinks = listOf(navDeepLink { uriPattern = "https://track.com/fitbit?code={authorizationCode}#_=_" })) {
       FitbitScreen(
         fitbitAuthorizationCode = it.arguments!!.getString("authorizationCode")!!,
-        openScreen = { route -> appState.navigate(route) }
+        openScreen = { route -> appState.clearAndNavigate(route) }
       )
   }
 }
