@@ -1,6 +1,5 @@
 package it.polimi.dima.track.model.service.impl.fitbit
 
-import android.net.Uri
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import it.polimi.dima.track.model.service.fitbit.FitbitAuthManager
@@ -9,6 +8,7 @@ import it.polimi.dima.track.model.service.fitbit.FitbitOAuthToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -23,18 +23,20 @@ class FitbitAuthManagerImpl @Inject constructor(
   private val base64Encoder = Base64.getUrlEncoder().withoutPadding()
   private val jacksonObjectMapper = jacksonObjectMapper()
 
-  override val config: FitbitConfig = FitbitConfig()
+  override val config: FitbitConfig = FitbitConfig
   override val codeVerifier = generateCodeVerifier()
   override val codeChallenge = generateCodeChallenge()
 
   override fun createAuthorizationUrl(): String {
-    return Uri.parse(config.authorizationUri)
-      .buildUpon()
-      .appendQueryParameter("client_id", config.clientId)
-      .appendQueryParameter("response_type", "code")
-      .appendQueryParameter("code_challenge", codeChallenge)
-      .appendQueryParameter("code_challenge_method", "S256")
-      .appendQueryParameter("scope", config.scope)
+    return HttpUrl.Builder()
+      .scheme("https")
+      .host("www.fitbit.com")
+      .encodedPath("/oauth2/authorize")
+      .addQueryParameter("client_id", config.clientId)
+      .addQueryParameter("response_type", "code")
+      .addQueryParameter("code_challenge", codeChallenge)
+      .addQueryParameter("code_challenge_method", "S256")
+      .addQueryParameter("scope", config.scope)
       .build()
       .toString()
   }
