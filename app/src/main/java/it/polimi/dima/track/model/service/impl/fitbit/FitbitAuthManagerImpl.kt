@@ -78,7 +78,7 @@ class FitbitAuthManagerImpl @Inject constructor(
 
     return withContext(Dispatchers.IO) {
       val response = call.execute()
-      val responseBody = response.body()
+      val responseBody = response.body
       if (response.isSuccessful && responseBody != null) {
         jacksonObjectMapper.readValue(responseBody.string())
       } else {
@@ -103,7 +103,7 @@ class FitbitAuthManagerImpl @Inject constructor(
 
     return withContext(Dispatchers.IO) {
       val response = call.execute()
-      val responseBody = response.body()
+      val responseBody = response.body
       if (response.isSuccessful && responseBody != null) {
         jacksonObjectMapper.readValue(responseBody.string())
       } else {

@@ -17,9 +17,10 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
-class FitbitServiceImpl @Inject constructor() : FitbitService {
+class FitbitServiceImpl @Inject constructor(
+  private val httpClient: OkHttpClient
+) : FitbitService {
   override lateinit var token: FitbitOAuthToken
-  private val httpClient = OkHttpClient()
   private val jacksonObjectMapper = jacksonObjectMapper()
 
   override suspend fun getActivitiesByTraining(training: Training): List<FitbitActivity> {
@@ -55,7 +56,7 @@ class FitbitServiceImpl @Inject constructor() : FitbitService {
 
     val responseContent = withContext(Dispatchers.IO) {
       val response = call.execute()
-      val responseBody = response.body()
+      val responseBody = response.body
       if (!response.isSuccessful || responseBody == null) {
         throw IOException()
       }
