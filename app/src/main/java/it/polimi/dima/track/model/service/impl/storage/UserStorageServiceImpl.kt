@@ -7,7 +7,6 @@ import it.polimi.dima.track.model.User
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.fitbit.FitbitOAuthToken
 import it.polimi.dima.track.model.service.storage.UserStorageService
-import it.polimi.dima.track.model.service.trace
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -35,17 +34,20 @@ class UserStorageServiceImpl @Inject constructor(
       }
 
   override suspend fun updateUserName(newName: String) {
-    trace(UPDATE_USER_NAME_TRACE) {
-      firestore.collection(USER_COLLECTION).document(auth.currentUserId).update("name", newName)
-        .await()
-    }
+    firestore
+      .collection(USER_COLLECTION)
+      .document(auth.currentUserId)
+      .update("name", newName)
+      .await()
+
   }
 
   override suspend fun updateUserSpecialty(newSpecialty: String) {
-    trace(UPDATE_USER_SPECIALTY_TRACE) {
-      firestore.collection(USER_COLLECTION).document(auth.currentUserId)
-        .update("specialty", newSpecialty).await()
-    }
+    firestore
+      .collection(USER_COLLECTION)
+      .document(auth.currentUserId)
+      .update("specialty", newSpecialty)
+      .await()
   }
 
   override suspend fun updateFitbitToken(token: FitbitOAuthToken?) {
@@ -58,8 +60,5 @@ class UserStorageServiceImpl @Inject constructor(
 
   companion object {
     private const val USER_COLLECTION = "users"
-    private const val UPDATE_USER_NAME_TRACE = "updateUserName"
-    private const val UPDATE_USER_SPECIALTY_TRACE = "updateUserSpecialty"
-    private const val UPDATE_FITBIT_TOKEN_TRACE = "updateFitbitToken"
   }
 }
