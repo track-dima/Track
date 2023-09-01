@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.AGENDA_SCREEN
 import it.polimi.dima.track.EDIT_MODE
-import it.polimi.dima.track.EDIT_MODE_ARG
 import it.polimi.dima.track.EDIT_MODE_DUPLICATE
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.SETTINGS_SCREEN
@@ -14,7 +13,6 @@ import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
-import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.TrackViewModel
@@ -27,8 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
   logService: LogService,
-  private val trainingStorageService: TrainingStorageService,
-  private val configurationService: ConfigurationService
+  private val trainingStorageService: TrainingStorageService
 ) : TrackViewModel(logService) {
   val actions = mutableStateOf<List<String>>(listOf())
   private val trainings = trainingStorageService.trainings
