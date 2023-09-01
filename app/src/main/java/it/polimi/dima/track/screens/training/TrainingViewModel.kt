@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.polimi.dima.track.EDIT_MODE_DUPLICATE
 import it.polimi.dima.track.TRAINING_DEFAULT_ID
 import it.polimi.dima.track.TRAINING_SCREEN
-import it.polimi.dima.track.common.ext.emptyResults
 import it.polimi.dima.track.model.FitbitData
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.LogService
