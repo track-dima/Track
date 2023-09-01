@@ -1,7 +1,6 @@
 package it.polimi.dima.track.model.service.storage
 
 import it.polimi.dima.track.model.Training
-import it.polimi.dima.track.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingStorageService {
@@ -12,6 +11,5 @@ interface TrainingStorageService {
   suspend fun updateTraining(training: Training)
   suspend fun duplicateTraining(training: Training): String
   suspend fun deleteTraining(trainingId: String)
-  suspend fun deleteAllForUser(userId: String)
   suspend fun updatePersonalBestFlag(trainingId: String, flag: Boolean)
 }
