@@ -6,6 +6,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verifyOrder
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.fitbit.FitbitOAuthToken
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
@@ -16,11 +17,15 @@ import org.junit.Test
 class UserStorageServiceTest {
   private lateinit var userStorageService: UserStorageService
 
+  private lateinit var firebaseFirestore: FirebaseFirestore
+  private lateinit var collectionReference: CollectionReference
+  private lateinit var documentReference: DocumentReference
+
   @Before
   fun setUp() {
-    val firebaseFirestore: FirebaseFirestore = mockk()
-    val collectionReference: CollectionReference = mockk()
-    val documentReference: DocumentReference = mockk()
+    firebaseFirestore = mockk()
+    collectionReference = mockk()
+    documentReference = mockk()
     val task: Task<Void> = mockk()
 
     every { firebaseFirestore.collection(any()) } returns collectionReference
@@ -39,31 +44,64 @@ class UserStorageServiceTest {
 
   @Test
   fun updateUserName() = runTest {
-    userStorageService.updateUserName("Test Name")
+    val newName = "New name"
+    userStorageService.updateUserName(newName)
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("name", newName)
+    }
   }
 
   @Test
   fun updateUserName_EmptyName() = runTest {
     userStorageService.updateUserName("")
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("name", "")
+    }
   }
 
   @Test
   fun updateUserSpecialty() = runTest {
-    userStorageService.updateUserSpecialty("New specialty")
+    val newSpecialty = "New specialty"
+    userStorageService.updateUserSpecialty(newSpecialty)
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("specialty", newSpecialty)
+    }
   }
 
   @Test
   fun updateUserSpecialty_EmptySpecialty() = runTest {
     userStorageService.updateUserSpecialty("")
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("specialty", "")
+    }
   }
 
   @Test
   fun updateFitbitToken() = runTest {
-    userStorageService.updateFitbitToken(FitbitOAuthToken())
+    val fitbitOAuthToken = FitbitOAuthToken()
+    userStorageService.updateFitbitToken(fitbitOAuthToken)
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("fitbitToken", fitbitOAuthToken)
+    }
   }
 
   @Test
   fun updateFitbitToken_NullToken() = runTest {
     userStorageService.updateFitbitToken(null)
+    verifyOrder {
+      firebaseFirestore.collection("users")
+      collectionReference.document(any())
+      documentReference.update("fitbitToken", null)
+    }
   }
 }
