@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.ActionToolbar
 import it.polimi.dima.track.common.composable.CardSelector
@@ -62,7 +63,7 @@ import org.burnoutcrew.reorderable.reorderable
 fun EditRepetitionsScreen(
   popUpScreen: () -> Unit,
   modifier: Modifier = Modifier,
-  viewModel: EditTrainingViewModel
+  viewModel: EditTrainingViewModel = hiltViewModel(),
 ) {
   BackHandler {
     viewModel.onDiscardStepsClick(popUpScreen)

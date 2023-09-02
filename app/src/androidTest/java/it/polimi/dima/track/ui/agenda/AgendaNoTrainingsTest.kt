@@ -15,9 +15,9 @@ import it.polimi.dima.track.R
 import it.polimi.dima.track.TrackApp
 import it.polimi.dima.track.data.mockedTrainings
 import it.polimi.dima.track.injection.InjectingTestCase
-import it.polimi.dima.track.utlis.compactWindowSize
-import it.polimi.dima.track.utlis.onNodeWithContentDescriptionForStringId
-import it.polimi.dima.track.utlis.onNodeWithStringId
+import it.polimi.dima.track.utils.compactWindowSize
+import it.polimi.dima.track.utils.onNodeWithContentDescriptionForStringId
+import it.polimi.dima.track.utils.onNodeWithStringId
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

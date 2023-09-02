@@ -10,7 +10,7 @@ import it.polimi.dima.track.data.emptyTraining
 import it.polimi.dima.track.data.mockedTrainings
 import it.polimi.dima.track.injection.InjectingTestCase
 import it.polimi.dima.track.screens.training.TrainingScreen
-import it.polimi.dima.track.utlis.onNodeWithContentDescriptionForStringId
+import it.polimi.dima.track.utils.onNodeWithContentDescriptionForStringId
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

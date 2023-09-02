@@ -36,6 +36,4 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
   override suspend fun deleteTraining(trainingId: String) {
     _trainings.value = _trainings.value.filter { it.id != trainingId }
   }
-
-  override suspend fun deleteAllForUser(userId: String) = Unit
 }

@@ -1,4 +1,4 @@
-package it.polimi.dima.track.utlis
+package it.polimi.dima.track.utils
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
