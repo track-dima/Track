@@ -6,7 +6,6 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import it.polimi.dima.track.injection.service.MockPersonalBestStorageServiceImpl
 import it.polimi.dima.track.injection.service.MockTrainingStorageServiceImpl
-import it.polimi.dima.track.model.service.impl.storage.PersonalBestStorageServiceImpl
 import it.polimi.dima.track.model.service.impl.storage.UserStorageServiceImpl
 import it.polimi.dima.track.model.service.module.StorageModule
 import it.polimi.dima.track.model.service.storage.PersonalBestStorageService
@@ -20,7 +19,7 @@ import javax.inject.Singleton
   replaces = [StorageModule::class]
 )
 @Suppress("unused")
-abstract class TestServiceModule {
+abstract class TestStorageModule {
   @Binds
   @Singleton
   abstract fun provideMockTrainingStorageService(impl: MockTrainingStorageServiceImpl): TrainingStorageService
