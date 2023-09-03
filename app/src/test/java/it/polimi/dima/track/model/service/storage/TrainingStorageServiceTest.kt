@@ -9,14 +9,13 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.AccountService
 import it.polimi.dima.track.model.service.impl.storage.TrainingStorageServiceImpl
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.Executor
@@ -26,38 +25,19 @@ class TrainingStorageServiceTest {
   private lateinit var firebaseFirestore: FirebaseFirestore
   private lateinit var collectionReference: CollectionReference
   private lateinit var documentReference: DocumentReference
-  private lateinit var query: Query
-  private lateinit var queryTask: Task<QuerySnapshot>
-  private lateinit var updateTask: Task<Void>
-  private lateinit var getTask: Task<DocumentSnapshot>
   private lateinit var documentSnapshot: DocumentSnapshot
-  private lateinit var querySnapshot: QuerySnapshot
 
   @Before
   fun setUp() {
     firebaseFirestore = mockk()
     collectionReference = mockk()
     documentReference = mockk()
-    query = mockk()
-    queryTask = mockk()
-    updateTask = mockk()
-    getTask = mockk()
     documentSnapshot = mockk()
-    querySnapshot = mockk()
 
     every { firebaseFirestore.collection(any()) } returns collectionReference
-
     every { collectionReference.document(any()) } returns documentReference
-
-    every { documentReference.update(any<String>(), any()) } returns updateTask
     every { documentReference.collection(any()) } returns collectionReference
-    every { documentReference.get() } returns getTask
     every { documentReference.id } returns "trainingId"
-
-    every { updateTask.isComplete } returns true
-    every { updateTask.isCanceled } returns false
-    every { updateTask.exception } returns null
-    every { updateTask.result } returns null
 
     val accountService: AccountService = mockk()
     every { accountService.currentUserId } returns "userId"
@@ -67,22 +47,31 @@ class TrainingStorageServiceTest {
 
   @Test
   fun searchTrainings() = runTest {
-    every { collectionReference.whereArrayContains(any<String>(), any()) } returns query
+    val query: Query = mockk()
+    val queryTask: Task<QuerySnapshot> = mockk()
+    val querySnapshot: QuerySnapshot = mockk()
+
+    every { collectionReference.whereArrayContainsAny(any<String>(), any()) } returns query
     every { query.get() } returns queryTask
 
     every { queryTask.isComplete } returns true
     every { queryTask.isCanceled } returns false
     every { queryTask.exception } returns null
-    every { queryTask.result } returns null
-    coEvery { queryTask.await() } returns querySnapshot
+    every { queryTask.result } returns querySnapshot
 
-    every { querySnapshot.toObjects<Training>() } returns listOf(Training())
+    every { querySnapshot.toObjects<Training>() } returns listOf(Training(
+      title = "Test training",
+    ))
 
-    trainingStorageService.searchTrainings("test training")
+    val trainings = trainingStorageService.searchTrainings("test training")
+
+    assertTrue(trainings.isNotEmpty())
   }
 
   @Test
   fun getTraining() = runTest {
+    val getTask: Task<DocumentSnapshot> = mockk()
+
     every { documentReference.get() } returns getTask
 
     every { getTask.isComplete } returns true
@@ -116,6 +105,15 @@ class TrainingStorageServiceTest {
 
   @Test
   fun updateTraining() = runTest {
+    val updateTask: Task<Void> = mockk()
+
+    every { documentReference.update(any<String>(), any()) } returns updateTask
+
+    every { updateTask.isComplete } returns true
+    every { updateTask.isCanceled } returns false
+    every { updateTask.exception } returns null
+    every { updateTask.result } returns null
+
     every { documentReference.set(any()) } returns updateTask
 
     trainingStorageService.updateTraining(Training())
@@ -151,6 +149,15 @@ class TrainingStorageServiceTest {
 
   @Test
   fun updatePersonalBestFlag() = runTest {
+    val updateTask: Task<Void> = mockk()
+
+    every { documentReference.update(any<String>(), any()) } returns updateTask
+
+    every { updateTask.isComplete } returns true
+    every { updateTask.isCanceled } returns false
+    every { updateTask.exception } returns null
+    every { updateTask.result } returns null
+
     trainingStorageService.updatePersonalBestFlag("trainingId", true)
   }
 }
