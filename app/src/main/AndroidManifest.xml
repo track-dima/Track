@@ -3,25 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".TrackHiltApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/track_icon"
         android:label="@string/app_name"
-        android:name = ".TrackHiltApp"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/track_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Track"
         tools:targetApi="33">
         <activity
             android:name=".TrackActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Track.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="track.com"
+                    android:scheme="https" />
             </intent-filter>
 
             <meta-data

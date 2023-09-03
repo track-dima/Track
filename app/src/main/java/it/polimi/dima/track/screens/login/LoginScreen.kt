@@ -6,7 +6,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.polimi.dima.track.R
 import it.polimi.dima.track.common.composable.*
@@ -14,6 +16,7 @@ import it.polimi.dima.track.common.ext.basicButton
 import it.polimi.dima.track.common.ext.fieldModifier
 import it.polimi.dima.track.common.ext.textButton
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
   openAndPopUp: (String, String) -> Unit,
@@ -21,21 +24,31 @@ fun LoginScreen(
   viewModel: LoginViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState
-
-  BasicToolbar(R.string.login_details)
-
   Column(
-    modifier = modifier.fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier.fillMaxSize(),
   ) {
-    EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
-    PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
+    BasicToolbar(R.string.login_details)
 
-    BasicButton(R.string.sign_in, Modifier.basicButton()) { viewModel.onSignInClick(openAndPopUp) }
+    Column(
+      modifier = modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      val keyboardController = LocalSoftwareKeyboardController.current
 
-    BasicTextButton(R.string.forgot_password, Modifier.textButton()) {
-      viewModel.onForgotPasswordClick()
+      EmailField(uiState.email, viewModel::onEmailChange, Modifier.fieldModifier())
+      PasswordField(uiState.password, viewModel::onPasswordChange, Modifier.fieldModifier())
+
+      BasicButton(R.string.sign_in, Modifier.basicButton()) {
+        keyboardController?.hide()
+        viewModel.onSignInClick(openAndPopUp)
+      }
+
+      BasicTextButton(R.string.forgot_password, Modifier.textButton()) {
+        viewModel.onForgotPasswordClick()
+      }
     }
   }
 }

@@ -3,19 +3,26 @@ package it.polimi.dima.track.common.composable
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import it.polimi.dima.track.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BasicField(
   @StringRes text: Int,
@@ -32,7 +39,22 @@ fun BasicField(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiLineField(
+  @StringRes text: Int,
+  value: String,
+  onNewValue: (String) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  OutlinedTextField(
+    singleLine = false,
+    modifier = modifier,
+    value = value,
+    onValueChange = { onNewValue(it) },
+    placeholder = { Text(stringResource(text)) }
+  )
+}
+
 @Composable
 fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
   OutlinedTextField(
@@ -41,7 +63,7 @@ fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier =
     value = value,
     onValueChange = { onNewValue(it) },
     placeholder = { Text(stringResource(R.string.email)) },
-    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") }
+    leadingIcon = { Icon(imageVector = Icons.Rounded.Email, contentDescription = "Email") }
   )
 }
 
@@ -59,7 +81,6 @@ fun RepeatPasswordField(
   PasswordField(value, R.string.repeat_password, onNewValue, modifier)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PasswordField(
   value: String,
@@ -70,8 +91,8 @@ private fun PasswordField(
   var isVisible by remember { mutableStateOf(false) }
 
   val icon =
-    if (isVisible) painterResource(R.drawable.ic_visibility_on)
-    else painterResource(R.drawable.ic_visibility_off)
+    if (isVisible) Icons.Rounded.Visibility
+    else Icons.Rounded.VisibilityOff
 
   val visualTransformation =
     if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
@@ -81,10 +102,10 @@ private fun PasswordField(
     value = value,
     onValueChange = { onNewValue(it) },
     placeholder = { Text(text = stringResource(placeholder)) },
-    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
+    leadingIcon = { Icon(imageVector = Icons.Rounded.Lock, contentDescription = "Lock") },
     trailingIcon = {
       IconButton(onClick = { isVisible = !isVisible }) {
-        Icon(painter = icon, contentDescription = "Visibility")
+        Icon(icon, contentDescription = "Visibility")
       }
     },
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

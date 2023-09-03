@@ -23,25 +23,108 @@
 
     <!-- TrainingsScreens -->
     <string name="trainings">Trainings</string>
+    <string name="next_scheduled_training">Next scheduled training</string>
+    <string name="last_training">Last training</string>
+    <string name="no_planned_trainings">no planned trainings yet…</string>
+    <string name="no_trainings_in_history">no trainings in history…</string>
+
+    <!-- AgendaScreen -->
+    <string name="agenda">Agenda</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile">Profile</string>
+    <string name="user_name">User name</string>
+    <string name="set_your_name">Set your name</string>
+    <string name="edit_name">Edit name</string>
+    <string name="user_information">User information</string>
+    <string name="user_specialty">User specialty</string>
+    <string name="set_your_specialty">Set your specialty</string>
+    <string name="edit_specialty">Edit specialty</string>
+    <string name="statistics">Statistics</string>
+    <string name="total_trainings">Total trainings</string>
+    <string name="trainings_this_week">Trainings this week</string>
+    <string name="trainings_this_month">Trainings this month</string>
+    <string name="personal_bests">Personal bests</string>
+    <string name="no_personal_bests_yet">no personal bests yet…</string>
 
     <!-- EditTrainingScreen -->
-    <string name="edit_training">Edit your training</string>
+    <string name="edit_training">Edit training</string>
+    <string name="new_training">New training</string>
+    <string name="duplicate_training">Duplicate training</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="url">URL</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
-    <string name="flag">Flag</string>
-    <string name="priority">Priority</string>
+    <string name="type">Type</string>
 
     <!-- SettingsScreen -->
     <string name="settings">Settings</string>
     <string name="sign_out">Sign out</string>
     <string name="delete_my_account">Delete my account</string>
+    <string name="connect_to_your_fitbit_account">Connect to your Fitbit account</string>
+    <string name="fitbit_account_connected">Fitbit account connected!</string>
 
     <!-- Dialogs -->
     <string name="sign_out_title">Sign out?</string>
     <string name="sign_out_description">You will have to sign in again to see your trainings.</string>
     <string name="delete_account_title">Delete account?</string>
     <string name="delete_account_description">You will lose all your trainings and your account will be deleted. This action is irreversible.</string>
+
+    <string name="edit">Edit</string>
+    <string name="add_training">Add training</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
+    <string name="edit_repetitions">Edit repetitions</string>
+    <string name="more_options">More options</string>
+    <string name="delete_repetition">Delete repetition</string>
+    <string name="add_repetition">Add repetition</string>
+    <string name="edit_repetition">Edit repetition</string>
+    <string name="duration_type">Duration type</string>
+    <string name="save">Save</string>
+    <string name="recover_type">Recover type</string>
+    <string name="recover_time">Recover time</string>
+    <string name="recover_duration">Recover duration</string>
+    <string name="duration">Duration</string>
+    <string name="distance">Distance</string>
+    <string name="cool_down">Cool down</string>
+    <string name="warm_up">Warm up</string>
+    <string name="repetitions">Repetitions</string>
+    <string name="recover">Recover</string>
+    <string name="move_step">Move step</string>
+    <string name="delete_repetition_confirmation">Are you sure you want to delete this element?</string>
+    <string name="delete">Delete</string>
+    <string name="repetition">Repetition</string>
+    <string name="favorite">Favorite</string>
+    <string name="run">Run</string>
+    <string name="delete_training">Delete training</string>
+    <string name="delete_training_confirmation">Are you sure you want to delete this training?</string>
+    <string name="fill_training">Fill training</string>
+    <string name="extra_recover">Extra recover</string>
+    <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="fill_result">Fill result</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="clear">Clear</string>
+    <string name="ok">OK</string>
+    <string name="notes">Notes</string>
+    <string name="search_trainings">Search trainings</string>
+    <string name="exercises">Exercises</string>
+    <string name="hurdles">Hurdles</string>
+    <string name="strength">Strength</string>
+    <string name="personal_best">Personal best</string>
+    <string name="no_trainings">No trainings</string>
+    <string name="calories">Calories</string>
+    <string name="steps">Steps</string>
+    <string name="elevation_gain">Elevation gain</string>
+    <string name="no_training_steps">No training steps</string>
+
+    <!-- Tags -->
+    <string name="navigation_drawer">Navigation drawer</string>
+    <string name="navigation_rail">Navigation rail</string>
+    <string name="navigation_bottom">Navigation bottom</string>
+    <string name="add_training_agenda_fab_tag">Add training agenda fab tag</string>
+    <string name="add_training_trainings_fab_tag">Add training trainings fab tag</string>
+    <string name="lazy_grid_profile_tag">Lazy grid profile tag</string>
+    <string name="title_input_tag">Title input tag</string>
 </resources>
