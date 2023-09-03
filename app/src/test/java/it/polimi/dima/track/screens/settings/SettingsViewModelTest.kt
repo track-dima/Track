@@ -1,8 +1,10 @@
 package it.polimi.dima.track.screens.settings
 
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import it.polimi.dima.track.LOGIN_SCREEN
@@ -71,6 +73,13 @@ class SettingsViewModelTest {
     every { openScreen(any()) } returns Unit
     settingsViewModel.onSignUpClick(openScreen)
     verify { openScreen(SIGN_UP_SCREEN) }
+  }
+
+  @Test
+  fun onSignOutClick() = runTest {
+    coEvery { accountService.signOut() } just Runs
+    settingsViewModel.onSignOutClick()
+    coVerify { accountService.signOut() }
   }
 
   @Test
