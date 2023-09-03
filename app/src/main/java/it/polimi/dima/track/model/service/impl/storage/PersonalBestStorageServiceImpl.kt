@@ -17,11 +17,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class PersonalBestStorageServiceImpl
-@Inject
-constructor(private val firestore: FirebaseFirestore, private val auth: AccountService) :
-  PersonalBestStorageService {
-
+class PersonalBestStorageServiceImpl @Inject constructor(
+  private val firestore: FirebaseFirestore,
+  private val auth: AccountService,
+) : PersonalBestStorageService {
   @OptIn(ExperimentalCoroutinesApi::class)
   override val personalBests: Flow<List<PersonalBest>>
     get() =
@@ -67,7 +66,10 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
       .toObjects<PersonalBest>()
       .minByOrNull { it.result.paceToSeconds() }
 
-  override suspend fun getPersonalBestFromDistanceAndTraining(distance: Int, trainingId: String): PersonalBest? =
+  override suspend fun getPersonalBestFromDistanceAndTraining(
+    distance: Int,
+    trainingId: String
+  ): PersonalBest? =
     currentPersonalBestCollection(auth.currentUserId)
       .whereEqualTo("distance", distance)
       .whereEqualTo("trainingId", trainingId)
@@ -76,7 +78,10 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
       .toObjects<PersonalBest>()
       .firstOrNull()
 
-  override suspend fun getPersonalBestFromDurationAndTraining(duration: Int, trainingId: String): PersonalBest? =
+  override suspend fun getPersonalBestFromDurationAndTraining(
+    duration: Int,
+    trainingId: String
+  ): PersonalBest? =
     currentPersonalBestCollection(auth.currentUserId)
       .whereEqualTo("duration", duration)
       .whereEqualTo("trainingId", trainingId)
@@ -105,7 +110,7 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
         .await()
     }
 
- private fun currentPersonalBestCollection(uid: String): CollectionReference =
+  private fun currentPersonalBestCollection(uid: String): CollectionReference =
     firestore.collection(USER_COLLECTION).document(uid).collection(PERSONAL_BEST_COLLECTION)
 
   companion object {

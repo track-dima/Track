@@ -177,6 +177,7 @@ class FillRepetitionsViewModelTest {
     coEvery { trainingStorageService.updateTraining(any()) } just Runs
     coEvery { personalBestStorageService.existsGlobalPersonalBestWithTrainingId(any()) } returns true
     coEvery { trainingStorageService.updatePersonalBestFlag(any(), any()) } just Runs
+    coEvery { personalBestStorageService.updatePersonalBest(any()) } just Runs
 
     val step1 = TrainingStep(
       type = TrainingStep.Type.REPETITION,

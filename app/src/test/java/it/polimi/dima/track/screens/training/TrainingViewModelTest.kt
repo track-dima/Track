@@ -1,5 +1,6 @@
 package it.polimi.dima.track.screens.training
 
+import io.mockk.Awaits
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -46,6 +47,8 @@ class TrainingViewModelTest {
     fitbitService = mockk()
     userStorageService = mockk()
     fitbitAuthManager = mockk()
+
+    coEvery { trainingStorageService.getTraining(any()) } just Awaits
 
     trainingViewModel = TrainingViewModel(
       mockk(),

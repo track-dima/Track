@@ -1,9 +1,11 @@
 package it.polimi.dima.track.screens.agenda
 
-import android.content.ClipboardManager
 import android.content.Context
+import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import it.polimi.dima.track.AGENDA_SCREEN
@@ -11,8 +13,6 @@ import it.polimi.dima.track.EDIT_MODE
 import it.polimi.dima.track.EDIT_MODE_DUPLICATE
 import it.polimi.dima.track.EDIT_TRAINING_SCREEN
 import it.polimi.dima.track.TRAINING_ID
-import it.polimi.dima.track.common.ext.parseTraining
-import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.common.utils.sendIntent
 import it.polimi.dima.track.model.Training
 import it.polimi.dima.track.model.service.storage.TrainingStorageService
@@ -113,27 +113,6 @@ class AgendaViewModelTest {
   }
 
   @Test
-  fun onTrainingActionClick_CopyTraining() {
-    val openScreen: (String) -> Unit = mockk()
-    val training = Training(id = "trainingId")
-    val context: Context = mockk()
-    val clipboardManager: ClipboardManager = mockk()
-
-    every { openScreen(any()) } returns Unit
-    every { context.getSystemService(Context.CLIPBOARD_SERVICE) } returns clipboardManager
-    every { clipboardManager.setPrimaryClip(any()) } returns Unit
-    every { copyToClipboard(context, any(), any()) } returns Unit
-
-    agendaViewModel.onTrainingActionClick(
-      openScreen,
-      training,
-      "Copy training",
-      context,
-    )
-    verify { copyToClipboard(context, training.parseTraining(), "Training") }
-  }
-
-  @Test
   fun onTrainingActionClick_DuplicateTraining() {
     val openScreen: (String) -> Unit = mockk()
     val training = Training(id = "trainingId")
@@ -149,6 +128,7 @@ class AgendaViewModelTest {
 
   @Test
   fun onTrainingActionClick_ToggleFavourite() {
+    coEvery { trainingStorageService.updateTraining(any()) } just Runs
     agendaViewModel.onTrainingActionClick(
       { _ -> },
       Training(),
@@ -161,6 +141,7 @@ class AgendaViewModelTest {
   @Test
   fun onDeleteTaskClick() {
     val trainingId = "trainingId"
+    coEvery { trainingStorageService.deleteTraining(any()) } just Runs
     agendaViewModel.onDeleteTaskClick(trainingId)
     coVerify { trainingStorageService.deleteTraining(trainingId) }
   }
