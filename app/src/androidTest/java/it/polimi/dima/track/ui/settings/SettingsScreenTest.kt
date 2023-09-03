@@ -39,7 +39,7 @@ class SettingsScreenTest : InjectingTestCase() {
   val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
   @Test
-  fun settingsScreen() {
+  fun settingsScreen_NoLogin_CorrectlyComposed() {
     composeTestRule.setContent {
       SettingsScreen(
         restartApp = { _ -> },
@@ -56,11 +56,10 @@ class SettingsScreenTest : InjectingTestCase() {
       .assertExists()
       .assertIsDisplayed()
       .assertHasClickAction()
-      .performClick()
   }
   
   @Test
-  fun settingsScreen_login() {
+  fun settingsScreen_LoginFlow() {
     composeTestRule.setContent {
       TrackApp(
         windowSize = WindowSizeClass.calculateFromSize(size = compactWindowSize),
