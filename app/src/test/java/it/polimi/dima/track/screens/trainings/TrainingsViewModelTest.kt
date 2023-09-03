@@ -48,7 +48,7 @@ class TrainingsViewModelTest {
     mockTrainingStorageService = mockk(relaxed = true)
     mockConfigurationService = mockk(relaxed = true)
     mockLogService = mockk(relaxed = true)
-    viewModel = TrainingsViewModel(mockLogService, mockTrainingStorageService, mockConfigurationService)
+    viewModel = TrainingsViewModel(mockLogService, mockTrainingStorageService)
   }
 
   @After
