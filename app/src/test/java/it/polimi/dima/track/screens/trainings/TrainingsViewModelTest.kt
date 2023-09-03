@@ -15,7 +15,6 @@ import it.polimi.dima.track.TRAINING_ID
 import it.polimi.dima.track.common.ext.parseTraining
 import it.polimi.dima.track.common.utils.copyToClipboard
 import it.polimi.dima.track.model.Training
-import it.polimi.dima.track.model.service.ConfigurationService
 import it.polimi.dima.track.model.service.LogService
 import it.polimi.dima.track.model.service.storage.TrainingStorageService
 import it.polimi.dima.track.screens.training.TrainingActionOption
@@ -36,7 +35,6 @@ class TrainingsViewModelTest {
   private lateinit var viewModel: TrainingsViewModel
   private lateinit var mockLogService: LogService
   private lateinit var mockTrainingStorageService: TrainingStorageService
-  private lateinit var mockConfigurationService: ConfigurationService
 
   @OptIn(DelicateCoroutinesApi::class)
   private val mainThreadSurrogate = newSingleThreadContext("UI thread")
@@ -46,7 +44,6 @@ class TrainingsViewModelTest {
     Dispatchers.setMain(mainThreadSurrogate)
 
     mockTrainingStorageService = mockk(relaxed = true)
-    mockConfigurationService = mockk(relaxed = true)
     mockLogService = mockk(relaxed = true)
     viewModel = TrainingsViewModel(mockLogService, mockTrainingStorageService)
   }
